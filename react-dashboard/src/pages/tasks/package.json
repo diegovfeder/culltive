@@ -1,0 +1,6 @@
+{
+  "name": "Tasks",
+  "version": "1.0.0",
+  "private": true,
+  "main": "Tasks.js"
+}
