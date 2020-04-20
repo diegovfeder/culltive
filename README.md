@@ -3,20 +3,19 @@
 </h1>
 
 <h4 align="center">
-  Backup repo for Culltive systems
+  Culltive is a startup that combines technology, nature and decoration.
 </h4>
 
 
 <p align="center">
     <a href="#-Project">Project</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-    <a href="#rocket-Technology">Technology</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+    <a href="#rocket-Technology">Technology</a>&nbsp;&nbsp;&nbsp;
 </p>
 
 <br>
 
 ## 💻 Project
 
-Culltive is a startup that combines technology, nature and decoration.
 It was developed to solve the difficulties of maintaining gardens in urban environments, taking into account unfavorable spaces and the lack of time for the necessary care. 
 
 
@@ -32,7 +31,4 @@ This project was developed with the following technologies:
 
 
 ---
-Made with ♥ by Diego Feder
-
-<link rel="stylesheet" type="text/css" href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
-Made with <i class="icon ion-heart"></i> by Diego Feder
+Made with ❤️ by Diego Feder
