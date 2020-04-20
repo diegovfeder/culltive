@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="Covid19" title="Culltive" />
+    <img alt="Culltive" title="Culltive" />
 </h1>
 
 <h4 align="center">
