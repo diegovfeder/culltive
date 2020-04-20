@@ -9,7 +9,7 @@ import {
   SafeAreaView,
   Alert
 } from "react-native";
-import { globalStyles } from "../styles/global";
+import { globalStyles } from "../style/global";
 import { useNavigation } from "@react-navigation/native";
 
 import axios from "axios";

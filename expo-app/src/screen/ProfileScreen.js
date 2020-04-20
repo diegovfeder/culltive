@@ -22,7 +22,7 @@ export default function ProfileScreen() {
         <View style={{ alignSelf: "center" }}>
           <View style={styles.profileImage}>
             <Image
-              source={require("../images/profile.png")}
+              source={require("../image/profile.png")}
               style={styles.image}
               resizeMode="center"
             ></Image>
@@ -84,21 +84,21 @@ export default function ProfileScreen() {
           <ScrollView horizontal={true} showsHorizontalScrollIndicatior={false}>
             <View style={styles.mediaImageContainer}>
               <Image
-                source={require("../images/media1.jpg")}
+                source={require("../image/media1.jpg")}
                 style={styles.image}
                 resizeMode="cover"
               ></Image>
             </View>
             <View style={styles.mediaImageContainer}>
               <Image
-                source={require("../images/media2.jpg")}
+                source={require("../image/media2.jpg")}
                 style={styles.image}
                 resizeMode="cover"
               ></Image>
             </View>
             <View style={styles.mediaImageContainer}>
               <Image
-                source={require("../images/media3.jpg")}
+                source={require("../image/media3.jpg")}
                 style={styles.image}
                 resizeMode="cover"
               ></Image>

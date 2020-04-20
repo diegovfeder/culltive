@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 
-import Firebase from "../utils/firebase";
+import Firebase from "../util/firebase";
 
 var FirebaseStateContext = React.createContext();
 var FirebaseDispatchContext = React.createContext();

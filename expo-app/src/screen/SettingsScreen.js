@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View, ScrollView } from "react-native";
-// import { globalStyles } from "../styles/global";
+// import { globalStyles } from "../style/global";
 
 // import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 

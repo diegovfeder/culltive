@@ -1,5 +1,5 @@
 import React from "react";
-import { globalStyles } from "../styles/global";
+import { globalStyles } from "../style/global";
 import {
   StyleSheet,
   Text,

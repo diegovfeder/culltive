@@ -11,7 +11,7 @@ import {
   Modal,
   ActivityIndicator
 } from "react-native";
-import { globalStyles } from "../styles/global";
+import { globalStyles } from "../style/global";
 import { useNavigation } from "@react-navigation/native";
 
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -155,7 +155,7 @@ export default function HomeScreen() {
             {/*// TODO: Create a get Image from Firebase or Facebook / Google or  else...*/}
 
             <Image
-              source={require("../images/acacia4.jpg")}
+              source={require("../image/acacia4.jpg")}
               style={styles.image}
               resizeMode="center"
             ></Image>

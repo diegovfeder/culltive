@@ -9,9 +9,9 @@ import {
 } from "react-native";
 // TODO: Implement Modal using this library
 // https://github.com/react-native-community/react-native-modal
-import { globalStyles } from "../styles/global";
+import { globalStyles } from "../style/global";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { useAsyncStorage } from "../utils/useAsyncStorage";
+import { useAsyncStorage } from "../util/useAsyncStorage";
 
 export default function BarCodeScreen() {
   const [hasPermission, setHasPermission] = useState(null);

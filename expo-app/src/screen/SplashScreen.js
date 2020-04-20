@@ -9,7 +9,7 @@ export default function SplashScreen() {
     <View style={[styles.container, { backgroundColor: "#3ea341" }]}>
       <View style={styles.centered}>
         <Image
-          source={require("../images/culltive_logo_1500t.png")}
+          source={require("../image/culltive_logo_1500t.png")}
           borderColor="#FFF"
           style={{ width: 400, height: 400 }}
         />

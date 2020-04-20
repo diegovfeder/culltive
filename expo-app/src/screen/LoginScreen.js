@@ -14,7 +14,7 @@ import {
   Button,
   TouchableHighlight
 } from "react-native";
-import { globalStyles } from "../styles/global";
+import { globalStyles } from "../style/global";
 // External Libs
 import Fade from "react-native-fade";
 // TODO: Implement Modal using this library
@@ -32,7 +32,7 @@ import { useNavigation } from "@react-navigation/native";
 
 // Components & Resources
 import InputTextField from "../component/InputTextField";
-import logo from "../images/culltive_logo_1500t.png";
+import logo from "../image/culltive_logo_1500t.png";
 
 export default function LoginScreen() {
   var firebaseDispatch = useFirebaseDispatch();

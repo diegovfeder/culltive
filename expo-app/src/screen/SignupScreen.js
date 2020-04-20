@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { globalStyles } from "../styles/global";
+import { globalStyles } from "../style/global";
 import {
   StyleSheet,
   Text,
@@ -26,7 +26,7 @@ import { useNavigation } from "@react-navigation/native";
 
 // Components & Resources
 import InputTextField from "../component/InputTextField";
-import logo from "../images/culltive_logo_1500t.png";
+import logo from "../image/culltive_logo_1500t.png";
 
 export default function SignupScreen() {
   var userDispatch = useUserDispatch();
