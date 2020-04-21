@@ -5176,6 +5176,11 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+re-base@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/re-base/-/re-base-4.0.0.tgz#becebcaa5a3ac1001f740256f7bda4fa94d0c968"
+  integrity sha512-btpYJuWOtPBiOW9osRu3O36kXbEK+J9HrJPwIbFZSd/r4wW3wJMBXLwASmilcE+mQIWupqmGdPyR+ZV+nKkSHA==
+
 react-devtools-core@^3.6.3:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-3.6.3.tgz#977d95b684c6ad28205f0c62e1e12c5f16675814"
