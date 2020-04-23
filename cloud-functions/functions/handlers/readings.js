@@ -25,15 +25,16 @@ exports.postNewReading = (req, res) => {
     });
   }
 
-  //TODO: change this to req.body.qrCode / req.body.air etc...
   const newReading = {
     qrCode: req.body.qrCode,
     createdAt: new Date().toISOString(),
     // geolocation: "",
-    air: 0,
-    lumi: 0,
-    soil: 0,
-    temp: 0
+    air: req.body.air,
+    lumi: req.body.lumi,
+    soil: req.body.soil,
+    temp: req.body.temp,
+    ledState: req.body.ledState,
+    waterLevel: req.body.waterLevel
   };
 
   db.collection("readings")
