@@ -17,6 +17,16 @@ export const globalStyles = StyleSheet.create({
     fontSize: 40,
     color: "#52575D"
   },
+  h2: {
+    fontFamily: "Helvetica Neue",
+    fontSize: 24,
+    color: "#52575D"
+  },
+  h3: {
+    fontFamily: "Helvetica Neue",
+    fontSize: 18,
+    color: "#52575D"
+  },
   subText: {
     fontSize: 12,
     fontWeight: "500",
@@ -66,6 +76,13 @@ export const globalStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 9 },
     shadowOpacity: 1,
     shadowRadius: 20
+  },
+  headerView: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "center"
   },
   headerTitle: {
     fontFamily: "Helvetica Neue",
