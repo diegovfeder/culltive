@@ -77,6 +77,23 @@ export const globalStyles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 20
   },
+  touchableOpacityButton2: {
+    width: "90%",
+    backgroundColor: "#3ea341",
+    position: "absolute",
+    bottom: 48,
+    fontSize: 16,
+    borderRadius: 4,
+    paddingVertical: 12,
+    marginTop: 32,
+    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: "center",
+    shadowColor: "rgba(171, 180, 189, 0.35)",
+    shadowOffset: { width: 0, height: 9 },
+    shadowOpacity: 1,
+    shadowRadius: 20
+  },
   headerView: {
     paddingHorizontal: 10,
     paddingVertical: 5,
