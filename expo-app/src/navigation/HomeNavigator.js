@@ -29,7 +29,7 @@ import { useNavigation } from "@react-navigation/native";
 import LoginScreen from "../screen/LoginScreen";
 import HomeScreen from "../screen/HomeScreen";
 import SettingsScreen from "../screen/SettingsScreen";
-import Settings from "../screen/Settings";
+// import Settings from "../screen/Settings";
 import ReportScreen from "../screen/ReportScreen";
 import ChartScreen from "../screen/ChartScreen";
 import BarCodeScreen from "../screen/BarCodeScreen";
@@ -86,7 +86,7 @@ function DrawerNavigator() {
       drawerContent={props => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen name="Home" component={HomeScreen} />
-      <Drawer.Screen name="Settings" component={Settings} />
+      <Drawer.Screen name="Settings" component={SettingsScreen} />
     </Drawer.Navigator>
   );
 }

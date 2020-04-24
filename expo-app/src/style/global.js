@@ -17,6 +17,16 @@ export const globalStyles = StyleSheet.create({
     fontSize: 40,
     color: "#52575D"
   },
+  h2: {
+    fontFamily: "Helvetica Neue",
+    fontSize: 24,
+    color: "#52575D"
+  },
+  h3: {
+    fontFamily: "Helvetica Neue",
+    fontSize: 18,
+    color: "#52575D"
+  },
   subText: {
     fontSize: 12,
     fontWeight: "500",
@@ -66,6 +76,30 @@ export const globalStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 9 },
     shadowOpacity: 1,
     shadowRadius: 20
+  },
+  touchableOpacityButton2: {
+    width: "90%",
+    backgroundColor: "#3ea341",
+    position: "absolute",
+    bottom: 48,
+    fontSize: 16,
+    borderRadius: 4,
+    paddingVertical: 12,
+    marginTop: 32,
+    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: "center",
+    shadowColor: "rgba(171, 180, 189, 0.35)",
+    shadowOffset: { width: 0, height: 9 },
+    shadowOpacity: 1,
+    shadowRadius: 20
+  },
+  headerView: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "center"
   },
   headerTitle: {
     fontFamily: "Helvetica Neue",
