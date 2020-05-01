@@ -1,0 +1,36 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add create-react-app app-ts-rn --typescript
+
+PATH: 
+  C:\Python27\;C:\Python27\Scripts;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\ia32\compiler;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\LLVM\bin;D:\AppData\AndroidSdk\platform-tools;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\nodejs\;C:\Users\diego\AppData\Local\Microsoft\WindowsApps;C:\Users\diego\AppData\Local\atom\bin;C:\Users\diego\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\Users\diego\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\diego\AppData\Local\GitHubDesktop\bin;D:\AppData\AndroidSdk\platform-tools;C:\Users\diego\AppData\Local\Yarn\bin;C:\Users\diego\AppData\Roaming\npm;
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  13.12.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/app-ts-rn: Not found
+      at Request.params.callback [as _callback] (C:\Program Files (x86)\Yarn\lib\cli.js:66096:18)
+      at Request.self.callback (C:\Program Files (x86)\Yarn\lib\cli.js:140748:22)
+      at Request.emit (events.js:315:20)
+      at Request.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:141720:10)
+      at Request.emit (events.js:315:20)
+      at IncomingMessage.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:141642:12)
+      at Object.onceWrapper (events.js:421:28)
+      at IncomingMessage.emit (events.js:327:22)
+      at endReadableNT (_stream_readable.js:1201:12)
+      at processTicksAndRejections (internal/process/task_queues.js:84:21)
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

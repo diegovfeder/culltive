@@ -18,17 +18,6 @@ export default function SplashScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  centered: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
-
 // {isLoading
 //   ? isAuthenticated
 //     ? navigation.navigate("AuthNavigator", { screen: "Login" })

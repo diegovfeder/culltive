@@ -131,7 +131,7 @@ export default function HomeScreen() {
         </View>
       </Modal>
 
-      <ScrollView>
+      <View>
         {/*GREEN CIRCLE / LAZY LOADING*/}
         <View
           style={{
@@ -253,7 +253,7 @@ export default function HomeScreen() {
           </View>
         </ScrollView>
         <Divider style={globalStyles.divider} />
-      </ScrollView>
+      </View>
 
       <TouchableOpacity
         style={globalStyles.touchableOpacityButton}

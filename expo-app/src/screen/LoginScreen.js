@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
-  View,
   Image,
   TouchableOpacity,
-  ScrollView,
+  View,
   AsyncStorage,
   Keyboard,
   KeyboardAvoidingView,
@@ -21,7 +20,7 @@ import Fade from "react-native-fade";
 // https://github.com/react-native-community/react-native-modal
 import Modal from "react-native-modal";
 // import { Input } from "react-native-elements";
-
+import SVGLogo from "../assets/icons/twitter.svg";
 // Icons
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
@@ -199,7 +198,7 @@ export default function LoginScreen() {
         </Modal>
       </View>
 
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <View>
           <View
             style={{
@@ -213,6 +212,7 @@ export default function LoginScreen() {
               resizeMode="contain"
               style={[styles.logo, { height: imageHeight }]}
             />
+            <SVGLogo />
           </View>
 
           <View
@@ -287,32 +287,6 @@ export default function LoginScreen() {
               }}
             ></InputTextField>
 
-            {/*Wrong password*/}
-            {/*{errors !== null ? (
-              <Text style={{ color: "red", alignSelf: "flex-start" }}>
-                {errors.password.toString()}
-              </Text>
-            ) : (
-              <Text> </Text>
-            )}*/}
-
-            {/*<Input
-              label="Email"
-              placeholder="Type your email address"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              onChangeText={text => setLoginValue(text)}
-            />
-
-            <Input
-              label="Password"
-              placeholder="Type your password"
-              secureTextEntry={true}
-              onChangeText={text => setPasswordValue(text)}
-              errorStyle={{ color: "red" }}
-              errorMessage={error ? "Something is " : ""}
-            />*/}
-
             <Text
               onPress={() => {
                 setModal(true);
@@ -380,11 +354,6 @@ export default function LoginScreen() {
               ]}
             >
               Don't have an account?{" "}
-              {/*<TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Signup");
-                }}
-              >*/}
               <Text
                 onPress={() => {
                   navigation.navigate("Signup");
@@ -393,11 +362,10 @@ export default function LoginScreen() {
               >
                 Register Now
               </Text>
-              {/*</TouchableOpacity>*/}
             </Text>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
