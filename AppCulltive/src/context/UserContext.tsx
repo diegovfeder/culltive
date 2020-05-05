@@ -8,7 +8,7 @@ var UserDispatchContext = React.createContext();
 function userReducer(state, action) {
   switch (action.type) {
     case 'VALIDATE_TOKEN':
-      console.log('VALIDATE_TOKEN');
+      // console.log('VALIDATE_TOKEN');
       return {
         ...state,
         isAuthenticated: !!action.token,
@@ -91,7 +91,7 @@ export {
   UserProvider,
   useUserState,
   useUserDispatch,
-  loginUser,
+  signinUser,
   signupUser,
   signOut,
   getUserData,
@@ -99,14 +99,14 @@ export {
 };
 // ###########################################################
 
-function loginUser(
+function signinUser(
   dispatch,
   loginValue,
   passwordValue,
   setIsLoading,
-  setErrors,
+  // setErrors,
 ) {
-  setErrors(false);
+  // setErrors(false);
   setIsLoading(true);
 
   console.log('login: ' + loginValue);
@@ -123,7 +123,7 @@ function loginUser(
       console.log(res.data); //Auth token
       setAuthorizationHeader(res.data.token);
 
-      setErrors(false);
+      // setErrors(false);
       setIsLoading(false);
       dispatch({type: 'LOGIN_SUCCESS'});
     })
@@ -131,7 +131,7 @@ function loginUser(
       console.log(err);
       dispatch({type: 'LOGIN_FAILURE', payload: []});
       // dispatch({ type: "SET_ERRORS", payload: err.response.data });
-      setErrors(true); // change This to payload response data...
+      // setErrors(true); // change This to payload response data...
       setIsLoading(false);
     });
 }

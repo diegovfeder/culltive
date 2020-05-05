@@ -1,29 +1,39 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text, View, Switch, TouchableOpacity, StyleSheet} from 'react-native';
 
 import {Slider} from 'react-native-elements';
 // import {Divider} from 'react-native-paper';
 
-import {globalStyles} from '../Styles';
-
 import {useNavigation} from '@react-navigation/native';
 
-import {Ionicons} from 'react-native-vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function SettingsScreen() {
+import {someStyles} from '../Styles';
+
+const Settings: React.FC = () => {
   const navigation = useNavigation();
 
-  const [isLEDEnabled, setIsLEDEnabled] = React.useState(true);
+  const [isLEDEnabled, setIsLEDEnabled] = useState(true);
   const toggleLEDSwitch = () =>
     setIsLEDEnabled((previousState) => !previousState);
 
-  const [isAWEnabled, setIsAWEnabled] = React.useState(true);
+  const [automaticWatering, setAutomaticWatering] = useState(true);
   const toggleAWSwitch = () =>
-    setIsAWEnabled((previousState) => !previousState);
+    setAutomaticWatering((previousState) => !previousState);
 
-  const [sliderValue, setSliderValue] = React.useState(5);
+  const [sliderValue, setSliderValue] = useState(5);
 
-  React.useEffect(() => {
+  const waterPumpButton = (
+    <TouchableOpacity
+      style={[globalStyles.touchableOpacityButton2]}
+      onPress={() => alert('PUMPING WATTA')}
+      // TODO: Develop a endpoint for waterPump
+    >
+      <Text style={[globalStyles.headerTitle]}>Water Pump</Text>
+    </TouchableOpacity>
+  );
+
+  useEffect(() => {
     navigation.setOptions({
       title: 'Settings',
       headerTitle: () => (
@@ -134,7 +144,7 @@ export default function SettingsScreen() {
               trackColor={{false: '#767577', true: '#3ea341'}}
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleAWSwitch}
-              value={isAWEnabled}
+              value={automaticWatering}
             />
           </View>
 
@@ -152,11 +162,11 @@ export default function SettingsScreen() {
           </Text>
           <Slider
             style={{marginHorizontal: 8}}
-            disabled={isAWEnabled}
+            disabled={automaticWatering}
             minimumValue={1}
             maximumValue={5}
             step={1}
-            thumbTintColor={isAWEnabled ? '#767577' : '#3ea341'}
+            thumbTintColor={automaticWatering ? '#767577' : '#3ea341'}
             value={sliderValue}
             onValueChange={(value) => setSliderValue(value)}
           />
@@ -206,17 +216,12 @@ export default function SettingsScreen() {
       </View>
       {/*<Divider style={globalStyles.divider} />*/}
 
-      {/*WATER PUMP BUTTON*/}
-      <TouchableOpacity
-        style={[globalStyles.touchableOpacityButton2]}
-        onPress={() => alert('PUMPING WATTA')}
-        // TODO: Develop a endpoint for waterPump
-      >
-        <Text style={[globalStyles.headerTitle]}>Water Pump</Text>
-      </TouchableOpacity>
+      {waterPumpButton}
     </View>
   );
-}
+};
+
+export default Settings();
 
 const styles = StyleSheet.create({
   container: {

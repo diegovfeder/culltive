@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 // import SplashScreen from "../screen/SplashScreen";
@@ -10,11 +10,7 @@ import Signup from '../screen/Signup';
 
 const Stack = createStackNavigator();
 
-export default function AuthNavigator() {
-  // if (isLoading) {
-  //   return <SplashScreen />;
-  // }
-
+const AuthNavigator: React.FC = () => {
   return (
     <Stack.Navigator
       initialRouteName="Welcome"
@@ -53,11 +49,13 @@ export default function AuthNavigator() {
       />
     </Stack.Navigator>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerTitle: {
-    fontFamily: 'Helvetica Neue',
-    color: '#52575D',
+    fontFamily: 'Montserrat-Bold',
+    color: '#fff',
   },
 });
+
+export default AuthNavigator();

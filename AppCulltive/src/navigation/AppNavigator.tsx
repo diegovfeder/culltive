@@ -10,7 +10,7 @@ import {
 } from '@react-navigation/stack';
 
 // Icons
-// import { Ionicons } from "@expo/vector-icons";
+// import { Ionicons } from "react-native-vector-icons";
 
 // Context API
 import {useUserDispatch, validateToken} from '../context/UserContext';
@@ -23,7 +23,7 @@ import SplashScreen from '../screen/Splash';
 
 const Stack = createStackNavigator();
 
-export default function AppNavigator() {
+const AppNavigator: React.FC = () => {
   var userDispatch = useUserDispatch();
   var {isAuthenticated, isLoading} = useUserState();
 
@@ -66,4 +66,6 @@ export default function AppNavigator() {
       )}
     </Stack.Navigator>
   );
-}
+};
+
+export default AppNavigator();

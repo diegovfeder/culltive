@@ -16,8 +16,10 @@ import {useAsyncStorage} from '../util/useAsyncStorage';
 // TODO: Finish this useAsyncStorage thing...
 // const [qrCode, setQrCode] = useAsyncStorage("qrCode", "CB-XXXX");
 
+// Styles
 import {someStyles} from '../Styles';
 
+// Assets
 import WelcomeUndraw from '../../assets/undraw/welcome.svg';
 
 const Welcome: React.FC = () => {
@@ -52,14 +54,14 @@ const Welcome: React.FC = () => {
         </Text>
       </View>
 
-      <WelcomeUndraw width={240} height={240} style={{alignSelf: 'center'}} />
+      <WelcomeUndraw width={320} height={320} style={{alignSelf: 'center'}} />
 
       <View style={{width: '100%'}}>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('Signup');
           }}
-          style={styles.button}>
+          style={someStyles.button}>
           <Text style={[styles.text]}>Criar nova conta</Text>
         </TouchableOpacity>
 
@@ -75,7 +77,7 @@ const Welcome: React.FC = () => {
           onPress={() => {
             navigation.navigate('Terms');
           }}>
-          <Text style={styles.textLink}>
+          <Text style={[someStyles.textLink, {alignSelf: 'center'}]}>
             Termos e Condições de uso da Plataforma
           </Text>
         </TouchableOpacity>
@@ -85,20 +87,6 @@ const Welcome: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  button: {
-    marginVertical: 6,
-    display: 'flex',
-    height: 84,
-    borderRadius: 84 / 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#3cbc40',
-    shadowOpacity: 5,
-    shadowRadius: 20,
-    elevation: 10,
-    borderColor: '#707070',
-    borderWidth: 0.5,
-  },
   text: {
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
@@ -107,8 +95,8 @@ const styles = StyleSheet.create({
   buttonWhite: {
     marginVertical: 6,
     display: 'flex',
-    height: 84,
-    borderRadius: 84 / 2,
+    height: 64,
+    borderRadius: 64 / 2,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -122,14 +110,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
     color: '#3cbc40',
-  },
-  textLink: {
-    marginVertical: 8,
-    alignSelf: 'center',
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: '#3cbc40',
-    textDecorationLine: 'underline',
   },
 });
 

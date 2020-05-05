@@ -1,7 +1,11 @@
 import React from 'react';
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 
 const Report: React.FC = () => {
-  <View />;
+  return (
+    <View>
+      <Text>Report</Text>
+    </View>
+  );
 };
 export default Report;

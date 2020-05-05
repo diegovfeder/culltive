@@ -21,7 +21,7 @@ import Settings from '../screen/Settings';
 import Report from '../screen/Report';
 import Chart from '../screen/Chart';
 
-import {Ionicons} from 'react-native-vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Stack = createStackNavigator();
 
@@ -77,7 +77,7 @@ function DrawerNavigator() {
   );
 }
 
-export default function HomeNavigator() {
+const HomeNavigator: React.FC = () => {
   var navigation = useNavigation();
 
   return (
@@ -170,7 +170,7 @@ export default function HomeNavigator() {
       />
     </Stack.Navigator>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerView: {
@@ -193,3 +193,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
+
+export default HomeNavigator();
