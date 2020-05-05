@@ -44,7 +44,8 @@ const Signin: React.FC = () => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  let _emailInput;
+  let _passwordInput;
   // const handlePress = useCallback(async () => {
   //   //Checking if the link is supported for links with custom URL scheme
   //   const supported = await Linking.canOpenURL(url);
@@ -92,7 +93,7 @@ const Signin: React.FC = () => {
                 onChangeText={handleChange('email')}
                 onBlur={handleBlur('email')}
                 errorStyle={{color: 'red'}}
-                errorMessage={errors.email && touched.email ? errors.email : ''}
+                errorMessage={errors.email ? errors.email : ''}
               />
               <Input
                 ref={(component) => (_passwordInput = component)}

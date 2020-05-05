@@ -33,6 +33,9 @@ export const someStyles = StyleSheet.create({
     borderColor: '#707070',
     borderWidth: 0.5,
   },
+  container: {
+    marginHorizontal: 16,
+  },
   h1: {
     fontSize: 24,
     fontFamily: 'Montserrat-Bold',
@@ -81,5 +84,26 @@ export const someStyles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     color: '#3cbc40',
     textDecorationLine: 'underline',
+  },
+  headerView: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontFamily: 'Montserrat-Bold',
+    color: '#FFF',
+    fontWeight: '400',
+    fontSize: 24,
+  },
+  headerSubTitle: {
+    fontFamily: 'Montserrat-Light',
+    color: '#52575D',
+  },
+  headerButton: {
+    marginHorizontal: 20,
+    paddingHorizontal: 10,
   },
 });

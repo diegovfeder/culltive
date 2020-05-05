@@ -24,6 +24,9 @@ import {someStyles} from '../Styles';
 const Signup: React.FC = () => {
   const navigation = useNavigation();
   // const [errors, setErrors] = useState(null);
+  let _namelInput;
+  let _emaillInput;
+  let _passwordlInput;
 
   // useEffect(() => {
   //   if (_emailInput) {
@@ -65,7 +68,7 @@ const Signup: React.FC = () => {
                 onChangeText={handleChange('name')}
                 onBlur={handleBlur('name')}
                 errorStyle={{color: 'red'}}
-                errorMessage={errors.name && touched.name ? errors.name : ''}
+                errorMessage={errors.name ? errors.name : ''}
               />
               <Input
                 ref={(component) => (_emailInput = component)}
@@ -109,18 +112,6 @@ const styles = StyleSheet.create({
   keyboard: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 20,
-    fontFamily: 'Montserrat-Bold',
-    color: '#fff',
-  },
-  textLink: {
-    alignSelf: 'flex-end',
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: '#3cbc40',
-    textDecorationLine: 'underline',
   },
 });
 

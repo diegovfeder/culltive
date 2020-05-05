@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {createContext, useContext, useReducer} from 'react';
 import {AsyncStorage} from 'react-native';
 import axios from 'axios';
 
-var UserStateContext = React.createContext();
-var UserDispatchContext = React.createContext();
+var UserStateContext = createContext(undefined);
+var UserDispatchContext = createContext(undefined);
 
 function userReducer(state, action) {
   switch (action.type) {
@@ -11,28 +11,28 @@ function userReducer(state, action) {
       // console.log('VALIDATE_TOKEN');
       return {
         ...state,
-        isAuthenticated: !!action.token,
-        isLoading: false,
+        authenticated: !!action.token,
+        loading: false,
       };
     case 'LOGIN_SUCCESS':
       console.log('LOGIN_SUCCESS');
-      return {...state, isAuthenticated: true};
+      return {...state, authenticated: true};
     case 'LOGIN_FAILURE': {
       // TODO: create a message to the user explaining login fail
       console.log('LOGIN_FAILURE');
-      return {...state, loginFailed: action.payload, isAuthenticated: false};
+      return {...state, loginFailed: action.payload, authenticated: false};
     }
     case 'SIGNUP_SUCCESS': {
       console.log('SIGNUP_SUCCESS');
-      return {...state, isAuthenticated: true};
+      return {...state, authenticated: true};
     }
     case 'SIGNUP_FAILURE': {
       // TODO: create a message to the user explaining signup fail
       console.log('SIGNUP_FAILURE');
-      return {...state, signupFailed: action.payload, isAuthenticated: false};
+      return {...state, signupFailed: action.payload, authenticated: false};
     }
     case 'SIGN_OUT_SUCCESS':
-      return {...state, isAuthenticated: false};
+      return {...state, authenticated: false};
     case 'SET_ERRORS':
       return {
         ...state,
@@ -54,11 +54,11 @@ function userReducer(state, action) {
   }
 }
 
-// isAuthenticated: !!AsyncStorage.getItem("FBIdToken")
+// authenticated: !!AsyncStorage.getItem("FBIdToken")
 function UserProvider({children}) {
-  var [state, dispatch] = React.useReducer(userReducer, {
-    isAuthenticated: false,
-    isLoading: true,
+  const [state, dispatch] = useReducer(userReducer, {
+    authenticated: false,
+    loading: true,
     userData: null,
   });
 
@@ -72,7 +72,7 @@ function UserProvider({children}) {
 }
 
 function useUserState() {
-  var context = React.useContext(UserStateContext);
+  var context = useContext(UserStateContext);
   if (context === undefined) {
     throw new Error('useUserState must be used within a UserProvider');
   }
@@ -80,7 +80,7 @@ function useUserState() {
 }
 
 function useUserDispatch() {
-  var context = React.useContext(UserDispatchContext);
+  var context = useContext(UserDispatchContext);
   if (context === undefined) {
     throw new Error('useUserDispatch must be used within a UserProvider');
   }

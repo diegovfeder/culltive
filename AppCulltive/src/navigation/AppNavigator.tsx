@@ -1,5 +1,5 @@
-import * as React from 'react';
-import {AsyncStorage} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {AsyncStorage, Text, View} from 'react-native';
 
 // Navigation
 // import { NavigationContainer } from "@react-navigation/native";
@@ -19,18 +19,20 @@ import {useUserState} from '../context/UserContext';
 //General Imports
 import AuthNavigator from './AuthNavigator';
 import HomeNavigator from './HomeNavigator';
-import SplashScreen from '../screen/Splash';
+import Splash from '../screen/Splash';
 
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
   var userDispatch = useUserDispatch();
-  var {isAuthenticated, isLoading} = useUserState();
+  var {authenticated, loading} = useUserState();
+  // const [authenticated, setAuthenticated] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  console.log('AppNavigator: isAuth: ' + isAuthenticated);
-  console.log('AppNavigator: isLoad: ' + isLoading);
+  console.log('AppNavigator: authenticated: ' + authenticated);
+  console.log('AppNavigator: loading: ' + loading);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
@@ -57,9 +59,9 @@ const AppNavigator: React.FC = () => {
         gestureEnabled: true,
         gestureDirection: 'horizontal',
       }}>
-      {isLoading ? (
-        <Stack.Screen name="Splash" component={SplashScreen} />
-      ) : isAuthenticated ? (
+      {loading ? (
+        <Stack.Screen name="Splash" component={Splash} />
+      ) : authenticated ? (
         <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
       ) : (
         <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
@@ -68,4 +70,28 @@ const AppNavigator: React.FC = () => {
   );
 };
 
-export default AppNavigator();
+export default AppNavigator;
+
+// <Stack.Navigator
+//   headerMode="none"
+//   screenOptions={{
+//     cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
+//     gestureEnabled: true,
+//     gestureDirection: 'horizontal',
+//   }}>
+//   {loading ? (
+//     <Stack.Screen name="Splash" component={Splash} />
+//   ) : authenticated ? (
+//     <View>
+//       <Text>Home</Text>
+//     </View>
+//   ) : (
+//     <View>
+//       <Text>Auth</Text>
+//     </View>
+//   )}
+// </Stack.Navigator>
+
+//FIXME: Taken from isAuthenticated. Invalid hooks call...
+// <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
+// <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
