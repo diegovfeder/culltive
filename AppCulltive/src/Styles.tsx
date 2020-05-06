@@ -98,9 +98,10 @@ export const someStyles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 24,
   },
-  headerSubTitle: {
+  headerSubtitle: {
     fontFamily: 'Montserrat-Light',
-    color: '#52575D',
+    color: '#FFF',
+    fontSize: 14,
   },
   headerButton: {
     marginHorizontal: 20,

@@ -45,14 +45,10 @@ const Home: React.FC = () => {
         <TouchableOpacity
           style={someStyles.button}
           onPress={() => navigation.navigate('Report')}>
-          <Text style={[someStyles.textButton]}>Daily Report</Text>
+          <Text style={[someStyles.textButton]}>Relatórios</Text>
         </TouchableOpacity>
       </View>
     </View>
-
-    // <View>
-    //   <Text>Home</Text>
-    // </View>
   );
 };
 export default Home;

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {createContext, useContext} from 'react';
 
 import axios from 'axios';
 
-var DataStateContext = React.createContext();
-var DataDispatchContext = React.createContext();
+let DataStateContext = createContext();
+let DataDispatchContext = createContext();
 
 function dataReducer(state, action) {
   switch (action.type) {
@@ -22,7 +22,7 @@ function dataReducer(state, action) {
 }
 
 function DataProvider({children}) {
-  var [state, dispatch] = React.useReducer(dataReducer, {
+  const [state, dispatch] = React.useReducer(dataReducer, {
     devices: [],
     loadingDevices: false,
     readings: [],
@@ -38,7 +38,7 @@ function DataProvider({children}) {
 }
 
 function useDataState() {
-  var context = React.useContext(DataStateContext);
+  let context = useContext(DataStateContext);
   if (context === undefined) {
     throw new Error('useDataState must be used within a DataProvider');
   }
@@ -46,7 +46,7 @@ function useDataState() {
 }
 
 function useDataDispatch() {
-  var context = React.useContext(DataDispatchContext);
+  let context = useContext(DataDispatchContext);
   if (context === undefined) {
     throw new Error('useDataDispatch must be used within a DataProvider');
   }

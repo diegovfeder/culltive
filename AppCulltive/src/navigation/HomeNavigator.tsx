@@ -31,7 +31,7 @@ const HomeNavigator: React.FC = () => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
 
-  var userDispatch = useUserDispatch();
+  let userDispatch = useUserDispatch();
   const CustomDrawerContent = (props) => {
     return (
       <DrawerContentScrollView {...props}>
