@@ -1,12 +1,21 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
+
+import FirstSigninModal from '../component/FirstSigninModal';
 
 import {someStyles} from '../Styles';
 
 const Home: React.FC = () => {
   const navigation = useNavigation();
+  const [modalState, setModalState] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setModalState(true);
+    }, 2000);
+  }, [null]);
 
   const loadingContainer = (
     <View
@@ -38,9 +47,11 @@ const Home: React.FC = () => {
         justifyContent: 'space-between',
         alignItems: 'stretch',
       }}>
+      {/*TODO: Ask if user already is set up with device pairing*/}
+      <FirstSigninModal modalState={modalState} />
+
       {/*MAIN CIRCLE / LAZY LOADING*/}
       {loadingContainer}
-
       <View style={{width: '100%'}}>
         <TouchableOpacity
           style={someStyles.button}

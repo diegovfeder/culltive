@@ -18,6 +18,9 @@ import {useNavigation} from '@react-navigation/native';
 import Home from '../screen/Home';
 import Report from '../screen/Report';
 import Chart from '../screen/Chart';
+import GrantPermissions from '../screen/GrantPermissions';
+import PairNavigator from './PairNavigator';
+
 // Settings is responsible for the INVALID HOOK CALL
 import Settings from '../screen/Settings';
 
@@ -27,6 +30,10 @@ import {someStyles} from '../Styles';
 
 const Stack = createStackNavigator();
 
+//FIXME: It seems that CustomDrawer and DrawerNavigation itself is not working properly
+// iconButton click - crashes
+// signOut dispatch() - ?
+// drawerItem click warns and refreshes...
 const HomeNavigator: React.FC = () => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
@@ -46,6 +53,7 @@ const HomeNavigator: React.FC = () => {
     );
   };
 
+  //FIXME: warning cant update state on unmounted component (line 51)
   const DrawerNavigator = () => {
     return (
       <Drawer.Navigator

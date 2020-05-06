@@ -180,6 +180,7 @@ function signupUser(
 }
 
 function signOut(dispatch) {
+  console.log('UserContext: signOut' + dispatch);
   AsyncStorage.removeItem('FBIdToken');
   dispatch({type: 'SIGN_OUT_SUCCESS'});
 }

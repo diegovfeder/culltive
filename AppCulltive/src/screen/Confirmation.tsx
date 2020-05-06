@@ -1,11 +1,11 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 
-const Chart: React.FC = () => {
+const Confirmation: React.FC = () => {
   return (
     <View>
-      <Text>Chart</Text>
+      <Text>Confirmation</Text>
     </View>
   );
 };
-export default Chart;
+export default Confirmation;

@@ -1,13 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Dimensions, Text, View} from 'react-native';
 
+import {useNavigation} from '@react-navigation/native';
+
+// Components
 import Carousel from 'react-native-snap-carousel';
 import MyCarousel from '../component/MyCarousel';
 
-import {useNavigation} from '@react-navigation/native';
-
+// Styles
 import {someStyles} from '../Styles';
-
 const {height, width} = Dimensions.get('window');
 
 const Report: React.FC = () => {

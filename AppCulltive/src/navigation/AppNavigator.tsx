@@ -26,9 +26,6 @@ const Stack = createStackNavigator();
 const AppNavigator: React.FC = () => {
   var userDispatch = useUserDispatch();
   var {authenticated, loading} = useUserState();
-  // const [authenticated, setAuthenticated] = useState(true);
-  // const [loading, setLoading] = useState(true);
-
   console.log('AppNavigator: authenticated: ' + authenticated);
   console.log('AppNavigator: loading: ' + loading);
 
@@ -70,28 +67,10 @@ const AppNavigator: React.FC = () => {
   );
 };
 
+// TODO: PairNavigator verification --> goes to clean / new / AppFlow
+// <Stack.Screen
+//   name="PairNavigator"
+//   component={PairNavigator}
+// />
+
 export default AppNavigator;
-
-// <Stack.Navigator
-//   headerMode="none"
-//   screenOptions={{
-//     cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
-//     gestureEnabled: true,
-//     gestureDirection: 'horizontal',
-//   }}>
-//   {loading ? (
-//     <Stack.Screen name="Splash" component={Splash} />
-//   ) : authenticated ? (
-//     <View>
-//       <Text>Home</Text>
-//     </View>
-//   ) : (
-//     <View>
-//       <Text>Auth</Text>
-//     </View>
-//   )}
-// </Stack.Navigator>
-
-//FIXME: Taken from isAuthenticated. Invalid hooks call...
-// <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
-// <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
