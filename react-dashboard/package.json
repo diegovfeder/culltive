@@ -12,7 +12,7 @@
     "apexcharts": "^3.15.5",
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
-    "firebase": "^7.8.1",
+    "firebase": "^7.14.2",
     "font-awesome": "^4.7.0",
     "jwt-decode": "^2.2.0",
     "mui-datatables": "^2.14.0",
@@ -24,7 +24,7 @@
     "react-google-maps": "^9.4.5",
     "react-redux": "^7.1.3",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.3.1",
+    "react-scripts": "^3.3.1",
     "react-syntax-highlighter": "^12.2.1",
     "react-toastify": "^5.5.0",
     "react-youtube": "^7.9.0",
@@ -53,5 +53,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-import-resolver-meteor": "^0.3.4",
+    "eslint-plugin-graphql": "^0.4.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-meteor": "^4.0.1",
+    "eslint-plugin-react": "^7.5.1"
   }
 }
