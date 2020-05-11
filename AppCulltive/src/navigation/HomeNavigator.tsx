@@ -121,6 +121,10 @@ const HomeNavigator: React.FC = () => {
               size={24}
               color="#fff"
               onPress={() => alert('Calendar Button')}
+              // TODO: contextData / contextApp / contextUI / ??
+              // setCalendarView(true) in ReportScreen
+              // create an access to Report child component being able to change its state
+              // ...
             />
           ),
         }}

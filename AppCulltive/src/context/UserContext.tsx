@@ -54,7 +54,6 @@ function userReducer(state, action) {
   }
 }
 
-// authenticated: !!AsyncStorage.getItem("FBIdToken")
 function UserProvider({children}) {
   const [state, dispatch] = useReducer(userReducer, {
     authenticated: false,
@@ -181,7 +180,7 @@ function signupUser(
 
 function signOut(dispatch) {
   console.log('UserContext: signOut' + dispatch);
-  AsyncStorage.removeItem('FBIdToken');
+  AsyncStorage.removeItem('@FBIdToken');
   dispatch({type: 'SIGN_OUT_SUCCESS'});
 }
 
@@ -206,5 +205,5 @@ function validateToken(dispatch, userToken) {
 
 const setAuthorizationHeader = (token) => {
   const FBIdToken = `Bearer ${token}`;
-  AsyncStorage.setItem('FBIdToken', FBIdToken);
+  AsyncStorage.setItem('@FBIdToken', FBIdToken);
 };

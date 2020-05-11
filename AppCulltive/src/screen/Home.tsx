@@ -11,6 +11,7 @@ const Home: React.FC = () => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState(false);
 
+  // FIXME: Open FirstSigninModal if !paired
   // useEffect(() => {
   //   setTimeout(() => {
   //     setModalState(true);
@@ -33,9 +34,6 @@ const Home: React.FC = () => {
       />
     </View>
   );
-
-  // TODO:
-  // const [modal, toggleModal] = useState(false);
 
   return (
     <View

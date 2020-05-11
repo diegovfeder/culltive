@@ -1,20 +1,16 @@
 import React from 'react';
 import {
-  View,
-  Text,
   Button,
   Dimensions,
-  TouchableOpacity,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
-// import {CulltiveButton} from '../component/CulltiveButton';
 import * as Svg from 'react-native-svg';
 
 import {useNavigation} from '@react-navigation/native';
-import {useAsyncStorage} from '../util/useAsyncStorage';
-// TODO: Finish this useAsyncStorage thing...
-// const [qrCode, setQrCode] = useAsyncStorage("qrCode", "CB-XXXX");
 
 // Styles
 import {someStyles} from '../Styles';
@@ -69,7 +65,7 @@ const Welcome: React.FC = () => {
           onPress={() => {
             navigation.navigate('Signin');
           }}
-          style={styles.buttonWhite}>
+          style={someStyles.buttonWhite}>
           <Text style={[styles.textGreen]}>Já possuo cadastro</Text>
         </TouchableOpacity>
 
@@ -91,20 +87,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
     color: '#FFFFFF',
-  },
-  buttonWhite: {
-    marginVertical: 6,
-    display: 'flex',
-    height: 64,
-    borderRadius: 64 / 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    shadowOpacity: 5,
-    shadowRadius: 20,
-    elevation: 10,
-    borderColor: '#707070',
-    borderWidth: 0.5,
   },
   textGreen: {
     fontSize: 20,

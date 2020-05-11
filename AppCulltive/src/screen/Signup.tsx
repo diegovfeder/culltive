@@ -4,7 +4,7 @@ import {
   Text,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Keyboard,
+  keyboardContainer,
   StyleSheet,
   Dimensions,
 } from 'react-native';
@@ -36,7 +36,9 @@ const Signup: React.FC = () => {
   // });
 
   return (
-    <KeyboardAvoidingView style={styles.keyboard} behavior="padding">
+    <KeyboardAvoidingView
+      style={someStyles.keyboardContainer}
+      behavior="padding">
       <View style={{marginHorizontal: 16}}>
         <Formik
           initialValues={{email: '', password: ''}}
@@ -98,7 +100,7 @@ const Signup: React.FC = () => {
               <TouchableOpacity
                 onPress={handleSubmit}
                 style={someStyles.button}>
-                <Text style={[styles.text]}>Continuar</Text>
+                <Text style={[someStyles.textButton]}>Continuar</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -107,12 +109,5 @@ const Signup: React.FC = () => {
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  keyboard: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
 
 export default Signup;

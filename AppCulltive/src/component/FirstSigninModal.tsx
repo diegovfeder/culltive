@@ -21,7 +21,6 @@ import {Input} from 'react-native-elements';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Space from '../component/Space';
-// import Modal from 'react-native-modal';
 
 // Styles
 import {someStyles} from '../Styles';

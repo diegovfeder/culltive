@@ -4,11 +4,13 @@ import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 // import SplashScreen from "../screen/SplashScreen";
 
 import GrantPermissions from '../screen/GrantPermissions';
+import WiFiCredentials from '../screen/WiFiCredentials';
+import ConnectDevice from '../screen/ConnectDevice';
 import Confirmation from '../screen/Confirmation';
 
 const Stack = createStackNavigator();
 
-const Pairnavigator: React.FC = () => {
+const PairNavigator: React.FC = () => {
   return (
     <Stack.Navigator
       initialRouteName="Pair"
@@ -17,17 +19,21 @@ const Pairnavigator: React.FC = () => {
         ...TransitionPresets.RevealFromBottomAndroid,
         gestureEnabled: true,
         gestureDirection: 'horizontal',
-        headerStyle: {
-          backgroundColor: '#3cbc40',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
+        headerShown: false,
       }}>
       <Stack.Screen
         name="GrantPermissions"
         component={GrantPermissions}
+        options={{headerTitle: () => <View style={styles.headerView} />}}
+      />
+      <Stack.Screen
+        name="WiFiCredentials"
+        component={WiFiCredentials}
+        options={{headerTitle: () => <View style={styles.headerView} />}}
+      />
+      <Stack.Screen
+        name="ConnectDevice"
+        component={ConnectDevice}
         options={{headerTitle: () => <View style={styles.headerView} />}}
       />
       <Stack.Screen

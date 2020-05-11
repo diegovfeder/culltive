@@ -1,60 +1,67 @@
 import React, {useEffect, useState} from 'react';
 import {AsyncStorage, Text, View} from 'react-native';
 
-// Navigation
-// import { NavigationContainer } from "@react-navigation/native";
-// import { useNavigation } from "@react-navigation/native";
 import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 
-// Icons
-// import { Ionicons } from "react-native-vector-icons";
-
-// Context API
+// Context
 import {useUserDispatch, validateToken} from '../context/UserContext';
 import {useUserState} from '../context/UserContext';
 
-//General Imports
-import AuthNavigator from './AuthNavigator';
-import HomeNavigator from './HomeNavigator';
+// Hooks
+// TODO: Create a useAsyncStorage custom hook
+// import {useAsyncStorage} from '../util/useAsyncStorage';
+
+//Screens || Navigators
 import Splash from '../screen/Splash';
+import HomeNavigator from './HomeNavigator';
+import PairNavigator from './PairNavigator';
+import AuthNavigator from './AuthNavigator';
 
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
-  let paired = false;
   let userDispatch = useUserDispatch();
   let {authenticated, loading} = useUserState();
+  let [paired, setPaired] = useState(false);
+  let userToken;
+  let deviceToken;
+
   console.log('AppNavigator: authenticated: ' + authenticated);
   console.log('AppNavigator: loading: ' + loading);
+  console.log('AppNavigator: paired: ' + paired);
 
   useEffect(() => {
-    // Fetch the token from storage then navigate to our appropriate place
-    const bootstrapAsync = async () => {
-      let userToken;
+    // Fetch userToken -> toggle authenticated via dispatcher
+    const retrieveTokenAsync = async () => {
       try {
-        userToken = await AsyncStorage.getItem('FBIdToken');
+        userToken = await AsyncStorage.getItem('@FBIdToken');
       } catch (e) {
-        console.log('AppNavigator:  Restoring token failed');
+        console.log('AppNavigator: Restoring FBIdToken failed');
       }
-
-      // TODO: Get QR Code (paired device verification)
-      // try {
-      //   paired = await AsyncStorage.getItem('qrCode');
-      // } catch (e) {
-      //   console.log('AppNavigator:  Restoring qr code failed');
-      // }
-
-      // After restoring token, we may need to validate it in production apps
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
-      // dispatch({ type: "RESTORE_TOKEN", token: userToken });
       console.log('AppNavigator: userToken: ' + userToken);
       validateToken(userDispatch, userToken);
     };
-    bootstrapAsync();
+    retrieveTokenAsync();
+
+    //TODO: validateDevice using dataDispatcher
+    // Fetch deviceToken -> toggle 'paired' flag
+    const retrievePairStatusAsync = async () => {
+      try {
+        deviceToken = await AsyncStorage.getItem('@DeviceTokenn');
+      } catch (e) {
+        console.log('AppNavigator: Restoring deviceToken failed');
+      }
+      console.log('AppNavigator: deviceToken: ' + deviceToken);
+      if (deviceToken != null) {
+        setPaired(true);
+      } else {
+        setPaired(false);
+      }
+    };
+    retrievePairStatusAsync();
   }, [userDispatch]);
 
   return (
@@ -69,9 +76,9 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="Splash" component={Splash} />
       ) : authenticated ? (
         paired ? (
-          <Stack.Screen name="PairNavigator" component={PairNavigator} />
-        ) : (
           <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
+        ) : (
+          <Stack.Screen name="PairNavigator" component={PairNavigator} />
         )
       ) : (
         <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
@@ -79,11 +86,5 @@ const AppNavigator: React.FC = () => {
     </Stack.Navigator>
   );
 };
-
-// TODO: PairNavigator verification --> goes to clean / new / AppFlow
-// <Stack.Screen
-//   name="PairNavigator"
-//   component={PairNavigator}
-// />
 
 export default AppNavigator;

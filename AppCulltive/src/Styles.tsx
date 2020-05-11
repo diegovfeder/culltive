@@ -33,6 +33,20 @@ export const someStyles = StyleSheet.create({
     borderColor: '#707070',
     borderWidth: 0.5,
   },
+  buttonWhite: {
+    marginVertical: 6,
+    display: 'flex',
+    height: 64,
+    borderRadius: 64 / 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    shadowOpacity: 5,
+    shadowRadius: 20,
+    elevation: 10,
+    borderColor: '#707070',
+    borderWidth: 0.5,
+  },
   container: {
     marginHorizontal: 16,
   },
@@ -58,6 +72,9 @@ export const someStyles = StyleSheet.create({
     fontFamily: 'Montserrat-Bold',
     color: '#959595',
     marginVertical: 2,
+  },
+  keyboardContainer: {
+    flex: 1,
   },
   modalView: {
     backgroundColor: 'white',

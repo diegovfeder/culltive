@@ -14,9 +14,6 @@ import {
 import * as Svg from 'react-native-svg';
 
 import {useNavigation} from '@react-navigation/native';
-import {useAsyncStorage} from '../util/useAsyncStorage';
-// TODO: Finish this useAsyncStorage thing...
-// const [qrCode, setQrCode] = useAsyncStorage("qrCode", "CB-XXXX");
 
 import {Strings} from '../Strings';
 

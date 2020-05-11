@@ -21,7 +21,6 @@ function firebaseReducer(state, action) {
   }
 }
 
-// isAuthenticated: !!AsyncStorage.getItem("FBIdToken")
 function FirebaseProvider({children}) {
   var [state, dispatch] = React.useReducer(firebaseReducer, {
     isReset: false,
