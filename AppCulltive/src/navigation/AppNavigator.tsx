@@ -24,8 +24,9 @@ import Splash from '../screen/Splash';
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
-  var userDispatch = useUserDispatch();
-  var {authenticated, loading} = useUserState();
+  let paired = false;
+  let userDispatch = useUserDispatch();
+  let {authenticated, loading} = useUserState();
   console.log('AppNavigator: authenticated: ' + authenticated);
   console.log('AppNavigator: loading: ' + loading);
 
@@ -38,6 +39,14 @@ const AppNavigator: React.FC = () => {
       } catch (e) {
         console.log('AppNavigator:  Restoring token failed');
       }
+
+      // TODO: Get QR Code (paired device verification)
+      // try {
+      //   paired = await AsyncStorage.getItem('qrCode');
+      // } catch (e) {
+      //   console.log('AppNavigator:  Restoring qr code failed');
+      // }
+
       // After restoring token, we may need to validate it in production apps
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
@@ -59,7 +68,11 @@ const AppNavigator: React.FC = () => {
       {loading ? (
         <Stack.Screen name="Splash" component={Splash} />
       ) : authenticated ? (
-        <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
+        paired ? (
+          <Stack.Screen name="PairNavigator" component={PairNavigator} />
+        ) : (
+          <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
+        )
       ) : (
         <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
       )}

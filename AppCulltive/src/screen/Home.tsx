@@ -11,11 +11,11 @@ const Home: React.FC = () => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setModalState(true);
-    }, 2000);
-  }, [null]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setModalState(true);
+  //   }, 2000);
+  // }, [null]);
 
   const loadingContainer = (
     <View
@@ -48,7 +48,7 @@ const Home: React.FC = () => {
         alignItems: 'stretch',
       }}>
       {/*TODO: Ask if user already is set up with device pairing*/}
-      <FirstSigninModal modalState={modalState} />
+      {/*<FirstSigninModal modalState={modalState} />*/}
 
       {/*MAIN CIRCLE / LAZY LOADING*/}
       {loadingContainer}

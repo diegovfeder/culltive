@@ -8,10 +8,10 @@ import Confirmation from '../screen/Confirmation';
 
 const Stack = createStackNavigator();
 
-const PairNavigator: React.FC = () => {
+const Pairnavigator: React.FC = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Welcome"
+      initialRouteName="Pair"
       headerMode="float"
       screenOptions={{
         ...TransitionPresets.RevealFromBottomAndroid,
