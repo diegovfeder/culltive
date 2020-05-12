@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 
 import * as Svg from 'react-native-svg';
