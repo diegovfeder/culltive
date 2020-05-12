@@ -34,10 +34,10 @@ const Confirmation: React.FC = () => {
       <TouchableOpacity
         onPress={() => {
           // openSettings().catch(() => console.warn('cannot open settings'));
-
           // delete all stack trace and navigate to Home
           // set asyncStorage pairedDevice state -> synced with AppNavigator triggers a change from PairNavigator to HomeNavigator
-          navigation.navigate('Home');
+          // set paired as true;
+          // navigation.navigate('Home');
         }}
         style={someStyles.button}>
         <Text style={[someStyles.textButton]}>Continuar</Text>
