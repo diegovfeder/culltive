@@ -11,7 +11,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AppNavigator from './navigation/AppNavigator';
 
 import axios from 'axios';
-axios.defaults.baseURL = 'https://us-central1-culltive.cloudfunctions.net/api';
+
+// FIXME: Change and make something work
+// axios.defaults.baseURL = 'https://us-central1-culltive.cloudfunctions.net/api';
 
 const Stack = createStackNavigator();
 
