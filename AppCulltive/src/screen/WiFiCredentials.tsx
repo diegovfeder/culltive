@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {
+  AsyncStorage,
   Button,
   Dimensions,
-  keyboardContainer,
   KeyboardAvoidingView,
   Linking,
   SafeAreaView,
@@ -17,7 +17,6 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 
 // Hooks
-// TODO: postCredentials
 import {useDataDispatch} from '../context/DataContext';
 import {useNavigation} from '@react-navigation/native';
 
@@ -35,6 +34,25 @@ const WiFiCredentials: React.FC = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
+  const _storeData = async (values) => {
+    try {
+      console.log('_storeData: ' + values.ssid + ' - ' + values.password);
+      const items = [
+        ['@ssid', values.ssid],
+        ['@password', values.password],
+        ['@user', 'getUserFromContext'], //// FIXME: change to useDataContext -> getUserData
+      ];
+      // JSON Object multiSet
+      AsyncStorage.setItem('@WIFI', JSON.stringify(items));
+      // std multiSet from lib
+      AsyncStorage.multiSet(items, () => {
+        //to do something
+      });
+    } catch (e) {
+      console.log(e.error);
+    }
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -50,7 +68,10 @@ const WiFiCredentials: React.FC = () => {
           password: Yup.string().required('*Obrigatório'),
         })}
         onSubmit={(values) => {
-          // navigation.navigate('Confirmation')
+          // TODO: if all wi-fi data is validated (ssid and password verifies)
+          // save data to asyncStorage,
+          _storeData(values);
+          // navigate to select device / device finder / connect to soft ap Wi-Fi
           navigation.navigate('ConnectDevice');
         }}>
         {({
@@ -118,3 +139,24 @@ const WiFiCredentials: React.FC = () => {
 const styles = StyleSheet.create({});
 
 export default WiFiCredentials;
+
+// const storeWiFiCredentials = async () => {
+//   try {
+//     await AsyncStorage.multiSet([['TECHNO', 'MELODICO'], ['k2', 'val2']], cb);
+//     ('@DeviceToken', 'culltiveXXX');
+//   } catch (e) {
+//     console.log(e.error);
+//   }
+// };
+
+// async function storeWiFiCredentials(values) {
+//   try {
+//     console.log('WiFiCredentials: ' + values);
+//     await AsyncStorage.multiSet([
+//       ['@ssid', values.ssid],
+//       ['@password', values.password],
+//     ]);
+//   } catch (e) {
+//     console.log(e.error);
+//   }
+// }

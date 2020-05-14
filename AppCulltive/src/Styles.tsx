@@ -22,8 +22,8 @@ export const someStyles = StyleSheet.create({
   button: {
     marginVertical: 6,
     display: 'flex',
-    height: 64,
-    borderRadius: 64 / 2,
+    height: 48,
+    borderRadius: 48 / 2,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#3cbc40',
