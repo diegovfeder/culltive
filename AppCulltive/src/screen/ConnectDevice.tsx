@@ -145,7 +145,6 @@ const ConnectDevice: React.FC = () => {
       <TouchableOpacity
         onPress={() => {
           // _sendData();
-
           axios.get('http://192.168.11.4/').then(
             (response) => {
               console.log(response);

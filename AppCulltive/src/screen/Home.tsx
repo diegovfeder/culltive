@@ -45,7 +45,7 @@ const Home: React.FC = () => {
         justifyContent: 'space-between',
         alignItems: 'stretch',
       }}>
-      {/*TODO: Ask if user already is set up with device pairing*/}
+      {/*TODO: Ask if user already set up with device pairing*/}
       {/*<FirstSigninModal modalState={modalState} />*/}
 
       {/*MAIN CIRCLE / LAZY LOADING*/}
