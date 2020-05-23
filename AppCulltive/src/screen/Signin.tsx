@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
-  keyboardContainer,
   Linking,
 } from 'react-native';
 

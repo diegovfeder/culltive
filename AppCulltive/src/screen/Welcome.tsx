@@ -19,6 +19,8 @@ import {someStyles} from '../Styles';
 import WelcomeUndraw from '../../assets/undraw/welcome.svg';
 
 const Welcome: React.FC = () => {
+  console.log("-- Welcome.tsx")
+
   const navigation = useNavigation();
 
   return (

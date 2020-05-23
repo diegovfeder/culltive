@@ -7,8 +7,10 @@ import {
 } from '@react-navigation/stack';
 
 // Context
-import {useUserDispatch, validateToken} from '../context/UserContext';
+import {useUserDispatch, validateUserToken} from '../context/UserContext';
 import {useUserState} from '../context/UserContext';
+import {useDeviceDispatch, setPaired} from '../context/DeviceContext';
+import {useDeviceState} from '../context/DeviceContext';
 
 // Hooks
 // TODO: Create a useAsyncStorage custom hook
@@ -24,10 +26,12 @@ const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
   let userDispatch = useUserDispatch();
+  let userToken: string | null;
   let {authenticated, loading} = useUserState();
-  let [paired, setPaired] = useState(false);
-  let userToken;
-  let deviceToken;
+
+  let deviceDispatch = useDeviceDispatch();
+  let deviceStatus: string | null;
+  let {paired} = useDeviceState();
 
   console.log('AppNavigator: authenticated: ' + authenticated);
   console.log('AppNavigator: loading: ' + loading);
@@ -42,7 +46,7 @@ const AppNavigator: React.FC = () => {
         console.log('AppNavigator: Restoring FBIdToken failed');
       }
       console.log('AppNavigator: userToken: ' + userToken);
-      validateToken(userDispatch, userToken);
+      validateUserToken(userDispatch, userToken);
     };
     retrieveTokenAsync();
 
@@ -50,19 +54,19 @@ const AppNavigator: React.FC = () => {
     // Fetch deviceToken -> toggle 'paired' flag
     const retrievePairStatusAsync = async () => {
       try {
-        deviceToken = await AsyncStorage.getItem('@DeviceTokenn');
+        deviceStatus = await AsyncStorage.getItem('@PAIR');
       } catch (e) {
-        console.log('AppNavigator: Restoring deviceToken failed');
+        console.log('AppNavigator: Restoring device status failed');
       }
-      console.log('AppNavigator: deviceToken: ' + deviceToken);
-      if (deviceToken != null) {
-        setPaired(true);
+      console.log('AppNavigator: setPaired: ' + deviceStatus);
+      if (deviceStatus != null) {
+        setPaired(deviceDispatch, true);
       } else {
-        setPaired(false);
+        setPaired(deviceDispatch, false);
       }
     };
     retrievePairStatusAsync();
-  }, [userDispatch]);
+  }, [userDispatch, deviceDispatch]);
 
   return (
     <Stack.Navigator

@@ -36,8 +36,8 @@ export const someStyles = StyleSheet.create({
   buttonWhite: {
     marginVertical: 6,
     display: 'flex',
-    height: 64,
-    borderRadius: 64 / 2,
+    height: 48,
+    borderRadius: 48 / 2,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -103,10 +103,8 @@ export const someStyles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   headerView: {
-    paddingHorizontal: 10,
     paddingVertical: 5,
     marginBottom: 10,
-    alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
@@ -121,7 +119,6 @@ export const someStyles = StyleSheet.create({
     fontSize: 14,
   },
   headerButton: {
-    marginHorizontal: 20,
-    paddingHorizontal: 10,
+    margin: 16,
   },
 });

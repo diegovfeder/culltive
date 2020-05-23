@@ -30,7 +30,7 @@ exports.signup = (req, res) => {
     .then(doc => {
       if (doc.exists) {
         return res.status(400).json({
-          handle: "this handle is already taken" // FIXME: This message is breaking the code at line 45: Cannot read property 'uid' of undefined
+          handle: "This handle is already taken" // FIXME: This message is breaking the code at line 45: Cannot read property 'uid' of undefined
         });
       } else {
         return firebase

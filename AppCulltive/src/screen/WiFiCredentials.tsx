@@ -28,6 +28,8 @@ import {Input} from 'react-native-elements';
 import {someStyles} from '../Styles';
 
 const WiFiCredentials: React.FC = () => {
+  console.log('-- WiFiCredentials.tsx');
+
   let _ssidInput;
   let _passwordInput;
   let dataDispatch = useDataDispatch();
@@ -91,8 +93,8 @@ const WiFiCredentials: React.FC = () => {
               }}>
               <Text style={someStyles.h1}>Conecte ao Wi-Fi</Text>
               <Text style={someStyles.h3}>
-                Entre com as informações da rede Wi-Fi que será utilizada em seu
-                dispositivo:
+                {' '}
+                Digite as informações da sua rede Wi-Fi.
               </Text>
 
               <View style={{marginVertical: 16}}>

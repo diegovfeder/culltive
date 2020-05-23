@@ -7,8 +7,8 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
   DrawerItem,
-  DrawerActions,
 } from '@react-navigation/drawer';
+// DrawerActions,
 
 // Hooks
 import {useUserDispatch, signOut} from '../context/UserContext';
@@ -18,9 +18,8 @@ import {useNavigation} from '@react-navigation/native';
 import Home from '../screen/Home';
 import Report from '../screen/Report';
 import Chart from '../screen/Chart';
-import GrantPermissions from '../screen/GrantPermissions';
-import PairNavigator from './PairNavigator';
 
+// FIXME:
 // Settings is responsible for the INVALID HOOK CALL
 import Settings from '../screen/Settings';
 
@@ -35,6 +34,8 @@ const Stack = createStackNavigator();
 // signOut dispatch() - ?
 // drawerItem click warns and refreshes...
 const HomeNavigator: React.FC = () => {
+  // console.log("-- HomeNavigator.tsx")
+
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
 

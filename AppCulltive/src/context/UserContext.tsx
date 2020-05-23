@@ -1,9 +1,25 @@
 import React, {createContext, useContext, useReducer} from 'react';
 import {AsyncStorage} from 'react-native';
-import axios from 'axios';
+import api from 'axios';
 
 var UserStateContext = createContext(undefined);
 var UserDispatchContext = createContext(undefined);
+
+function UserProvider({children}) {
+  const [state, dispatch] = useReducer(userReducer, {
+    authenticated: false,
+    loading: true,
+    userData: null,
+  });
+
+  return (
+    <UserStateContext.Provider value={state}>
+      <UserDispatchContext.Provider value={dispatch}>
+        {children}
+      </UserDispatchContext.Provider>
+    </UserStateContext.Provider>
+  );
+}
 
 function userReducer(state, action) {
   switch (action.type) {
@@ -15,20 +31,20 @@ function userReducer(state, action) {
         loading: false,
       };
     case 'LOGIN_SUCCESS':
-      console.log('LOGIN_SUCCESS');
+      console.log('userReducer: LOGIN_SUCCESS');
       return {...state, authenticated: true};
     case 'LOGIN_FAILURE': {
       // TODO: create a message to the user explaining login fail
-      console.log('LOGIN_FAILURE');
+      console.log('userReducer: LOGIN_FAILURE');
       return {...state, loginFailed: action.payload, authenticated: false};
     }
     case 'SIGNUP_SUCCESS': {
-      console.log('SIGNUP_SUCCESS');
+      console.log('userReducer: SIGNUP_SUCCESS');
       return {...state, authenticated: true};
     }
     case 'SIGNUP_FAILURE': {
       // TODO: create a message to the user explaining signup fail
-      console.log('SIGNUP_FAILURE');
+      console.log('userReducer: SIGNUP_FAILURE');
       return {...state, signupFailed: action.payload, authenticated: false};
     }
     case 'SIGN_OUT_SUCCESS':
@@ -52,22 +68,6 @@ function userReducer(state, action) {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
   }
-}
-
-function UserProvider({children}) {
-  const [state, dispatch] = useReducer(userReducer, {
-    authenticated: false,
-    loading: true,
-    userData: null,
-  });
-
-  return (
-    <UserStateContext.Provider value={state}>
-      <UserDispatchContext.Provider value={dispatch}>
-        {children}
-      </UserDispatchContext.Provider>
-    </UserStateContext.Provider>
-  );
 }
 
 function useUserState() {
@@ -94,15 +94,15 @@ export {
   signupUser,
   signOut,
   getUserData,
-  validateToken,
+  validateUserToken,
 };
 // ###########################################################
 
 function signinUser(
-  dispatch,
-  loginValue,
-  passwordValue,
-  setIsLoading,
+  dispatch: any,
+  loginValue: any,
+  passwordValue: any,
+  setIsLoading: any,
   // setErrors,
 ) {
   // setErrors(false);
@@ -116,7 +116,7 @@ function signinUser(
     password: passwordValue,
   };
 
-  axios
+  api
     .post('/login', userData)
     .then((res) => {
       console.log(res.data); //Auth token
@@ -154,7 +154,7 @@ function signupUser(
   };
 
   // dispatch({ type: LOADING_UI });
-  axios
+  api
     .post('/signup', newUserData)
     .then((res) => {
       console.log(res.data); //Auth token
@@ -184,10 +184,12 @@ function signOut(dispatch) {
   dispatch({type: 'SIGN_OUT_SUCCESS'});
 }
 
+// TODO: Finish function dispatch, userHandle, /user/${userHandle}
+// maybe save the user Logged in data in AsyncStorage?..
 function getUserData(dispatch) {
   // dispatch({ type: LOADING_USER });
   // .get(`/user/${diegovfeder@gmail.com}`)
-  axios
+  api
     .get('/user/diegovfeder@gmail.com')
     .then((res) => {
       console.log('getUser: ' + JSON.stringify(res));
@@ -199,7 +201,7 @@ function getUserData(dispatch) {
     .catch((err) => console.log('getUser ERROR: ' + err));
 }
 
-function validateToken(dispatch, userToken) {
+function validateUserToken(dispatch, userToken) {
   dispatch({type: 'VALIDATE_TOKEN', token: userToken});
 }
 

@@ -44,15 +44,16 @@ app.get("/user/:userId", getUser);
 
 // Device routes
 const {
-  getAllDevices,
-  postNewDevice,
-  getDevice
+  getDevices,
+  getDevice,
+  postDevice,
+
   // deleteDevice,
 } = require("./handlers/devices");
 
-app.get("/devices", getAllDevices);
-app.post("/device", FBAuth, postNewDevice);
+app.get("/devices", getDevices);
 app.get("/device/:deviceId", getDevice);
+app.post("/device", postDevice);
 // app.delete("/device/:deviceId", FBAuth, deleteDevice);
 
 // exports the above api to firebase cloud functions @ https://baseurl.com/api/

@@ -29,78 +29,86 @@ import {someStyles} from '../Styles';
 import LocationUndraw from '../../assets/undraw/location.svg';
 
 const GrantPermissions: React.FC = () => {
-  const navigation = useNavigation();
-  // TODO: feat (permissionsGranted) -> Verify state, re-direct user accordingly
+  console.log('-- GrantPermissions.tsx');
 
-  const doThis = async () => {};
-  const doThat = async () => {};
+  const navigation = useNavigation();
+
+  // TODO: feat (permissionsGranted) -> Verify state, re-direct user accordingly
+  const checkAndroid = async () => {
+    check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+      .then((result) => {
+        console.log('checkAndroid: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION');
+        switch (result) {
+          case RESULTS.UNAVAILABLE:
+            console.log(
+              'This feature is not available (on this device / in this context)',
+            );
+            break;
+          case RESULTS.DENIED:
+            console.log(
+              'The permission has not been requested / is denied but requestable',
+            );
+            break;
+          case RESULTS.GRANTED:
+            console.log('The permission is granted');
+            navigation.navigate('WiFiCredentials');
+            break;
+          case RESULTS.BLOCKED:
+            console.log('The permission is denied and not requestable anymore');
+            break;
+        }
+      })
+      .catch((error) => {
+        // …
+      });
+  };
+
+  const checkIOS = async () => {
+    check(PERMISSIONS.IOS.LOCATION_ALWAYS)
+      .then((result) => {
+        console.log('checkIOS: PERMISSIONS.IOS.LOCATION_ALWAYS');
+        switch (result) {
+          case RESULTS.UNAVAILABLE:
+            console.log(
+              'This feature is not available (on this device / in this context)',
+            );
+            break;
+          case RESULTS.DENIED:
+            console.log(
+              'The permission has not been requested / is denied but requestable',
+            );
+            break;
+          case RESULTS.GRANTED:
+            console.log('The permission is granted');
+            navigation.navigate('WiFiCredentials');
+            break;
+          case RESULTS.BLOCKED:
+            console.log('The permission is denied and not requestable anymore');
+            break;
+        }
+      })
+      .catch((error) => {
+        // …
+      });
+  };
 
   useEffect(() => {
+    // TODO: Switch console.log() to state logic -> navigating to screens (Verify Permissions)
+    // FIXME: Simplify code below with select as switch statement.
+    // checkPermissions();
+    Platform.select({
+      android: () => checkAndroid(),
+      ios: () => checkIOS(),
+    })();
+
+    // requestPermissions();
     request(
       Platform.select({
         android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
         ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
       }),
     );
-
-    // FIXME: Simplify code below with select as switch statement.
-    Platform.select({
-      android: () => doThis(),
-      ios: () => doThat(),
-    })();
   });
-  // TODO: Switch console.log() to state logic -> navigating to screens (Verify Permissions)
-  // check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
-  // .then((result) => {
-  //   console.log('PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION');
-  //   switch (result) {
-  //     case RESULTS.UNAVAILABLE:
-  //       console.log(
-  //         'This feature is not available (on this device / in this context)',
-  //       );
-  //       break;
-  //     case RESULTS.DENIED:
-  //       console.log(
-  //         'The permission has not been requested / is denied but requestable',
-  //       );
-  //       break;
-  //     case RESULTS.GRANTED:
-  //       console.log('The permission is granted');
-  //       break;
-  //     case RESULTS.BLOCKED:
-  //       console.log('The permission is denied and not requestable anymore');
-  //       break;
-  //   }
-  // })
-  // .catch((error) => {
-  //   // …
-  // });
-
-  // check(PERMISSIONS.IOS.LOCATION_ALWAYS)
-  // .then((result) => {
-  //   console.log('PERMISSIONS.IOS.LOCATION_ALWAYS');
-  //   switch (result) {
-  //     case RESULTS.UNAVAILABLE:
-  //       console.log(
-  //         'This feature is not available (on this device / in this context)',
-  //       );
-  //       break;
-  //     case RESULTS.DENIED:
-  //       console.log(
-  //         'The permission has not been requested / is denied but requestable',
-  //       );
-  //       break;
-  //     case RESULTS.GRANTED:
-  //       console.log('The permission is granted');
-  //       break;
-  //     case RESULTS.BLOCKED:
-  //       console.log('The permission is denied and not requestable anymore');
-  //       break;
-  //   }
-  // })
-  // .catch((error) => {
-  //   // …
-  // });
 
   return (
     <SafeAreaView
@@ -118,6 +126,7 @@ const GrantPermissions: React.FC = () => {
       <LocationUndraw width={320} height={320} style={{alignSelf: 'center'}} />
       <TouchableOpacity
         onPress={() => {
+          console.log('GrantPermissions: openSettings()');
           openSettings().catch(() =>
             console.warn('GrantPermissions: Cannot open settings'),
           );
