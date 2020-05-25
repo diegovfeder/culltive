@@ -15,12 +15,12 @@ import {someStyles} from '../Styles';
 const {height, width} = Dimensions.get('window');
 
 const MyCarousel: React.FC = (props) => {
-  const carouselRef = useRef(null);
+  const carouselRef = useRef('');
 
   const [slider1ActiveSlide, setSlider1ActiveSlide] = useState(0);
   const [index, setIndex] = useState(0);
 
-  const renderItem = ({item, index}) => {
+  const renderItem = ({item}) => {
     return (
       <View
         style={{
@@ -36,6 +36,7 @@ const MyCarousel: React.FC = (props) => {
           shadowRadius: 20,
           borderRadius: 16,
           elevation: 5,
+          alignSelf: 'center',
         }}>
         <Text style={someStyles.h1}>{item.title}</Text>
         <Text style={[someStyles.h3, {alignSelf: 'center'}]}>{item.text}</Text>
@@ -47,10 +48,17 @@ const MyCarousel: React.FC = (props) => {
   return (
     <View style={styles.container}>
       <Carousel
-        layout={'default'}
-        ref={carouselRef}
         data={props.data}
-        inactiveSlideOpacity={0.1}
+        renderItem={renderItem}
+        sliderWidth={width}
+        itemWidth={width}
+        loop={true}
+        onSnapToItem={(index) => setIndex(index)}
+      />
+      {/* <Carousel
+        layout={'default'}
+        data={props.data}
+        inactiveSlideOpacity={0.2}
         inactiveSlideScale={0.5}
         sliderWidth={width}
         itemWidth={width}
@@ -58,23 +66,23 @@ const MyCarousel: React.FC = (props) => {
         renderItem={renderItem}
         containerCustomStyle={{overflow: 'visible'}}
         contentContainerCustomStyle={{overflow: 'visible'}}
-        loopClonesPerSide={5}
+        loopClonesPerSide={3}
+        activeAnimationType={'timing'}
+        loop={true}
+        swipeThreshold={5}
+        lockScrollTimeoutDuration={10}
         onSnapToItem={(index) => setIndex(index)}
-      />
-
-      <View style={styles.containerPagination}>
-        <Pagination
-          dotsLength={props.data.length}
-          activeDotIndex={index}
-          containerStyle={styles.paginationContainer}
-          dotColor={'#3cbc40'}
-          dotStyle={styles.paginationDot}
-          inactiveDotColor={'lightgrey'}
-          inactiveDotOpacity={0.4}
-          inactiveDotScale={0.7}
-          carouselRef={carouselRef}
-        />
-      </View>
+      /> */}
+      {/* <Pagination
+        dotsLength={props.data.length}
+        activeDotIndex={index}
+        containerStyle={styles.paginationContainer}
+        dotColor={'#3cbc40'}
+        dotStyle={styles.paginationDot}
+        inactiveDotColor={'lightgrey'}
+        inactiveDotOpacity={2}
+        inactiveDotScale={1}
+      /> */}
     </View>
   );
 };

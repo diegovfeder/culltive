@@ -1,17 +1,24 @@
 import React, {useEffect, useState} from 'react';
+
 import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 
 import * as Svg from 'react-native-svg';
 
 import {useNavigation} from '@react-navigation/native';
 
+// TODO: Import Device Context // setPaired
+
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../Styles';
 
 // Assets
-import ConfirmationUndraw from '../../assets/undraw/confirmation.svg';
+import ConfirmationUndraw from '../../../assets/undraw/confirmation.svg';
 
 const Confirmation: React.FC = () => {
+  console.log('-- Confirmation.tsx');
+
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView
       style={{
@@ -21,24 +28,25 @@ const Confirmation: React.FC = () => {
         justifyContent: 'space-between',
       }}>
       <View>
-        <Text style={[someStyles.h1, {color: '#3cbc40'}]}>Parabéns</Text>
-        <Text style={someStyles.h2}>
+        <Text style={[someStyles.h1, {color: '#3cbc40'}]}>Parabéns!</Text>
+        <Text style={someStyles.h3}>
+          {' '}
           Seu dispositivo foi conectado com sucesso.
         </Text>
       </View>
+
       <ConfirmationUndraw
         width={320}
         height={320}
         style={{alignSelf: 'center'}}
       />
+
       <TouchableOpacity
         onPress={() => {
-          // TODO:
-          // openSettings().catch(() => console.warn('cannot open settings'));
-          // delete all stack trace and navigate to Home
-          // set asyncStorage pairedDevice state -> synced with AppNavigator triggers a change from PairNavigator to HomeNavigator
-          // set paired as true;
-          // navigation.navigate('Home');
+          // Set pairedDevice = true
+          // Connect user and device with id @firestore
+          // ...
+          navigation.navigate('DataAgreements');
         }}
         style={someStyles.button}>
         <Text style={[someStyles.textButton]}>Continuar</Text>

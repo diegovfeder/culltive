@@ -5,22 +5,6 @@ import axios from 'axios';
 let DataStateContext = createContext();
 let DataDispatchContext = createContext();
 
-function dataReducer(state, action) {
-  switch (action.type) {
-    case 'LOADING_DEVICES':
-      return {...state, loadingDevices: true};
-    case 'GET_DEVICES':
-      return {...state, devices: action.payload, loadingDevices: false};
-    case 'LOADING_READINGS':
-      return {...state, loadingReadings: true};
-    case 'GET_READINGS':
-      return {...state, readings: action.payload, loadingReadings: false};
-    default: {
-      throw new Error(`Unhandled action type: ${action.type}`);
-    }
-  }
-}
-
 function DataProvider({children}) {
   const [state, dispatch] = React.useReducer(dataReducer, {
     devices: [],
@@ -35,6 +19,22 @@ function DataProvider({children}) {
       </DataDispatchContext.Provider>
     </DataStateContext.Provider>
   );
+}
+
+function dataReducer(state, action) {
+  switch (action.type) {
+    case 'LOADING_DEVICES':
+      return {...state, loadingDevices: true};
+    case 'GET_DEVICES':
+      return {...state, devices: action.payload, loadingDevices: false};
+    case 'LOADING_READINGS':
+      return {...state, loadingReadings: true};
+    case 'GET_READINGS':
+      return {...state, readings: action.payload, loadingReadings: false};
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`);
+    }
+  }
 }
 
 function useDataState() {

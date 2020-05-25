@@ -1,6 +1,6 @@
 const { db } = require("../util/admin");
 
-exports.getAllDevices = (req, res) => {
+exports.getDevices = (req, res) => {
   db.collection("devices")
     .orderBy("createdAt", "desc")
     .get()
@@ -18,40 +18,7 @@ exports.getAllDevices = (req, res) => {
     .catch(err => console.error(err));
 };
 
-exports.postNewDevice = (req, res) => {
-  if (req.body.body.trim() === "") {
-    return res.status(400).json({
-      body: "Body must not be empty"
-    });
-  }
 
-  const newDevice = {
-    body: req.body.body,
-    userHandle: req.user.handle,
-    userImage: req.user.imageUrl,
-    createdAt: new Date().toISOString(),
-    likeCount: 0,
-    commentCount: 0
-  };
-
-  db.collection("devices")
-    .add(newDevice)
-    .then(doc => {
-      const resDevice = newDevice;
-      resDevice.deviceId = doc.id;
-      res.json({
-        resDevice
-      });
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: "something went wrong"
-      });
-      console.error(err);
-    });
-};
-
-// Fetch one device
 exports.getDevice = (req, res) => {
   let deviceData = {};
   db.doc(`/devices/${req.params.deviceId}`)
@@ -82,6 +49,42 @@ exports.getDevice = (req, res) => {
       return res.status(500).json({
         error: err.code
       });
+    });
+};
+
+exports.postDevice = (req, res) => {
+  if (req.body.user.trim() === "") {
+    return res.status(400).json({
+      body: "User must exist to be assigned"
+    });
+  }
+
+  const newDevice = {
+    user: req.body.user,
+    createdAt: new Date().toISOString(),
+    geolocation: req.body.geolocation,
+    productType: req.body.productType,
+    qrCode: req.body.qrCode, 
+    version: req.body.version,
+    wifiSSID: req.body.wifiSSID,
+    wifiPassword: req.body.wifiPassword,
+    wifiStatus: req.body.wifiStatus
+  };
+
+  db.collection("devices")
+    .add(newDevice)
+    .then(doc => {
+      const resDevice = newDevice;
+      resDevice.deviceId = doc.id;
+      res.json({
+        resDevice
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: "something went wrong"
+      });
+      console.error(err);
     });
 };
 

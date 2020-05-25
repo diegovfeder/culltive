@@ -13,7 +13,7 @@ import * as Svg from 'react-native-svg';
 
 import axios from 'axios';
 
-// TODO: try below lib after system is manually working / pairing
+// TODO: Try below lib after system is manually working / pairing
 import WifiManager from 'react-native-wifi-reborn';
 
 import {useNavigation} from '@react-navigation/native';
@@ -25,10 +25,13 @@ import {someStyles} from '../Styles';
 import CircuitUndraw from '../../assets/undraw/circuit.svg';
 
 const ConnectDevice: React.FC = () => {
+  console.log('-- ConnectDevice.tsx');
+
   const navigation = useNavigation();
-  const [ssid, setSsid] = useState();
-  const [password, setPassword] = useState();
-  const [user, setUser] = useState();
+
+  const [ssid, setSsid] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState('');
 
   const _retrieveData = async () => {
     try {
@@ -77,53 +80,19 @@ const ConnectDevice: React.FC = () => {
     }
   };
 
-  // TODO: Change data sent to Wi-Fi Crendetials Inputs + userContext + geoLocation
-  // const _sendData = () => {
-  //   console.log('ConnectDevice: sendData()');
-  //   const instance = axios.create({
-  //     baseURL: 'http://192.168.11.4/post',
-  //   });
-  //   instance
-  //     .post('http://192.168.11.4/post', {
-  //       ssid: ssid,
-  //       password: password,
-  //       assignedUser: 'diegovfeder', //get userData context etc.
-  //     })
-  //     .then(
-  //       (response) => {
-  //         console.log(response);
-  //       },
-  //       (error) => {
-  //         console.log(error);
-  //       },
-  //     );
-  // };
-
   useEffect(() => {
     _retrieveData();
 
     WifiManager.getCurrentWifiSSID().then(
       (ssid) => {
-        console.log('Your current connected wifi SSID is ' + ssid);
+        console.log(
+          'ConnectDevice: Your current connected wifi SSID is ' + ssid,
+        );
       },
       () => {
-        console.log('Cannot get current SSID!');
+        console.log('ConnectDevice: Cannot get current SSID!');
       },
     );
-
-    // TODO: Connect to qr-code scanned Wi-Fi or automatic scan and connect to a culltiveXXX network...
-    // WifiManager.connectToProtectedSSID(
-    //   'culltiveXXX',
-    //   'culltive.me',
-    //   false,
-    // ).then(
-    //   () => {
-    //     console.log('Connected successfully!');
-    //   },
-    //   () => {
-    //     console.log('Connection failed!');
-    //   },
-    // );
   }, []);
 
   return (
@@ -147,11 +116,11 @@ const ConnectDevice: React.FC = () => {
           // _sendData();
 
           axios.get('http://192.168.11.4/').then(
-            (response) => {
-              console.log(response);
+            (res) => {
+              console.log(res.data);
             },
-            (error) => {
-              console.log(error);
+            (err) => {
+              console.log(err);
             },
           );
 
@@ -162,11 +131,11 @@ const ConnectDevice: React.FC = () => {
               assignedUser: 'diegovfeder', //get userData context etc.
             })
             .then(
-              (response) => {
-                console.log(response);
+              (res) => {
+                console.log(res.data);
               },
-              (error) => {
-                console.log(error);
+              (err) => {
+                console.log(err);
               },
             );
         }}
@@ -175,19 +144,69 @@ const ConnectDevice: React.FC = () => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          // async () => {
-          //   // Open the custom settings if the app has one
-          //   await Linking.openSettings();
-          // };
+          navigation.navigate('Confirmation');
+          // WifiManager.connectToProtectedSSID(
+          //   'cultive000',
+          //   'culltive.me',
+          //   true,
+          // ).then(
+          //   () => {
+          //     console.log('Connected successfully!');
+          //   },
+          //   () => {
+          //     console.log('Connection failed!');
+          //   },
+          // );
         }}
         style={someStyles.button}>
-        <Text style={[someStyles.textButton]}>Menu WiFi Config</Text>
+        <Text style={[someStyles.textButton]}>skip / confirmation</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
 export default ConnectDevice;
+
+// TODO: Connect to qr-code scanned Wi-Fi or automatic scan and connect to a culltiveXXX network...
+// WifiManager.connectToProtectedSSID(
+//   'culltiveXXX',
+//   'culltive.me',
+//   false,
+// ).then(
+//   () => {
+//     console.log('Connected successfully!');
+//   },
+//   () => {
+//     console.log('Connection failed!');
+//   },
+// );
+
+// async () => {
+//   // Open the custom settings if the app has one
+//   await Linking.openSettings();
+// };
+
+// TODO: Change data sent to Wi-Fi Crendetials Inputs + userContext + geoLocation
+// const _sendData = () => {
+//   console.log('ConnectDevice: sendData()');
+//   const instance = axios.create({
+//     baseURL: 'http://192.168.11.4/post',
+//   });
+//   instance
+//     .post('http://192.168.11.4/post', {
+//       ssid: ssid,
+//       password: password,
+//       assignedUser: 'diegovfeder', //get userData context etc.
+//     })
+//     .then(
+//       (response) => {
+//         console.log(response);
+//       },
+//       (error) => {
+//         console.log(error);
+//       },
+//     );
+// };
 
 // val bodyJson = "{ \"ssid\" : \"$editTextWifiSSID\", \"pw\" : \"$editTextWiFiPassword\", \"qr\" : \"$sharedPrefsQQCode\"  }"
 // val (request, response, result) = Fuel.post("http://192.168.11.4/post")
