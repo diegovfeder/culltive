@@ -43,7 +43,7 @@ const Report: React.FC = () => {
       title: 'Report',
       headerTitle: () => (
         <View style={someStyles.headerView}>
-          <Text style={someStyles.headerTitle}>Report:</Text>
+          <Text style={someStyles.headerTitle}>Relatório:</Text>
           <Text style={someStyles.headerSubtitle}>{date.toString()}</Text>
         </View>
       ),
@@ -111,7 +111,7 @@ const Report: React.FC = () => {
         elevation: 5,
       }}>
       {loadingWeather ? (
-        <ActivityIndicator />
+        <ActivityIndicator color={'#3cbc40'} />
       ) : (
         <View>
           <Text style={someStyles.h3}>

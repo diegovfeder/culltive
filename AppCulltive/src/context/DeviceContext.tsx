@@ -9,6 +9,7 @@ function DeviceProvider({children}) {
   const [state, dispatch] = useReducer(deviceReducer, {
     paired: false,
     deviceData: null,
+    waterPump: null,
   });
 
   return (
@@ -32,6 +33,11 @@ function deviceReducer(state, action) {
       return {
         ...state,
         deviceData: action.payload,
+      };
+    case 'WATER_PUMP':
+      return {
+        ...state,
+        waterpumpss: false,
       };
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -82,6 +88,13 @@ function getDeviceData(dispatch) {
 
 function setPaired(dispatch) {
   dispatch({type: 'SET_PAIRED'});
+}
+
+function waterPump(dispatch, setLoading) {
+  setLoading(true);
+  return setTimeout(() => {
+    dispatch({type: 'WATER_PUMP'});
+  }, 2000);
 }
 
 // function validateDeviceToken(dispatch, deviceToken) {

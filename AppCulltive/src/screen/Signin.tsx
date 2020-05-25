@@ -1,14 +1,15 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {
-  View,
-  Text,
-  TextInput,
+  ActivityIndicator,
   Button,
   Dimensions,
-  TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Linking,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import {Formik} from 'formik';
@@ -34,18 +35,42 @@ import {someStyles} from '../Styles';
 
 // TODO: Fix modalState. maybe embbed code from import
 const Signin: React.FC = () => {
+  console.log('-- Signin.tsx');
+
   let _emailInput;
   let _passwordInput;
-  let userDispatch = useUserDispatch();
+  const userDispatch = useUserDispatch();
   const navigation = useNavigation();
   const [modalState, setModalState] = useState(false); //FIXME: odd state res
   const [loading, setLoading] = useState(false);
+  // const [errors, setErrors] = useState(null); // connection Errors coming from userContext
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: '',
+      headerTitle: () => (
+        <View style={someStyles.headerView}>
+          <Text style={someStyles.headerTitle}>Já possuo cadastro</Text>
+        </View>
+      ),
+    });
+    // if (_emailInput) {
+    //   // _emailInput.shake();
+    //   _emailInput.focus();
+    // }
+  });
 
   return (
-    <KeyboardAvoidingView
-      style={someStyles.keyboardContainer}
-      behavior="padding">
-      <View style={{marginHorizontal: 16}}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        marginHorizontal: 16,
+        marginVertical: 12,
+        justifyContent: 'space-between',
+      }}>
+      <KeyboardAvoidingView
+        style={someStyles.keyboardContainer}
+        behavior="padding">
         <Formik
           initialValues={{email: '', password: ''}}
           validationSchema={Yup.object().shape({
@@ -91,6 +116,7 @@ const Signin: React.FC = () => {
               />
 
               <TouchableOpacity
+                style={{justifyContent: 'center', alignSelf: 'flex-end'}}
                 onPress={() => {
                   setModalState(!modalState);
                 }}>
@@ -104,13 +130,17 @@ const Signin: React.FC = () => {
               <TouchableOpacity
                 style={someStyles.button}
                 onPress={handleSubmit}>
-                <Text style={someStyles.textButton}>Continuar</Text>
+                {loading ? (
+                  <ActivityIndicator color={'white'} />
+                ) : (
+                  <Text style={[someStyles.textButton]}>Continuar</Text>
+                )}
               </TouchableOpacity>
             </View>
           )}
         </Formik>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

@@ -45,7 +45,7 @@ const HomeNavigator: React.FC = () => {
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
-          label="Signout"
+          label="Sair"
           onPress={() => {
             signOut(userDispatch);
           }}
@@ -65,8 +65,8 @@ const HomeNavigator: React.FC = () => {
           activeTintColor: '#3ea341',
         }}
         drawerContent={(props) => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen name="Settings" component={Report} />
+        <Drawer.Screen name="Início" component={Home} />
+        <Drawer.Screen name="Configurações" component={Settings} />
       </Drawer.Navigator>
     );
   };
@@ -115,19 +115,19 @@ const HomeNavigator: React.FC = () => {
         component={Report}
         options={{
           headerTitle: () => <View style={someStyles.headerView} />,
-          headerRight: () => (
-            <Ionicons
-              name="ios-calendar"
-              style={someStyles.headerButton}
-              size={24}
-              color="#fff"
-              onPress={() => alert('Calendar Button')}
-              // TODO: contextData / contextApp / contextUI / ??
-              // setCalendarView(true) in ReportScreen
-              // create an access to Report child component being able to change its state
-              // ...
-            />
-          ),
+          // headerRight: () => (
+          //   <Ionicons
+          //     name="ios-calendar"
+          //     style={someStyles.headerButton}
+          //     size={24}
+          //     color="#fff"
+          //     onPress={() => alert('Calendar Button')}
+          //     // TODO: contextData / contextApp / contextUI / ??
+          //     // setCalendarView(true) in ReportScreen
+          //     // create an access to Report child component being able to change its state
+          //     // ...
+          //   />
+          // ),
         }}
       />
       <Stack.Screen

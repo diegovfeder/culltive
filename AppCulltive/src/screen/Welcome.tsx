@@ -3,6 +3,7 @@ import {
   Button,
   Dimensions,
   StyleSheet,
+  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -19,12 +20,12 @@ import {someStyles} from '../Styles';
 import WelcomeUndraw from '../../assets/undraw/welcome.svg';
 
 const Welcome: React.FC = () => {
-  console.log("-- Welcome.tsx")
+  console.log('-- Welcome.tsx');
 
   const navigation = useNavigation();
 
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         flexDirection: 'column',
@@ -80,7 +81,7 @@ const Welcome: React.FC = () => {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

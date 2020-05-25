@@ -102,14 +102,15 @@ function signinUser(
   dispatch: any,
   loginValue: any,
   passwordValue: any,
-  setIsLoading: any,
+  setLoading: any,
   // setErrors,
 ) {
+  // TODO: set Errors (connection issues?) 404, 500 etc...
   // setErrors(false);
-  setIsLoading(true);
+  setLoading(true);
 
-  console.log('login: ' + loginValue);
-  console.log('password: ' + passwordValue);
+  console.log('UserContext: signInUser: login: ' + loginValue);
+  console.log('UserContext: signInUser: password: ' + passwordValue);
 
   const userData = {
     email: loginValue,
@@ -117,13 +118,13 @@ function signinUser(
   };
 
   api
-    .post('/login', userData)
+    .post('/signin', userData)
     .then((res) => {
       console.log(res.data); //Auth token
       setAuthorizationHeader(res.data.token);
 
       // setErrors(false);
-      setIsLoading(false);
+      setLoading(false);
       dispatch({type: 'LOGIN_SUCCESS'});
     })
     .catch((err) => {
@@ -131,26 +132,26 @@ function signinUser(
       dispatch({type: 'LOGIN_FAILURE', payload: []});
       // dispatch({ type: "SET_ERRORS", payload: err.response.data });
       // setErrors(true); // change This to payload response data...
-      setIsLoading(false);
+      setLoading(false);
     });
 }
 
-// TODO: FINISH THIS METHOD
+// TODO: Infer the right types
 function signupUser(
-  dispatch,
-  userNameValue,
-  loginValue,
-  passwordValue,
-  setIsLoading,
-  setErrors,
+  dispatch: any,
+  name: any,
+  email: any,
+  password: any,
+  setLoading: any,
 ) {
-  setErrors(null);
-  setIsLoading(true);
+  // TODO: set Errors (connection errors) 404, 500 etc...
+  // setErrors(null);
+  setLoading(true);
 
   const newUserData = {
-    userName: userNameValue,
-    email: loginValue,
-    password: passwordValue,
+    name: name,
+    email: email,
+    password: password,
   };
 
   // dispatch({ type: LOADING_UI });
@@ -160,8 +161,8 @@ function signupUser(
       console.log(res.data); //Auth token
       setAuthorizationHeader(res.data.token);
       // dispatch(getUserData());
-      setErrors(false);
-      setIsLoading(false);
+      // setErrors(false);
+      setLoading(false);
       dispatch({type: 'SIGNUP_SUCCESS'});
       // dispatch({ type: CLEAR_ERRORS });
     })
@@ -173,12 +174,12 @@ function signupUser(
       console.log(err);
       dispatch({type: 'SIGNUP_FAILURE', payload: []});
       // dispatch({ type: "SET_ERRORS", payload: err.response.data });
-      setErrors(true); // change This to payload response data...
-      setIsLoading(false);
+      // setErrors(true); // change This to payload response data...
+      setLoading(false);
     });
 }
 
-function signOut(dispatch) {
+function signOut(dispatch: any) {
   console.log('UserContext: signOut' + dispatch);
   AsyncStorage.removeItem('@FBIdToken');
   dispatch({type: 'SIGN_OUT_SUCCESS'});

@@ -35,6 +35,7 @@ const Home: React.FC = () => {
         backgroundColor: '#DDD',
       }}>
       <ActivityIndicator
+        color={'#3cbc40'}
         size={'large'}
         style={{alignItems: 'center', justifyContent: 'center', flex: 1}}
       />

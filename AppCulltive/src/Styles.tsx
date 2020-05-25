@@ -48,6 +48,7 @@ export const someStyles = StyleSheet.create({
     borderWidth: 0.5,
   },
   container: {
+    flex: 1,
     marginHorizontal: 16,
   },
   h1: {
@@ -103,8 +104,8 @@ export const someStyles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   headerView: {
-    paddingVertical: 5,
-    marginBottom: 10,
+    paddingVertical: 4,
+    marginVertical: 4,
     justifyContent: 'center',
   },
   headerTitle: {

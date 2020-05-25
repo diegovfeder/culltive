@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {
-  View,
+  Dimensions,
+  KeyboardAvoidingView,
+  SafeAreaView,
   Text,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  keyboardContainer,
-  StyleSheet,
-  Dimensions,
+  View,
+  ActivityIndicator,
 } from 'react-native';
 
 import {Formik} from 'formik';
@@ -15,33 +15,51 @@ import * as Yup from 'yup';
 import {Input} from 'react-native-elements';
 
 // Hooks
-import {useFirebaseDispatch, resetPassword} from '../context/FirebaseContext';
-import {useUserDispatch, loginUser, signupUser} from '../context/UserContext';
+import {useUserDispatch, signupUser} from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
 import {someStyles} from '../Styles';
 
+// TODO: handleError (signup)
 const Signup: React.FC = () => {
-  const navigation = useNavigation();
-  // const [errors, setErrors] = useState(null);
-  let _namelInput;
-  let _emaillInput;
-  let _passwordlInput;
+  console.log('-- Signup.tsx');
 
-  // useEffect(() => {
-  //   if (_emailInput) {
-  //     // _emailInput.shake();
-  //     _emailInput.focus();
-  //   }
-  // });
+  let _namelInput;
+  let _emailInput;
+  let _passwordInput;
+  const userDispatch = useUserDispatch();
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
+  // const [errors, setErrors] = useState(null); // connection Errors coming from userContext
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: '',
+      headerTitle: () => (
+        <View style={someStyles.headerView}>
+          <Text style={someStyles.headerTitle}>Criar nova conta</Text>
+        </View>
+      ),
+    });
+    // if (_emailInput) {
+    //   // _emailInput.shake();
+    //   _emailInput.focus();
+    // }
+  });
 
   return (
-    <KeyboardAvoidingView
-      style={someStyles.keyboardContainer}
-      behavior="padding">
-      <View style={{marginHorizontal: 16}}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        marginHorizontal: 16,
+        marginVertical: 12,
+        justifyContent: 'space-between',
+      }}>
+      <KeyboardAvoidingView
+        style={someStyles.keyboardContainer}
+        behavior="padding">
         <Formik
-          initialValues={{email: '', password: ''}}
+          initialValues={{name: '', email: '', password: ''}}
           validationSchema={Yup.object().shape({
             name: Yup.string()
               .min(2, 'Nome curto demais')
@@ -52,7 +70,16 @@ const Signup: React.FC = () => {
               .required('*Obrigatório'),
             password: Yup.string().required('*Obrigatório'),
           })}
-          onSubmit={(values) => alert(JSON.stringify(values))}>
+          onSubmit={(values) => {
+            // alert(JSON.stringify(values))
+            signupUser(
+              userDispatch,
+              values.name,
+              values.email,
+              values.password,
+              setLoading,
+            );
+          }}>
           {({
             handleChange,
             handleBlur,
@@ -85,8 +112,6 @@ const Signup: React.FC = () => {
               <Input
                 ref={(component) => (_passwordInput = component)}
                 placeholder="Senha"
-                errorStyle={{color: 'red'}}
-                errorMessage={errors ? 'Error' : ''}
                 secureTextEntry={true}
                 value={values.password}
                 onChangeText={handleChange('password')}
@@ -100,13 +125,17 @@ const Signup: React.FC = () => {
               <TouchableOpacity
                 onPress={handleSubmit}
                 style={someStyles.button}>
-                <Text style={[someStyles.textButton]}>Continuar</Text>
+                {loading ? (
+                  <ActivityIndicator color={'white'} />
+                ) : (
+                  <Text style={[someStyles.textButton]}>Continuar</Text>
+                )}
               </TouchableOpacity>
             </View>
           )}
         </Formik>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
