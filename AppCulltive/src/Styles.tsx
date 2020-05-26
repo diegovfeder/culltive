@@ -50,6 +50,7 @@ export const someStyles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 16,
+    marginVertical: 12,
   },
   h1: {
     fontSize: 24,
