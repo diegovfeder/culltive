@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Button,
   Dimensions,
@@ -23,6 +23,27 @@ const Welcome: React.FC = () => {
   console.log('-- Welcome.tsx');
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: '',
+      headerTitle: () => (
+        <Text
+          style={{
+            color: '#3ea341',
+            fontSize: 36,
+            fontFamily: 'Montserrat-Bold',
+          }}>
+          culltive
+        </Text>
+        // Removed this view and inserted culltive, name on the navigation header.
+        // Postponing work-- This needs to be a responsive grid / flex environment...
+        // <View style={someStyles.headerView}>
+        //   <Text style={someStyles.headerTitle}>culltive</Text>
+        // </View>
+      ),
+    });
+  });
 
   return (
     <SafeAreaView

@@ -87,8 +87,12 @@ const ForgotPasswordModal: React.FC = (props) => {
                 />
 
                 <Text style={someStyles.h3}>Não lembra seu email?</Text>
-                <TouchableOpacity onPress={() => {}}>
-                  <Text style={someStyles.textLink}>
+                <TouchableOpacity
+                  style={{justifyContent: 'center', alignSelf: 'flex-start'}}
+                  onPress={() => {
+                    console.log('TODO: Open whatsapp link with a message');
+                  }}>
+                  <Text style={[someStyles.textLink, {fontSize: 14}]}>
                     Entre em contato com nosso suporte.
                   </Text>
                 </TouchableOpacity>

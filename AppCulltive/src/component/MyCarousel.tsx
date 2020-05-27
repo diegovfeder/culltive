@@ -38,7 +38,7 @@ const MyCarousel: React.FC = (props) => {
           elevation: 5,
           alignSelf: 'center',
         }}>
-        <Text style={someStyles.h1}>{item.title}</Text>
+        <Text style={someStyles.h1_regular}>{item.title}</Text>
         <Text style={[someStyles.h3, {alignSelf: 'center'}]}>{item.text}</Text>
         <Text style={[someStyles.h3, {alignSelf: 'center'}]}>{item.value}</Text>
       </View>

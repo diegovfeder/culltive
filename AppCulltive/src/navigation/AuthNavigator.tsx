@@ -10,6 +10,8 @@ import Signup from '../screen/Signup';
 
 const Stack = createStackNavigator();
 
+// Customized by props...
+// options={{ headerTitle: props => <LogoTitle {...props} /> }}
 const AuthNavigator: React.FC = () => {
   return (
     <Stack.Navigator
@@ -21,8 +23,11 @@ const AuthNavigator: React.FC = () => {
         gestureDirection: 'horizontal',
         headerStyle: {
           backgroundColor: '#3cbc40',
+          elevation: 4,
+          shadowOpacity: 100,
+          // borderBottomWidth: 1,
         },
-        headerTintColor: '#fff',
+        headerTintColor: '#f6f7f8',
         headerTitleStyle: {
           fontWeight: 'bold',
         },
@@ -30,7 +35,13 @@ const AuthNavigator: React.FC = () => {
       <Stack.Screen
         name="Welcome"
         component={Welcome}
-        options={{headerTitle: () => <View style={styles.headerView} />}}
+        options={{
+          headerShown: false,
+          headerStyle: {
+            backgroundColor: '#f6f7f8',
+          },
+          headerTitle: () => <View style={styles.headerView} />,
+        }}
       />
       <Stack.Screen
         name="Terms"

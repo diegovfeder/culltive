@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -24,31 +24,58 @@ import WelcomeUndraw from '../../assets/undraw/welcome.svg';
 const Welcome: React.FC = () => {
   const navigation = useNavigation();
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: '',
+      headerTitle: () => (
+        <View style={{justifyContent: 'flex-start'}}>
+          <Text
+            style={{
+              color: '#fff',
+              fontSize: 18,
+              fontFamily: 'Montserrat-Bold',
+              justifyContent: 'flex-start',
+              textAlign: 'center',
+              paddingVertical: 8,
+              paddingEnd: 32,
+            }}>
+            {Strings.termsHeader}
+          </Text>
+        </View>
+        // Removed this view and inserted culltive, name on the navigation header.
+        // Postponing work-- This needs to be a responsive grid / flex environment...
+        // <View style={someStyles.headerView}>
+        //   <Text style={someStyles.headerTitle}>culltive</Text>
+        // </View>
+      ),
+    });
+  });
+
   return (
     <View
       style={{
         flex: 1,
         flexDirection: 'column',
-        marginHorizontal: 16,
-        marginVertical: 12,
+        marginBottom: 12,
         justifyContent: 'space-between',
         alignItems: 'stretch',
       }}>
-      <View style={{}}>
+      {/* <View style={{}}>
         <Text
           style={{
             color: '#6c6c6c',
-            fontSize: 20,
+            fontSize: 24,
             fontFamily: 'Montserrat-Bold',
             textAlign: 'center',
           }}>
           {Strings.termsHeader}
         </Text>
-      </View>
+      </View> */}
 
-      <ScrollView style={{marginVertical: 12}}>
+      <ScrollView style={{marginBottom: 32}}>
         <Text
           style={{
+            marginHorizontal: 16,
             color: '#959595',
             fontSize: 16,
             fontFamily: 'Montserrat-Regular',
