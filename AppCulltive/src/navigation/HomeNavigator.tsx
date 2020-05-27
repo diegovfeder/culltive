@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Button,
   Dimensions,
   StyleSheet,
   TouchableOpacity,
@@ -7,95 +8,87 @@ import {
   View,
 } from 'react-native';
 
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from '@react-navigation/drawer';
-import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
-
-// import { DrawerActions } from 'react-navigation'
+import DrawerNavigator from './DrawerNavigator';
 
 // Hooks
 import {useUserDispatch, signOut} from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
-// Components & Resources
+// import {
+//   createDrawerNavigator,
+//   DrawerContentScrollView,
+//   DrawerItemList,
+//   DrawerItem,
+// } from '@react-navigation/drawer';
+
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+
+// Screens
 import Home from '../screen/Home';
 import Report from '../screen/Report';
 import Chart from '../screen/Chart';
-
-// FIXME:
-// Settings is responsible for the INVALID HOOK CALL
 import Settings from '../screen/Settings';
 
+// Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+// Styles
 import {someStyles} from '../Styles';
 
 const Stack = createStackNavigator();
 
-const DrawerButton = () => {
-  const navigation = useNavigation();
-  return (
-    <View style={{flexDirection: 'row'}}>
-      <TouchableOpacity
-        onPress={() => {
-          // navigation.navigate('DrawerOpen');
-          navigation.setOptions;
-        }}>
-        <Ionicons
-          name="md-menu"
-          style={someStyles.headerButton}
-          size={24}
-          color="#fff"
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
+// const DrawerButton = () => {
+//   const navigation = useNavigation();
+//   return (
+//     <View style={{flexDirection: 'row'}}>
+//       <TouchableOpacity
+//         onPress={() => {
+//           // navigation.navigate('DrawerOpen');
+//           navigation.setOptions;
+//         }}>
+//         <Ionicons
+//           name="md-menu"
+//           style={someStyles.headerButton}
+//           size={24}
+//           color="#fff"
+//         />
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
 
-//FIXME: It seems that CustomDrawer and DrawerNavigation itself is not working properly
-// iconButton click - crashes
-// signOut dispatch() - ?
-// drawerItem click warns and refreshes...
 const HomeNavigator: React.FC = () => {
-  // console.log("-- HomeNavigator.tsx")
-  let navigation = useNavigation();
-  const Drawer = createDrawerNavigator();
+  console.log('-- HomeNavigator.tsx');
 
-  let userDispatch = useUserDispatch();
-  const CustomDrawerContent = (props: any) => {
+  const navigation = useNavigation();
+  // navigation.setOptions({
+  //   headerRight: () => (
+  //     <DoneButton
+  //       onPress={async () => {
+  //         await saveNote();
+  //         navigation.replace('Notes');
+  //       }}
+  //     />
+  //   ),
+  // });
+
+  const DrawerButton = (props: any) => {
+    const navigation = useNavigation();
     return (
-      <DrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
-        <DrawerItem
-          label="Sair"
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity
           onPress={() => {
-            signOut(userDispatch);
-          }}
-        />
-      </DrawerContentScrollView>
-    );
-  };
-
-  //FIXME: warning cant update state on unmounted component (line 51)
-  const DrawerNavigator = () => {
-    return (
-      <Drawer.Navigator
-        edgeWidth={192}
-        drawerStyle={{width: 256}}
-        drawerType={
-          Dimensions.get('window').width > 900 ? 'permanent' : 'front'
-        }
-        drawerContentOptions={{
-          activeTintColor: '#3ea341',
-        }}
-        drawerContent={(props) => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Início" component={Home} />
-        <Drawer.Screen name="Configurações" component={Settings} />
-      </Drawer.Navigator>
+            // props.navigation.openDrawer();
+            // navigation.openDrawer();
+          }}>
+          <Ionicons
+            name="md-menu"
+            style={someStyles.headerButton}
+            size={24}
+            color="#fff"
+          />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -118,7 +111,7 @@ const HomeNavigator: React.FC = () => {
       <Stack.Screen
         name="Home"
         component={DrawerNavigator}
-        options={({navigation}) => ({
+        options={() => ({
           title: 'Home',
           headerTitle: () => (
             <View style={someStyles.headerView}>
@@ -140,15 +133,6 @@ const HomeNavigator: React.FC = () => {
         component={Chart}
         options={{
           headerTitle: () => <View style={someStyles.headerView} />,
-          headerRight: () => (
-            <Ionicons
-              name="ios-information-circle"
-              style={someStyles.headerButton}
-              size={24}
-              color="#fff"
-              onPress={() => alert('Info Button')}
-            />
-          ),
         }}
       />
     </Stack.Navigator>
@@ -156,6 +140,26 @@ const HomeNavigator: React.FC = () => {
 };
 
 export default HomeNavigator;
+
+// options={({navigation}) => ({
+//   headerRight: (props) => {
+//     return (
+//       <Button
+//         title={'oi'}
+//         onPress={() => navigation.toggleDrawer()}></Button>
+//     );
+//   },
+// })}
+
+// headerRight: () => (
+//   <Ionicons
+//     name="ios-information-circle"
+//     style={someStyles.headerButton}
+//     size={24}
+//     color="#fff"
+//     onPress={() => alert('Info Button')}
+//   />
+// ),
 
 //  headerLeft: <DrawerButton navigation={navigation} />,
 
