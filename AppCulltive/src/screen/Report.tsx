@@ -4,6 +4,7 @@ import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import axios from 'axios';
+import api from 'axios';
 
 // Components
 import MyCarousel from '../component/MyCarousel';
@@ -11,6 +12,7 @@ import MyCarousel from '../component/MyCarousel';
 
 // Styles
 import {someStyles} from '../Styles';
+import AppNavigator from 'src/navigation/AppNavigator';
 const {height, width} = Dimensions.get('window');
 
 const Report: React.FC = () => {
@@ -60,17 +62,22 @@ const Report: React.FC = () => {
         setCity(res.data.name);
         setTemperature(res.data.main.temp.toFixed());
         setWeather(res.data.weather[0].main);
-        console.log(res.data);
+        console.log('openWeather data: ' + JSON.stringify(res.data));
       })
       .catch((err) => {
+        setLoadingWeather(false);
+        //TODO: Set another state to try to load data again // handle Error routine...
         console.log('OpenWeather: ERROR: ' + err);
       });
+
+    //TODO: Fetch data from culltive/firestore
+    // api.get(`device/$[deviceId]`)
   }, []);
 
   // TODO: Get data from Firestore
   const sensorData = [
     {
-      title: 'Humidade atmosférica',
+      title: 'Humidade do ar',
       text: '[moreinfo]',
       value: '[number]',
     },
@@ -111,7 +118,7 @@ const Report: React.FC = () => {
         elevation: 5,
       }}>
       {loadingWeather ? (
-        <ActivityIndicator color={'#3cbc40'} />
+        <ActivityIndicator color={'#3ea341'} />
       ) : (
         <View>
           <Text style={someStyles.h3}>
@@ -126,16 +133,22 @@ const Report: React.FC = () => {
 
   return (
     <View
-      style={{
-        flex: 1,
-        justifyContent: 'flex-start',
-        marginVertical: 16,
-      }}>
-      <Text style={[someStyles.h1, {alignSelf: 'flex-start'}]}>Clima</Text>
+      style={[
+        someStyles.container,
+        {
+          flex: 1,
+          justifyContent: 'flex-start',
+        },
+      ]}>
+      <Text style={[someStyles.h1, {alignSelf: 'flex-start', marginBottom: 2}]}>
+        Clima
+      </Text>
 
       {weatherContainer}
 
-      <Text style={[someStyles.h1, {alignSelf: 'flex-start'}]}>Sensores</Text>
+      <Text style={[someStyles.h1, {alignSelf: 'flex-start', marginBottom: 2}]}>
+        Sensores
+      </Text>
       <MyCarousel data={sensorData} />
     </View>
   );

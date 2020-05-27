@@ -92,7 +92,7 @@ function setPaired(dispatch) {
 
 function waterPump(dispatch, setLoading) {
   setLoading(true);
-  return setTimeout(() => {
+  setTimeout(() => {
     dispatch({type: 'WATER_PUMP'});
   }, 2000);
 }

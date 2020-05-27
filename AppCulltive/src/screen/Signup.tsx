@@ -71,7 +71,7 @@ const Signup: React.FC = () => {
             password: Yup.string().required('*Obrigatório'),
           })}
           onSubmit={(values) => {
-            // alert(JSON.stringify(values))
+            console.log(JSON.stringify(values));
             signupUser(
               userDispatch,
               values.name,

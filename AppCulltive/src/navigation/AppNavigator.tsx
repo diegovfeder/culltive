@@ -50,6 +50,9 @@ const AppNavigator: React.FC = () => {
     };
     retrieveTokenAsync();
 
+    //FIXME: @PAIR from asyncStorage is waiting too much to load.
+    // You should re-organize this structure, or get from ContextState
+    // fix this in general... it is a async await problem syncing with state thing.
     //TODO: validateDevice using dataDispatcher
     // Fetch deviceToken -> toggle 'paired' flag
     const retrievePairStatusAsync = async () => {

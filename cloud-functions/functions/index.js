@@ -22,7 +22,7 @@ app.post("/reading", postNewReading);
 // User routes
 const {
   signup,
-  login,
+  signin,
   getAllUsers,
   getUser
 
@@ -33,7 +33,7 @@ const {
 } = require("./handlers/users");
 
 app.post("/signup", signup);
-app.post("/login", login);
+app.post("/signin", signin);
 app.get("/users", getAllUsers);
 app.get("/user/:userId", getUser);
 // app.post("/user/image", FBAuth, uploadImage);

@@ -1,73 +1,94 @@
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions} from 'react-native';
-
-import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from '@react-navigation/drawer';
-// DrawerActions,
+  Button,
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+} from 'react-native';
+
+import DrawerNavigator from './DrawerNavigator';
 
 // Hooks
 import {useUserDispatch, signOut} from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
-// Components & Resources
+// import {
+//   createDrawerNavigator,
+//   DrawerContentScrollView,
+//   DrawerItemList,
+//   DrawerItem,
+// } from '@react-navigation/drawer';
+
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+
+// Screens
 import Home from '../screen/Home';
 import Report from '../screen/Report';
 import Chart from '../screen/Chart';
-
-// FIXME:
-// Settings is responsible for the INVALID HOOK CALL
 import Settings from '../screen/Settings';
 
+// Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+// Styles
 import {someStyles} from '../Styles';
 
 const Stack = createStackNavigator();
 
-//FIXME: It seems that CustomDrawer and DrawerNavigation itself is not working properly
-// iconButton click - crashes
-// signOut dispatch() - ?
-// drawerItem click warns and refreshes...
+// const DrawerButton = () => {
+//   const navigation = useNavigation();
+//   return (
+//     <View style={{flexDirection: 'row'}}>
+//       <TouchableOpacity
+//         onPress={() => {
+//           // navigation.navigate('DrawerOpen');
+//           navigation.setOptions;
+//         }}>
+//         <Ionicons
+//           name="md-menu"
+//           style={someStyles.headerButton}
+//           size={24}
+//           color="#fff"
+//         />
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
+
 const HomeNavigator: React.FC = () => {
-  // console.log("-- HomeNavigator.tsx")
+  console.log('-- HomeNavigator.tsx');
 
-  const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
+  // navigation.setOptions({
+  //   headerRight: () => (
+  //     <DoneButton
+  //       onPress={async () => {
+  //         await saveNote();
+  //         navigation.replace('Notes');
+  //       }}
+  //     />
+  //   ),
+  // });
 
-  let userDispatch = useUserDispatch();
-  const CustomDrawerContent = (props) => {
+  const DrawerButton = (props: any) => {
+    const navigation = useNavigation();
     return (
-      <DrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
-        <DrawerItem
-          label="Sair"
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity
           onPress={() => {
-            signOut(userDispatch);
-          }}
-        />
-      </DrawerContentScrollView>
-    );
-  };
-
-  //FIXME: warning cant update state on unmounted component (line 51)
-  const DrawerNavigator = () => {
-    return (
-      <Drawer.Navigator
-        drawerType={
-          Dimensions.get('window').width > 900 ? 'permanent' : 'front'
-        }
-        drawerContentOptions={{
-          activeTintColor: '#3ea341',
-        }}
-        drawerContent={(props) => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Início" component={Home} />
-        <Drawer.Screen name="Configurações" component={Settings} />
-      </Drawer.Navigator>
+            // props.navigation.openDrawer();
+            // navigation.openDrawer();
+          }}>
+          <Ionicons
+            name="md-menu"
+            style={someStyles.headerButton}
+            size={24}
+            color="#fff"
+          />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -90,44 +111,21 @@ const HomeNavigator: React.FC = () => {
       <Stack.Screen
         name="Home"
         component={DrawerNavigator}
-        options={{
+        options={() => ({
           title: 'Home',
           headerTitle: () => (
             <View style={someStyles.headerView}>
               <Text style={someStyles.headerTitle}>Inicio</Text>
             </View>
           ),
-          headerLeft: () => (
-            <Ionicons
-              name="md-menu"
-              style={someStyles.headerButton}
-              size={24}
-              color="#fff"
-              onPress={() => {
-                navigation.openDrawer();
-              }}
-            />
-          ),
-        }}
+          headerLeft: () => <DrawerButton navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="Report"
         component={Report}
         options={{
           headerTitle: () => <View style={someStyles.headerView} />,
-          // headerRight: () => (
-          //   <Ionicons
-          //     name="ios-calendar"
-          //     style={someStyles.headerButton}
-          //     size={24}
-          //     color="#fff"
-          //     onPress={() => alert('Calendar Button')}
-          //     // TODO: contextData / contextApp / contextUI / ??
-          //     // setCalendarView(true) in ReportScreen
-          //     // create an access to Report child component being able to change its state
-          //     // ...
-          //   />
-          // ),
         }}
       />
       <Stack.Screen
@@ -135,15 +133,6 @@ const HomeNavigator: React.FC = () => {
         component={Chart}
         options={{
           headerTitle: () => <View style={someStyles.headerView} />,
-          headerRight: () => (
-            <Ionicons
-              name="ios-information-circle"
-              style={someStyles.headerButton}
-              size={24}
-              color="#fff"
-              onPress={() => alert('Info Button')}
-            />
-          ),
         }}
       />
     </Stack.Navigator>
@@ -151,6 +140,80 @@ const HomeNavigator: React.FC = () => {
 };
 
 export default HomeNavigator;
+
+// options={({navigation}) => ({
+//   headerRight: (props) => {
+//     return (
+//       <Button
+//         title={'oi'}
+//         onPress={() => navigation.toggleDrawer()}></Button>
+//     );
+//   },
+// })}
+
+// headerRight: () => (
+//   <Ionicons
+//     name="ios-information-circle"
+//     style={someStyles.headerButton}
+//     size={24}
+//     color="#fff"
+//     onPress={() => alert('Info Button')}
+//   />
+// ),
+
+//  headerLeft: <DrawerButton navigation={navigation} />,
+
+// <Ionicons
+//   name="md-menu"
+//   style={someStyles.headerButton}
+//   size={24}
+//   color="#fff"
+//   onPress={() => {
+//     navigation.navigate('DrawerOpen');
+//     // navigation.toggleDrawer();
+//   }}
+// />
+
+// headerRight: () => (
+//   <Ionicons
+//     name="ios-calendar"
+//     style={someStyles.headerButton}
+//     size={24}
+//     color="#fff"
+//     onPress={() => alert('Calendar Button')}
+//     // TODO: contextData / contextApp / contextUI / ??
+//     // setCalendarView(true) in ReportScreen
+//     // create an access to Report child component being able to change its state
+//     // ...
+//   />
+// ),
+
+// FIXME:
+// console.log('try openDrawer...');
+// navigation.openDrawer();
+// console.log('nice!');
+
+// const DrawerButton = (props: any) => {
+//   return (
+//     <View>
+//       <TouchableOpacity
+//         onPress={() => {
+//           navigation.setOptions
+//         }}>
+//         <Ionicons
+//           name="md-menu"
+//           style={someStyles.headerButton}
+//           size={24}
+//           color="#fff"
+//           // onPress={() => {
+//           //   // navigation.navigate('DrawerOpen');
+//           //   props.navigation.toggleDrawer();
+//           // }}
+//         />
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
 
 // Styles for a subTitle in the header
 /*<Text
@@ -217,3 +280,32 @@ export default HomeNavigator;
 //     easing: Easing.linear,
 //   },
 // };
+
+// options={(props) => {
+//   return {
+//     headerStyle: {
+//       backgroundColor: '#00a5f0',
+//     },
+//     headerTintColor: '#ffffff',
+//     headerTitleStyle: {
+//       fontWeight: 'bold',
+//     },
+//     headerLeftContainerStyle: {},
+//     headerLeft: (
+//       <TouchableOpacity
+//         onPress={() => props.navigation.openDrawer()}
+//         style={{
+//           flex: 1,
+//           width: 49,
+//           height: 20,
+//           alignItems: 'center',
+//           justifyContent: 'center',
+//           backgroundColor: 'transparent',
+//         }}
+//         title="X"
+//         color="#fff">
+//         <Ionicons name="md-menu" />
+//       </TouchableOpacity>
+//     ),
+//   };
+// }}

@@ -12,8 +12,8 @@ const isEmail = string => {
 exports.validateSignupData = data => {
   let errors = {};
 
-  if (isEmpty(data.userName)) {
-    errors.userName = "Must not be empty";
+  if (isEmpty(data.name)) {
+    errors.name = "Must not be empty";
   }
 
   if (isEmpty(data.email)) {
@@ -35,7 +35,7 @@ exports.validateSignupData = data => {
   };
 };
 
-exports.validateLoginData = data => {
+exports.validateSigninData = data => {
   let errors = {};
 
   if (isEmpty(data.email)) {

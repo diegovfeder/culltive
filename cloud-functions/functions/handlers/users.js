@@ -6,23 +6,23 @@ firebase.initializeApp(firebaseConfig);
 
 const {
   validateSignupData,
-  validateLoginData,
+  validateSigninData,
   reduceUserDetails
 } = require("../util/validators");
 
-// Sign user up
 exports.signup = (req, res) => {
   const newUser = {
-    userName: req.body.userName,
+    name: req.body.name,
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password 
   };
 
   const { valid, errors } = validateSignupData(newUser);
 
   if (!valid) return res.status(400).json(errors);
 
-  const noImg = "no-img.png";
+  // FIXME: Upload a default user img and link to newUser in firestore
+  // const noImg = "no-img.jpg";
 
   let token, userId;
   db.doc(`/users/${newUser.email}`)
@@ -45,10 +45,9 @@ exports.signup = (req, res) => {
     .then(idToken => {
       token = idToken;
       const userCredentials = {
-        userName: newUser.userName,
+        name: newUser.name,
         email: newUser.email,
         createdAt: new Date().toISOString(),
-        imageUrl: `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/${noImg}?alt=media`,
         userId //can do this because it is the same name of the declared variable
       };
       return db.doc(`/users/${newUser.email}`).set(userCredentials);
@@ -71,15 +70,16 @@ exports.signup = (req, res) => {
       }
     });
 };
+// imageUrl: `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/${noImg}?alt=media`,
 
-// Log user in
-exports.login = (req, res) => {
+
+exports.signin = (req, res) => {
   const user = {
     email: req.body.email,
     password: req.body.password
   };
 
-  const { valid, errors } = validateLoginData(user);
+  const { valid, errors } = validateSigninData(user);
 
   if (!valid) return res.status(400).json(errors);
 

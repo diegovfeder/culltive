@@ -3,6 +3,8 @@ import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
 
 import * as Svg from 'react-native-svg';
 
+import {Divider} from 'react-native-elements';
+
 import {useNavigation} from '@react-navigation/native';
 
 import FirstSigninModal from '../component/FirstSigninModal';
@@ -12,6 +14,8 @@ import {someStyles} from '../Styles';
 
 // Assets
 import PlantHomeUndraw from '../../assets/undraw/plantHome.svg';
+import {ScrollView} from 'react-native-gesture-handler';
+import {ListItem} from 'react-native-elements';
 
 const Home: React.FC = () => {
   const navigation = useNavigation();
@@ -29,9 +33,9 @@ const Home: React.FC = () => {
       style={{
         alignSelf: 'center',
         marginTop: 48,
-        borderRadius: 300,
-        width: 300,
-        height: 300,
+        borderRadius: 128,
+        width: 128,
+        height: 128,
         backgroundColor: '#DDD',
       }}>
       <ActivityIndicator
@@ -46,17 +50,44 @@ const Home: React.FC = () => {
     <View
       style={{
         alignSelf: 'center',
-        marginTop: 48,
-        borderRadius: 300,
-        width: 300,
-        height: 300,
+        marginTop: 16,
+        borderRadius: 256,
+        width: 256,
+        height: 256,
         backgroundColor: '#DDD',
       }}>
-      <PlantHomeUndraw width={220} height={300} style={{alignSelf: 'center'}} />
+      <PlantHomeUndraw width={198} height={256} style={{alignSelf: 'center'}} />
+      {/* <PlantHomeUndraw width={200} height={300} style={{alignSelf: 'center'}} /> */}
     </View>
   );
 
-  const activityContainer = <View></View>;
+  const activityContainer = (
+    <ScrollView style={{height: 96, marginStart: 8}}>
+      {/* FIXME: turn into a list */}
+      <Text style={someStyles.h3}>O reservatório de água está cheio</Text>
+      <Text style={someStyles.h3}>
+        O reservatório de água está ficando vazio
+      </Text>
+      <Text style={someStyles.h3}>
+        Sua planta não está recebeádo luz suficiente
+      </Text>
+      <Text style={someStyles.h3}>O reservatório de água está cheio</Text>
+      <Text style={someStyles.h3}>O reservatório de água está vazio</Text>
+      <Text style={someStyles.h3}>O reservatório de água está cheio</Text>
+      <Text style={someStyles.h3}>O reservatório de água está vazio</Text>
+      <Text style={someStyles.h3}>O reservatório de água está cheio</Text>
+      <Text style={someStyles.h3}>
+        O reservatório de água está ficando vazio
+      </Text>
+      <Text style={someStyles.h3}>
+        Sua planta não está recebendo luz suficiente
+      </Text>
+      <Text style={someStyles.h3}>
+        Sua planta não está recebendo luz suficiente
+      </Text>
+      <Text style={someStyles.h3}>O reservatório de água está vazio</Text>
+    </ScrollView>
+  );
 
   return (
     <View
@@ -64,7 +95,8 @@ const Home: React.FC = () => {
         flex: 1,
         flexDirection: 'column',
         marginHorizontal: 16,
-        marginVertical: 12,
+        // marginVertical: 12,
+        marginBottom: 12,
         justifyContent: 'space-between',
         alignItems: 'stretch',
       }}>
@@ -73,12 +105,18 @@ const Home: React.FC = () => {
 
       {/*MAIN CIRCLE / LAZY LOADING*/}
       {/* {loadingContainer} */}
+
       {plantContainer}
 
-      <View style={{width: '100%'}}>
+      <Divider style={{marginVertical: 8}} />
+
+      <View style={{}}>
         <Text style={someStyles.h4}>ATIVIDADES RECENTES</Text>
         {activityContainer}
       </View>
+
+      <Divider style={{marginVertical: 8}} />
+
       <View style={{width: '100%'}}>
         <TouchableOpacity
           style={someStyles.button}

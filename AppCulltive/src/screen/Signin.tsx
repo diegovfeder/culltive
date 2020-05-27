@@ -17,7 +17,7 @@ import * as Yup from 'yup';
 
 // Hooks
 import {useFirebaseDispatch, resetPassword} from '../context/FirebaseContext';
-import {useUserDispatch, signinUser, signupUser} from '../context/UserContext';
+import {useUserDispatch, signinUser} from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
 // Components
@@ -79,9 +79,10 @@ const Signin: React.FC = () => {
               .required('*Obrigatório'),
             password: Yup.string().required('*Obrigatório'),
           })}
-          onSubmit={(values) =>
-            signinUser(userDispatch, values.email, values.password, setLoading)
-          }>
+          onSubmit={(values) => {
+            console.log(JSON.stringify(values));
+            signinUser(userDispatch, values.email, values.password, setLoading);
+          }}>
           {({
             handleChange,
             handleBlur,

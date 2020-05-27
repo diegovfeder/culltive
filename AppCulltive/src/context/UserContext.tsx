@@ -5,6 +5,8 @@ import api from 'axios';
 var UserStateContext = createContext(undefined);
 var UserDispatchContext = createContext(undefined);
 
+console.log('-- UserContext.tsx: ');
+
 function UserProvider({children}) {
   const [state, dispatch] = useReducer(userReducer, {
     authenticated: false,
@@ -30,14 +32,6 @@ function userReducer(state, action) {
         authenticated: !!action.token,
         loading: false,
       };
-    case 'LOGIN_SUCCESS':
-      console.log('userReducer: LOGIN_SUCCESS');
-      return {...state, authenticated: true};
-    case 'LOGIN_FAILURE': {
-      // TODO: create a message to the user explaining login fail
-      console.log('userReducer: LOGIN_FAILURE');
-      return {...state, loginFailed: action.payload, authenticated: false};
-    }
     case 'SIGNUP_SUCCESS': {
       console.log('userReducer: SIGNUP_SUCCESS');
       return {...state, authenticated: true};
@@ -46,6 +40,14 @@ function userReducer(state, action) {
       // TODO: create a message to the user explaining signup fail
       console.log('userReducer: SIGNUP_FAILURE');
       return {...state, signupFailed: action.payload, authenticated: false};
+    }
+    case 'SIGNIN_SUCCESS':
+      console.log('userReducer: SIGNIN_SUCCESS');
+      return {...state, authenticated: true};
+    case 'SIGNIN_FAILURE': {
+      // TODO: create a message to the user explaining SIGNIN fail
+      console.log('userReducer: SIGNIN_FAILURE');
+      return {...state, signinFailed: action.payload, authenticated: false};
     }
     case 'SIGN_OUT_SUCCESS':
       return {...state, authenticated: false};
@@ -90,52 +92,15 @@ export {
   UserProvider,
   useUserState,
   useUserDispatch,
-  signinUser,
   signupUser,
+  signinUser,
   signOut,
   getUserData,
   validateUserToken,
 };
 // ###########################################################
 
-function signinUser(
-  dispatch: any,
-  loginValue: any,
-  passwordValue: any,
-  setLoading: any,
-  // setErrors,
-) {
-  // TODO: set Errors (connection issues?) 404, 500 etc...
-  // setErrors(false);
-  setLoading(true);
-
-  console.log('UserContext: signInUser: login: ' + loginValue);
-  console.log('UserContext: signInUser: password: ' + passwordValue);
-
-  const userData = {
-    email: loginValue,
-    password: passwordValue,
-  };
-
-  api
-    .post('/signin', userData)
-    .then((res) => {
-      console.log(res.data); //Auth token
-      setAuthorizationHeader(res.data.token);
-
-      // setErrors(false);
-      setLoading(false);
-      dispatch({type: 'LOGIN_SUCCESS'});
-    })
-    .catch((err) => {
-      console.log(err);
-      dispatch({type: 'LOGIN_FAILURE', payload: []});
-      // dispatch({ type: "SET_ERRORS", payload: err.response.data });
-      // setErrors(true); // change This to payload response data...
-      setLoading(false);
-    });
-}
-
+// SIGN UP
 // TODO: Infer the right types
 function signupUser(
   dispatch: any,
@@ -144,19 +109,24 @@ function signupUser(
   password: any,
   setLoading: any,
 ) {
+  console.log('* signupUser: ');
+  console.log('name: ' + name);
+  console.log('email: ' + email);
+  console.log('password: ' + password);
   // TODO: set Errors (connection errors) 404, 500 etc...
   // setErrors(null);
   setLoading(true);
 
-  const newUserData = {
+  const user = {
     name: name,
     email: email,
     password: password,
   };
 
+  console.log('user: ' + JSON.stringify(user));
   // dispatch({ type: LOADING_UI });
   api
-    .post('/signup', newUserData)
+    .post('/signup', user)
     .then((res) => {
       console.log(res.data); //Auth token
       setAuthorizationHeader(res.data.token);
@@ -171,11 +141,49 @@ function signupUser(
       //   type: SET_ERRORS,
       //   payload: err.response.data
       // });
-      console.log(err);
+      console.log(err.response.data);
+      setLoading(false);
       dispatch({type: 'SIGNUP_FAILURE', payload: []});
       // dispatch({ type: "SET_ERRORS", payload: err.response.data });
       // setErrors(true); // change This to payload response data...
+    });
+}
+
+// SIGN IN
+function signinUser(
+  dispatch: any,
+  email: any,
+  password: any,
+  setLoading: any,
+  // setErrors,
+) {
+  console.log('UserContext: signinUser: email: ' + email);
+  console.log('UserContext: signinUser: password: ' + password);
+  // TODO: set Errors (connection issues?) 404, 500 etc...
+  // setErrors(false);
+  setLoading(true);
+
+  const user = {
+    email: email,
+    password: password,
+  };
+
+  api
+    .post('/signin', user)
+    .then((res) => {
+      console.log(res.data); //Auth token
+      setAuthorizationHeader(res.data.token);
+
+      // setErrors(false);
       setLoading(false);
+      dispatch({type: 'SIGNIN_SUCCESS'});
+    })
+    .catch((err) => {
+      console.log(err);
+      setLoading(false);
+      dispatch({type: 'SIGNIN_FAILURE', payload: []});
+      // dispatch({ type: "SET_ERRORS", payload: err.response.data });
+      // setErrors(true); // change This to payload response data...
     });
 }
 
