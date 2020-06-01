@@ -89,6 +89,7 @@ function getDeviceData(dispatch) {
 function setPaired(dispatch) {
   dispatch({type: 'SET_PAIRED'});
 }
+// setAuthorizationHeader(res.data.token); // ???
 
 function waterPump(dispatch, setLoading) {
   setLoading(true);

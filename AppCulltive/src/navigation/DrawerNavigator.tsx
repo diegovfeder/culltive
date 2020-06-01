@@ -1,6 +1,8 @@
 import React from 'react';
 import {Dimensions, TouchableOpacity, Text, View} from 'react-native';
 
+import HomeNavigator from './HomeNavigator';
+
 // Hooks
 import {useUserDispatch, signOut} from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
@@ -26,26 +28,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // Styles
 import {someStyles} from '../Styles';
 
-const DrawerButton = () => {
-  const navigation = useNavigation();
-  return (
-    <View style={{flexDirection: 'row'}}>
-      <TouchableOpacity
-        onPress={() => {
-          // navigation.navigate('DrawerOpen');
-          navigation.setOptions;
-        }}>
-        <Ionicons
-          name="md-menu"
-          style={someStyles.headerButton}
-          size={24}
-          color="#fff"
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
 const CustomDrawerContent = (props: any) => {
   let userDispatch = useUserDispatch();
   return (
@@ -61,9 +43,31 @@ const CustomDrawerContent = (props: any) => {
   );
 };
 
-const DrawerNavigator: React.FC = (navigation: any) => {
+const DrawerNavigator: React.FC = () => {
   console.log('-- DrawerNavigator.tsx');
+
+  const navigation = useNavigation();
+
   const Drawer = createDrawerNavigator();
+
+  const DrawerButton = () => {
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity
+          onPress={() => {
+            // navigation.toggleDrawer();
+            // navigation.setOptions;
+          }}>
+          <Ionicons
+            name="md-menu"
+            style={someStyles.headerButton}
+            size={24}
+            color="#fff"
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <Drawer.Navigator
@@ -74,8 +78,19 @@ const DrawerNavigator: React.FC = (navigation: any) => {
         activeTintColor: '#3ea341',
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Início" component={Home} />
-      <Drawer.Screen name="Configurações" component={Settings} />
+      <Drawer.Screen name="Início" component={HomeNavigator} />
+      <Drawer.Screen
+        name="Configurações"
+        component={Settings}
+        options={() => ({
+          title: 'Home',
+          headerTitle: () => (
+            <View style={someStyles.headerView}>
+              <Text style={someStyles.headerTitle}>Configurações</Text>
+            </View>
+          ),
+        })}
+      />
     </Drawer.Navigator>
   );
 };

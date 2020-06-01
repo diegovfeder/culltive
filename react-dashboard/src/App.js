@@ -16,6 +16,8 @@ import { useUserState } from "./context/UserContext";
 
 axios.defaults.baseURL = "https://us-central1-culltive.cloudfunctions.net/api";
 
+
+
 export default function App() {
   var { isAuthenticated } = useUserState();
 

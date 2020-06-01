@@ -60,32 +60,63 @@ exports.postDevice = (req, res) => {
   }
 
   const newDevice = {
-    user: req.body.user,
-    createdAt: new Date().toISOString(),
+    user: req.body.user, // TODO: This user received from esp8266 should be tested
     geolocation: req.body.geolocation,
     productType: req.body.productType,
     qrCode: req.body.qrCode, 
     version: req.body.version,
     wifiSSID: req.body.wifiSSID,
     wifiPassword: req.body.wifiPassword,
-    wifiStatus: req.body.wifiStatus
+    wifiStatus: req.body.wifiStatus,
+    createdAt: new Date().toISOString(),
   };
 
-  db.collection("devices")
-    .add(newDevice)
+  db.doc(`/devices/${newDevice.qrCode}`)
+    .get()
     .then(doc => {
-      const resDevice = newDevice;
-      resDevice.deviceId = doc.id;
-      res.json({
-        resDevice
+      if (doc.exists) {
+        return res.status(400).json({
+          body: "This device is already created / paired."
+        });
+      } else {
+        return db.doc(`/devices/${newDevice.qrCode}`).set(newDevice);
+       }
+    })
+    .then(() => {
+      return res.status(201).json({
+        body: 'Device ' + newDevice.qrCode + ' created successfully'
       });
     })
     .catch(err => {
-      res.status(500).json({
-        error: "something went wrong"
-      });
       console.error(err);
+      if (err.code === "auth/device-already-created") {
+        return res.status(400).json({
+          device: "Device Id / QR Code is already in use"
+        });
+      } else {
+        return res.status(500).json({
+          general: "Something went wrong, please try again"
+        });
+      }
     });
+
+
+  //FIXME: Old cold... chanong to above one
+  // db.collection("devices")
+  //   .add(newDevice)
+  //   .then(doc => {
+  //     const resDevice = newDevice;
+  //     resDevice.deviceId = doc.id;
+  //     return res.json({
+  //       resDevice
+  //     });
+  //   })
+  //   .catch(err => {
+  //     return res.status(500).json({
+  //       error: "something went wrong"
+  //     });
+  //     console.error(err);
+  //   });
 };
 
 // Delete a device

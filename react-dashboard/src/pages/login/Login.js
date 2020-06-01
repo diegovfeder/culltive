@@ -32,6 +32,10 @@ const Login = props => {
   var classes = useStyles();
   var userDispatch = useUserDispatch();
 
+  console.log('-- Login.js'); 
+
+
+
   // local
   const [isLoading, setIsLoading] = useState(false);
   // const [errors, setErrors] = useState(false);

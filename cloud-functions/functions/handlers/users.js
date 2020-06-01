@@ -186,6 +186,7 @@ exports.getAuthenticatedUser = (req, res) => {
         });
       });
       return res.json(userData);
+      // return res.status(201).json(userData);
     })
     .catch(err => {
       console.error(err);

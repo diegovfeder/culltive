@@ -18,7 +18,8 @@ import {useDeviceState} from '../context/DeviceContext';
 
 //Screens || Navigators
 import Splash from '../screen/Splash';
-import HomeNavigator from './HomeNavigator';
+// import HomeNavigator from './HomeNavigator';
+import DrawerNavigator from './DrawerNavigator';
 import PairNavigator from './PairNavigator';
 import AuthNavigator from './AuthNavigator';
 
@@ -83,7 +84,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="Splash" component={Splash} />
       ) : authenticated ? (
         paired ? (
-          <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
+          <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
         ) : (
           <Stack.Screen name="PairNavigator" component={PairNavigator} />
         )
