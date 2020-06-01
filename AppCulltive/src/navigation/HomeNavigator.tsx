@@ -8,18 +8,9 @@ import {
   View,
 } from 'react-native';
 
-import DrawerNavigator from './DrawerNavigator';
-
 // Hooks
 import {useUserDispatch, signOut} from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
-
-// import {
-//   createDrawerNavigator,
-//   DrawerContentScrollView,
-//   DrawerItemList,
-//   DrawerItem,
-// } from '@react-navigation/drawer';
 
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 
@@ -27,7 +18,6 @@ import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import Home from '../screen/Home';
 import Report from '../screen/Report';
 import Chart from '../screen/Chart';
-import Settings from '../screen/Settings';
 
 // Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -37,60 +27,28 @@ import {someStyles} from '../Styles';
 
 const Stack = createStackNavigator();
 
-// const DrawerButton = () => {
-//   const navigation = useNavigation();
-//   return (
-//     <View style={{flexDirection: 'row'}}>
-//       <TouchableOpacity
-//         onPress={() => {
-//           // navigation.navigate('DrawerOpen');
-//           navigation.setOptions;
-//         }}>
-//         <Ionicons
-//           name="md-menu"
-//           style={someStyles.headerButton}
-//           size={24}
-//           color="#fff"
-//         />
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
+const DrawerButton = (props: any) => {
+  return (
+    <View style={{flexDirection: 'row'}}>
+      <TouchableOpacity
+        onPress={() => {
+          props.navigation.toggleDrawer();
+        }}>
+        <Ionicons
+          name="md-menu"
+          style={someStyles.headerButton}
+          size={24}
+          color="#fff"
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const HomeNavigator: React.FC = () => {
   console.log('-- HomeNavigator.tsx');
 
   const navigation = useNavigation();
-  // navigation.setOptions({
-  //   headerRight: () => (
-  //     <DoneButton
-  //       onPress={async () => {
-  //         await saveNote();
-  //         navigation.replace('Notes');
-  //       }}
-  //     />
-  //   ),
-  // });
-
-  const DrawerButton = (props: any) => {
-    const navigation = useNavigation();
-    return (
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity
-          onPress={() => {
-            // props.navigation.openDrawer();
-            // navigation.openDrawer();
-          }}>
-          <Ionicons
-            name="md-menu"
-            style={someStyles.headerButton}
-            size={24}
-            color="#fff"
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  };
 
   return (
     <Stack.Navigator
@@ -110,7 +68,7 @@ const HomeNavigator: React.FC = () => {
       }}>
       <Stack.Screen
         name="Home"
-        component={DrawerNavigator}
+        component={Home}
         options={() => ({
           title: 'Home',
           headerTitle: () => (
@@ -140,6 +98,17 @@ const HomeNavigator: React.FC = () => {
 };
 
 export default HomeNavigator;
+
+// navigation.setOptions({
+//   headerRight: () => (
+//     <DoneButton
+//       onPress={async () => {
+//         await saveNote();
+//         navigation.replace('Notes');
+//       }}
+//     />
+//   ),
+// });
 
 // options={({navigation}) => ({
 //   headerRight: (props) => {
@@ -187,6 +156,26 @@ export default HomeNavigator;
 //     // ...
 //   />
 // ),
+
+// const DrawerButton = () => {
+//   const navigation = useNavigation();
+//   return (
+//     <View style={{flexDirection: 'row'}}>
+//       <TouchableOpacity
+//         onPress={() => {
+//           // navigation.navigate('DrawerOpen');
+//           navigation.setOptions;
+//         }}>
+//         <Ionicons
+//           name="md-menu"
+//           style={someStyles.headerButton}
+//           size={24}
+//           color="#fff"
+//         />
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
 
 // FIXME:
 // console.log('try openDrawer...');

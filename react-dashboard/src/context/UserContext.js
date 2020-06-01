@@ -74,13 +74,18 @@ function loginUser(
   setError(false);
   setIsLoading(true);
 
+  console.log('UserContext: loginUser'); 
+  console.log(loginValue); 
+  console.log(passwordValue); 
+
   const userData = {
     email: loginValue,
     password: passwordValue
   };
 
+
   axios
-    .post("/login", userData)
+    .post("/signin", userData)
     .then(res => {
       console.log(res.data); //Auth token
       setAuthorizationHeader(res.data.token);

@@ -109,10 +109,10 @@ function signupUser(
   password: any,
   setLoading: any,
 ) {
-  console.log('* signupUser: ');
-  console.log('name: ' + name);
-  console.log('email: ' + email);
-  console.log('password: ' + password);
+  // console.log('* signupUser: ');
+  // console.log('name: ' + name);
+  // console.log('email: ' + email);
+  // console.log('password: ' + password);
   // TODO: set Errors (connection errors) 404, 500 etc...
   // setErrors(null);
   setLoading(true);

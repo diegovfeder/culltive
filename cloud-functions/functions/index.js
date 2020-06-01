@@ -59,20 +59,85 @@ app.post("/device", postDevice);
 // exports the above api to firebase cloud functions @ https://baseurl.com/api/
 exports.api = functions.https.onRequest(app);
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
 
-// Deploying Firebase Locally (https://firebase.google.com/docs/functions/local-emulator)
+// Trigger function when newReading is created @ readings collection
+exports.transposeReading = functions.firestore
+.document('readings/{readingsId}')
+.onCreate(async (snap, context) => {
+  const qrCode = snap.data().qrCode;
+  const air = snap.data().air;
+  const lumi = snap.data().lumi;
+  const soil = snap.data().soil;
+  const temp = snap.data().temp;
+  const ledState = snap.data().ledState;
+  const waterLevel = snap.data().waterLevel;
+  const waterPumpState = snap.data().waterPumpState;
+
+  //TODO: Verify if doc exists, catch error
+  await db
+    .doc(`devices/${qrCode}`)
+    .set({
+      air,
+      lumi,
+      soil,
+      temp,
+      ledState,
+      waterLevel,
+      waterPumpState
+    });
+
+  console.log('transposeReading');
+});
+
+// Trigger a function on user creation
+exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
+  // TODO: Send the email...
+
+});
+
+// Schedule function to run every 3 hours
+exports.scheduledFunction =
+functions.pubsub.schedule('every 3 hours').onRun((context) => {
+    console.log('This will be run every 3 hours daily')
+})
+
+
+
+// --------------------------------------------------------
+//               FIREBASE RELATED... well, ofc
+// --------------------------------------------------------
+// -- Deploying Firebase Locally (https://firebase.google.com/docs/functions/local-emulator)
 // cd functions
 // set GOOGLE_APPLICATION_CREDENTIALS=.\serviceAccountKey.json
 // cd ..
 // firebase serve
 //
-// // Javascript Email Validator Library
+// -- Javascript Email Validator Library
 // npm install validator
 // var validator = require('validator')
 // validator.isEmail('foo@bar.com')
+//
+// -- Create and Deploy Your First Cloud Functions
+// https://firebase.google.com/docs/functions/write-firebase-functions
+
+
+// --------------------------------------------------------
+//               THE FORGOTTHEN FUNCTIONS 
+// --------------------------------------------------------
+// exports.helloWorld = functions.https.onRequest((request, response) => {
+//  response.send("Hello from Firebase!");
+// });
+
+// -- Listen for changes in all documents in the 'users' collection
+// exports.userSomething = functions.firestore
+//     .document('user/{userId}')
+//     .onCreate((snap, context) => {
+//     // Get an object representing the document
+//     const newValue = snap.data();
+
+//     // access a particular field as you would any JS property
+//     const name = newValue.name;
+
+//     // perform desired operations ...
+
+//     });

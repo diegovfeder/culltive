@@ -15,6 +15,9 @@ import YouTube from "react-youtube";
 import logo from "../../images/culltive_logo_1500t.png";
 import logo_small from "../../images/culltive_small.jpeg";
 
+
+import axios from 'axios'
+
 // styles
 // import useStyles from "../styles";
 
@@ -120,6 +123,7 @@ function Copyright() {
 export default function Pricing() {
   const classes = useStyles();
   const history = useHistory();
+
 
   function _onReady(event) {
     // access to player in all event handlers via event.target
