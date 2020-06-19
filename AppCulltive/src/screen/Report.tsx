@@ -1,10 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
-import axios from 'axios';
 import api from 'axios';
+import axios from 'axios';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+// import tz from 'moment-timezone';
 
 // Components
 import MyCarousel from '../component/MyCarousel';
@@ -16,15 +19,37 @@ import AppNavigator from 'src/navigation/AppNavigator';
 const {height, width} = Dimensions.get('window');
 
 const Report: React.FC = () => {
+  moment.locale('pt-BR');
+  const timezone = 'America/Sao_Paulo';
+  const format = 'MMMM Do YYYY, h:mm:ss a';
+  // console.log(tz('America/Los_Angeles').format('ha z'));
+  // const dateMoment = moment.tz(date, format, timezone);
+
   const navigation = useNavigation();
+  const route = useRoute();
 
   const [loadingWeather, setLoadingWeather] = useState(true);
   const [city, setCity] = useState('');
   const [temperature, setTemperature] = useState('');
   const [weather, setWeather] = useState('');
+  const [fetchingError, setFetchingError] = useState(false);
 
   // TODO: feat (Calendar picker -> retrieve data from firestore for selected date)
   // const [calendarView, setCalendarView] = useState(false);
+
+  // const fetchLastReading = (key, device = 0) =>
+  //   fetch('/api/readings?device=' + device);
+
+  // const info = useQuery('todos', fetchLastReading);
+  // const {status, data, error} = useQuery('todos', fetchLastReading);
+
+  // if (status === 'loading') {
+  //   return <span>Loading...</span>;
+  // }
+
+  // if (status === 'error') {
+  //   return <span>Error: {error.message}</span>;
+  // }
 
   const today = new Date();
   const date =
@@ -35,12 +60,24 @@ const Report: React.FC = () => {
     today.getFullYear();
   const hours = today.getHours() + ':' + today.getMinutes();
 
+  //TODO: Weather Icons
+  // https://github.com/erikflowers/weather-icons
+  // https://gist.github.com/tbranyen/62d974681dea8ee0caa1
+
   useEffect(() => {
+    console.log(today.getHours() + ' : ' + today.getMinutes());
+    console.log(moment().format('LLL'));
+
     // TODO: getData from firestore // get data from weatherAPI
     // getDeviceStatus(dataDispatch);
     // getReadings(dataDispatch);
     // console.log(devices.data);
     // console.log(readings.data);
+
+    navigation.setOptions({gestureEnabled: false});
+    navigation.setOptions({swipeEnabled: false});
+    // route.state.index > 0 ? props.navigation.setOptions({ gestureEnabled: false }) : props.navigation.setOptions({ gestureEnabled: true })
+
     navigation.setOptions({
       title: 'Report',
       headerTitle: () => (
@@ -66,6 +103,7 @@ const Report: React.FC = () => {
       })
       .catch((err) => {
         setLoadingWeather(false);
+        setFetchingError(true);
         //TODO: Set another state to try to load data again // handle Error routine...
         console.log('OpenWeather: ERROR: ' + err);
       });
@@ -103,12 +141,16 @@ const Report: React.FC = () => {
     },
   ];
 
+  // style={{justifyContent: 'center', alignSelf: 'center'}}
   const weatherContainer = (
     <View
       style={{
-        marginVertical: 8,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 4,
         marginHorizontal: 16,
-        padding: 16,
+        padding: 8,
         backgroundColor: '#fff',
         shadowColor: '#000',
         shadowOffset: 5,
@@ -118,14 +160,43 @@ const Report: React.FC = () => {
         elevation: 5,
       }}>
       {loadingWeather ? (
-        <ActivityIndicator color={'#3ea341'} />
+        <View
+        // style={{margin: 48,}}
+        >
+          <ActivityIndicator
+            color={'#3ea341'}
+            style={{justifyContent: 'center'}}
+          />
+        </View>
+      ) : fetchingError ? (
+        <View
+          style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={[someStyles.h3, {fontSize: 20, textAlign: 'center'}]}>
+            Falha ao carregar informações
+          </Text>
+          <Text
+            style={[
+              someStyles.h3,
+              {marginVertical: 8, fontSize: 12, textAlign: 'center'},
+            ]}>
+            Verifique sua conexão com a internet.
+          </Text>
+        </View>
       ) : (
         <View>
-          <Text style={someStyles.h3}>
-            {city} - {hours}
+          <Text style={[someStyles.h3, {paddingVertical: 2, fontSize: 18}]}>
+            {city}
           </Text>
-          <Text style={someStyles.h2}>{temperature} ˚C</Text>
-          <Text style={someStyles.h3}>{weather}</Text>
+          <Text
+            style={[
+              someStyles.h3,
+              {fontSize: 14, paddingVertical: 4, textAlign: 'center'},
+            ]}>
+            {moment().format('LLL')}
+          </Text>
+          <Text style={[someStyles.h1, {fontSize: 32}]}>{temperature} ˚C</Text>
+          {/* TODO: WeatherIcons */}
+          {/* <Text style={[someStyles.h2, {alignSelf: 'center'}]}>{weather}</Text> */}
         </View>
       )}
     </View>
@@ -149,7 +220,12 @@ const Report: React.FC = () => {
       <Text style={[someStyles.h1, {alignSelf: 'flex-start', marginBottom: 2}]}>
         Sensores
       </Text>
-      <MyCarousel data={sensorData} />
+      <MyCarousel
+        onPress={() => {
+          console.log('MyCarousel onPress: ' + sensorData);
+        }}
+        data={sensorData}
+      />
     </View>
   );
 };

@@ -1,26 +1,30 @@
 import React, {useState, useEffect} from 'react';
 import {
-  Dimensions,
+  Alert,
   KeyboardAvoidingView,
   SafeAreaView,
   Text,
-  TouchableOpacity,
+  TouchableHighlight,
   View,
   ActivityIndicator,
 } from 'react-native';
 
+import {Input} from 'react-native-elements';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
-import {Input} from 'react-native-elements';
-
 // Hooks
-import {useUserDispatch, signupUser} from '../context/UserContext';
+import {
+  useUserDispatch,
+  useUserState,
+  signupUser,
+  clearErrors,
+} from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
+// Styles
 import {someStyles} from '../Styles';
 
-// TODO: handleError (signup)
 const Signup: React.FC = () => {
   console.log('-- Signup.tsx');
 
@@ -30,7 +34,38 @@ const Signup: React.FC = () => {
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  // const [errors, setErrors] = useState(null); // connection Errors coming from userContext
+
+  // TODO: handleError useUserCntext
+  let {errors} = useUserState();
+
+  useEffect(() => {
+    const _handleContextErrors = () => {
+      if (typeof errors === 'undefined' || errors === null) {
+        console.log('errors is undefiend or null// there is no error');
+        // return <></>;
+      } else {
+        console.log('errors is ' + errors);
+        Alert.alert(
+          'Ops...',
+          'Encontramos um problema durante a autenticação.',
+          // \nVerifique se digitou as credenciais corretamente e se possui conexão com a internet.
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                console.log('OK Pressed');
+                // errors = null;
+                clearErrors(userDispatch);
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+        // return <Text style={someStyles.textError}>{errors.message}</Text>;
+      }
+    };
+    return _handleContextErrors();
+  }, [errors]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -41,10 +76,6 @@ const Signup: React.FC = () => {
         </View>
       ),
     });
-    // if (_emailInput) {
-    //   // _emailInput.shake();
-    //   _emailInput.focus();
-    // }
   });
 
   return (
@@ -98,6 +129,10 @@ const Signup: React.FC = () => {
                 onBlur={handleBlur('name')}
                 errorStyle={{color: 'red'}}
                 errorMessage={errors.name ? errors.name : ''}
+                onSubmitEditing={() => {
+                  _emailInput.focus();
+                }}
+                blurOnSubmit={false}
               />
               <Input
                 ref={(component) => (_emailInput = component)}
@@ -108,6 +143,10 @@ const Signup: React.FC = () => {
                 onBlur={handleBlur('email')}
                 errorStyle={{color: 'red'}}
                 errorMessage={errors.email && touched.email ? errors.email : ''}
+                onSubmitEditing={() => {
+                  _passwordInput.focus();
+                }}
+                blurOnSubmit={false}
               />
               <Input
                 ref={(component) => (_passwordInput = component)}
@@ -120,17 +159,19 @@ const Signup: React.FC = () => {
                 errorMessage={
                   errors.password && touched.password ? errors.password : ''
                 }
+                onSubmitEditing={handleSubmit}
               />
-
-              <TouchableOpacity
+              <TouchableHighlight
                 onPress={handleSubmit}
-                style={someStyles.button}>
+                style={someStyles.button}
+                underlayColor="#3ea341"
+                activeOpacity={1}>
                 {loading ? (
                   <ActivityIndicator color={'white'} />
                 ) : (
                   <Text style={[someStyles.textButton]}>Continuar</Text>
                 )}
-              </TouchableOpacity>
+              </TouchableHighlight>
             </View>
           )}
         </Formik>

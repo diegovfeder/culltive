@@ -8,6 +8,8 @@ app.use(cors());
 
 const { db } = require("./util/admin");
 
+// const cityTimezones = require('city-timezones');
+
 // baseURL = "https://us-central1-culltive.cloudfunctions.net/api";
 
 // TODO: Create firebase functions calls for Hours / Days / Week readings
@@ -99,8 +101,29 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
 exports.scheduledFunction =
 functions.pubsub.schedule('every 3 hours').onRun((context) => {
     console.log('This will be run every 3 hours daily')
-})
+});
 
+
+//-----------------------------------------------
+// Testing Firebase Cloud GEOLOCATION
+//----------------------------------------------=
+// Handle the response within this function. It can be extended to include more data.
+function _geolocation(req, res) {
+  // res.header('Cache-Control','no-cache');
+
+  const data = {
+    country: req.headers["x-appengine-country"],
+    region: req.headers["x-appengine-region"],
+    city: req.headers["x-appengine-city"],
+    cityLatLong: req.headers["x-appengine-citylatlong"],
+    userIP: req.headers["x-appengine-user-ip"],
+    // cityData: cityTimezones.lookupViaCity(req.headers["x-appengine-city"])
+  }
+
+  res.json(data)
+};
+
+exports.geolocation = functions.https.onRequest(_geolocation);
 
 
 // --------------------------------------------------------
@@ -124,6 +147,22 @@ functions.pubsub.schedule('every 3 hours').onRun((context) => {
 // --------------------------------------------------------
 //               THE FORGOTTHEN FUNCTIONS 
 // --------------------------------------------------------
+// // Options when not using the whitelist.
+// const corsOptions = {
+//   origin: true
+// }
+
+// // Export the cloud function.
+// exports.geolocation = (req, res) => {
+//   const corsHandler = cors(corsOptions);
+
+//   return corsHandler(req, res, function() {
+//     return _geolocation(req, res);
+//   });
+// };
+
+// exports.geolocation = functions.https.onRequest(app);
+
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="341" height="340" viewBox="0 0 341 340">
+  <defs>
+    <filter id="Ellipse_2" x="0" y="0" width="341" height="340" filterUnits="userSpaceOnUse">
+      <feOffset dy="5" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_76" data-name="Group 76" transform="translate(-17 -241)">
+    <g transform="matrix(1, 0, 0, 1, 17, 241)" filter="url(#Ellipse_2)">
+      <g id="Ellipse_2-2" data-name="Ellipse 2" transform="translate(15 10)" fill="#f6f7f8" stroke="#707070" stroke-width="1">
+        <ellipse cx="155.5" cy="155" rx="155.5" ry="155" stroke="none"/>
+        <ellipse cx="155.5" cy="155" rx="155" ry="154.5" fill="none"/>
+      </g>
+    </g>
+    <text id="C" transform="translate(179 496)" fill="#3ea341" font-size="250" font-family="Montserrat-Bold, Montserrat" font-weight="700"><tspan x="-91.5" y="0">C</tspan></text>
+  </g>
+</svg>

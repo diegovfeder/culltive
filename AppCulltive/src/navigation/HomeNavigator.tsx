@@ -1,25 +1,27 @@
 import React from 'react';
 import {
-  Button,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
   Text,
+  TouchableHighlight,
+  TouchableOpacity,
   View,
+  TouchableNativeFeedback,
 } from 'react-native';
 
 // Hooks
 import {useUserDispatch, signOut} from '../context/UserContext';
-import {useNavigation} from '@react-navigation/native';
 
+// Navigation
+import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 
-// Screens
+// Navigators || Screens
+// import {DrawerButton} from './DrawerNavigator';
+import PairNavigator from './PairNavigator';
 import Home from '../screen/Home';
 import Report from '../screen/Report';
 import Chart from '../screen/Chart';
 
-// Icons
+// Assets
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Styles
@@ -27,28 +29,28 @@ import {someStyles} from '../Styles';
 
 const Stack = createStackNavigator();
 
-const DrawerButton = (props: any) => {
-  return (
-    <View style={{flexDirection: 'row'}}>
-      <TouchableOpacity
-        onPress={() => {
-          props.navigation.toggleDrawer();
-        }}>
-        <Ionicons
-          name="md-menu"
-          style={someStyles.headerButton}
-          size={24}
-          color="#fff"
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
 const HomeNavigator: React.FC = () => {
   console.log('-- HomeNavigator.tsx');
 
   const navigation = useNavigation();
+
+  const DrawerButton = (props: any) => {
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.dispatch(DrawerActions.openDrawer());
+          }}>
+          <Ionicons
+            name="md-menu"
+            style={someStyles.headerButton}
+            size={24}
+            color="#fff"
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <Stack.Navigator
@@ -76,8 +78,13 @@ const HomeNavigator: React.FC = () => {
               <Text style={someStyles.headerTitle}>Inicio</Text>
             </View>
           ),
-          headerLeft: () => <DrawerButton navigation={navigation} />,
+          headerLeft: () => <DrawerButton />,
         })}
+      />
+      <Stack.Screen
+        name="PairNavigator"
+        component={PairNavigator}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="Report"
@@ -98,203 +105,3 @@ const HomeNavigator: React.FC = () => {
 };
 
 export default HomeNavigator;
-
-// navigation.setOptions({
-//   headerRight: () => (
-//     <DoneButton
-//       onPress={async () => {
-//         await saveNote();
-//         navigation.replace('Notes');
-//       }}
-//     />
-//   ),
-// });
-
-// options={({navigation}) => ({
-//   headerRight: (props) => {
-//     return (
-//       <Button
-//         title={'oi'}
-//         onPress={() => navigation.toggleDrawer()}></Button>
-//     );
-//   },
-// })}
-
-// headerRight: () => (
-//   <Ionicons
-//     name="ios-information-circle"
-//     style={someStyles.headerButton}
-//     size={24}
-//     color="#fff"
-//     onPress={() => alert('Info Button')}
-//   />
-// ),
-
-//  headerLeft: <DrawerButton navigation={navigation} />,
-
-// <Ionicons
-//   name="md-menu"
-//   style={someStyles.headerButton}
-//   size={24}
-//   color="#fff"
-//   onPress={() => {
-//     navigation.navigate('DrawerOpen');
-//     // navigation.toggleDrawer();
-//   }}
-// />
-
-// headerRight: () => (
-//   <Ionicons
-//     name="ios-calendar"
-//     style={someStyles.headerButton}
-//     size={24}
-//     color="#fff"
-//     onPress={() => alert('Calendar Button')}
-//     // TODO: contextData / contextApp / contextUI / ??
-//     // setCalendarView(true) in ReportScreen
-//     // create an access to Report child component being able to change its state
-//     // ...
-//   />
-// ),
-
-// const DrawerButton = () => {
-//   const navigation = useNavigation();
-//   return (
-//     <View style={{flexDirection: 'row'}}>
-//       <TouchableOpacity
-//         onPress={() => {
-//           // navigation.navigate('DrawerOpen');
-//           navigation.setOptions;
-//         }}>
-//         <Ionicons
-//           name="md-menu"
-//           style={someStyles.headerButton}
-//           size={24}
-//           color="#fff"
-//         />
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// FIXME:
-// console.log('try openDrawer...');
-// navigation.openDrawer();
-// console.log('nice!');
-
-// const DrawerButton = (props: any) => {
-//   return (
-//     <View>
-//       <TouchableOpacity
-//         onPress={() => {
-//           navigation.setOptions
-//         }}>
-//         <Ionicons
-//           name="md-menu"
-//           style={someStyles.headerButton}
-//           size={24}
-//           color="#fff"
-//           // onPress={() => {
-//           //   // navigation.navigate('DrawerOpen');
-//           //   props.navigation.toggleDrawer();
-//           // }}
-//         />
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// Styles for a subTitle in the header
-/*<Text
-  style={
-    (someStyles.headerSubtitle,
-    {
-      color: '#FFF',
-      fontWeight: '300',
-      fontSize: 14,
-    })
-  }>
-  Acacia Imperial
-</Text>*/
-
-// const Drawer = createDrawerNavigator();
-
-// props.navigation.closeDrawer()
-// FIXME: Drawer navigator somehow was creating the Invalid hook call error
-// function CustomDrawerContent(props) {
-//   var userDispatch = useUserDispatch();
-//   return (
-//     <DrawerContentScrollView {...props}>
-//       <DrawerItemList {...props} />
-//       <DrawerItem
-//         label="Signout"
-//         onPress={() => {
-//           signOut(userDispatch);
-//         }}
-//       />
-//     </DrawerContentScrollView>
-//   );
-// }
-
-// function DrawerNavigator() {
-//   return (
-//     <Drawer.Navigator
-//       drawerType={Dimensions.get('window').width > 900 ? 'permanent' : 'front'}
-//       drawerContentOptions={{
-//         activeTintColor: '#3ea341',
-//       }}
-//       drawerContent={(props) => <CustomDrawerContent {...props} />}>
-//       <Drawer.Screen name="Home" component={Home} />
-//       <Drawer.Screen name="Settings" component={Settings} />
-//     </Drawer.Navigator>
-//   );
-// }
-
-// const config = {
-//   animation: 'spring',
-//   config: {
-//     stiffness: 1000,
-//     damping: 50,
-//     mass: 3,
-//     overshootClamping: false,
-//     restDisplacementThreshold: 0.01,
-//     restSpeedThreshold: 0.01,
-//   },
-// };
-//
-// const closeConfig = {
-//   animation: 'timing',
-//   config: {
-//     duration: 500,
-//     easing: Easing.linear,
-//   },
-// };
-
-// options={(props) => {
-//   return {
-//     headerStyle: {
-//       backgroundColor: '#00a5f0',
-//     },
-//     headerTintColor: '#ffffff',
-//     headerTitleStyle: {
-//       fontWeight: 'bold',
-//     },
-//     headerLeftContainerStyle: {},
-//     headerLeft: (
-//       <TouchableOpacity
-//         onPress={() => props.navigation.openDrawer()}
-//         style={{
-//           flex: 1,
-//           width: 49,
-//           height: 20,
-//           alignItems: 'center',
-//           justifyContent: 'center',
-//           backgroundColor: 'transparent',
-//         }}
-//         title="X"
-//         color="#fff">
-//         <Ionicons name="md-menu" />
-//       </TouchableOpacity>
-//     ),
-//   };
-// }}

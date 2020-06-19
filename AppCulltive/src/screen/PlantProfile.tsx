@@ -17,7 +17,7 @@ import * as Yup from 'yup';
 
 // Hooks
 import {useDataDispatch} from '../context/DataContext';
-import {useDeviceDispatch, setPaired} from '../context/DeviceContext';
+import {useDeviceDispatch, setDeviceToken} from '../context/DeviceContext';
 import {useNavigation} from '@react-navigation/native';
 
 // Components
@@ -38,17 +38,6 @@ const PlantProfile: React.FC = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  // TODO: Function post / create plant profile @ firestore / async
-  const _storePaired = async (value) => {
-    try {
-      console.log('_storePaired: ' + value);
-      // JSON Object multiSet
-      AsyncStorage.setItem('@PAIR', value);
-    } catch (e) {
-      console.log(e.error);
-    }
-  };
-
   return (
     <SafeAreaView
       style={{
@@ -63,9 +52,9 @@ const PlantProfile: React.FC = () => {
           plantName: Yup.string().required('*Obrigatório'),
         })}
         onSubmit={(values) => {
-          _storePaired(true);
-          setPaired(deviceDispatch);
-          // setPaired == true // serPlantName...
+          // _storePaired(true);
+          // setDeviceToken(deviceDispatch);
+          // setDeviceToken == true // serPlantName...
           // navigation.navigate('ConnectDevice');
         }}>
         {({

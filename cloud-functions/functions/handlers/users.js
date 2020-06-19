@@ -97,11 +97,11 @@ exports.signin = (req, res) => {
     .catch(err => {
       console.error(err);
       if (err.code === "auth/user-not-found") {
-        return res.status(403).json({
+        return res.status(404).json({
           general: "Wrong credentials, please try again"
         });
       } else if (err.code === "auth/wrong-password") {
-        return res.status(403).json({
+        return res.status(401).json({
           general: "Wrong password, please try again"
         });
       } else {
@@ -112,7 +112,6 @@ exports.signin = (req, res) => {
     });
 };
 
-// get all users
 exports.getAllUsers = (req, res) => {
   db.collection("users")
     .get()

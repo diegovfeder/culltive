@@ -19,7 +19,6 @@ import useStyles from "./styles";
 
 // logo
 import logo from "../../images/culltive_logo_1500t.png";
-// import logo from "../../images/planet-earth.png";
 
 // context
 import {
@@ -61,7 +60,7 @@ const Login = props => {
             centered
           >
             <Tab label="Sign In" classes={{ root: classes.tab }} />
-            <Tab label="Sign Up" classes={{ root: classes.tab }} />
+            {/* <Tab label="Sign Up" classes={{ root: classes.tab }} /> */}
           </Tabs>
           {/*SIGN IN TAB*/}
           {activeTabId === 0 && (

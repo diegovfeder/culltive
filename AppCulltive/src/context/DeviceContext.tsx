@@ -23,11 +23,10 @@ function DeviceProvider({children}) {
 
 function deviceReducer(state, action) {
   switch (action.type) {
-    case 'SET_PAIRED':
-      console.log('DeviceContext: deviceReducer: SET_PAIRED');
+    case 'VALIDATE_TOKEN':
       return {
         ...state,
-        paired: true,
+        paired: !!action.token,
       };
     case 'GET_DEVICE':
       return {
@@ -44,6 +43,13 @@ function deviceReducer(state, action) {
     }
   }
 }
+// case 'SET_DEVICE_TOKEN':
+//   console.log('DeviceContext: deviceReducer: SET_DEVICE_TOKEN');
+//   console.log('pairState: action.payload = ' + action.payload);
+//   return {
+//     ...state,
+//     paired: action.payload,
+//   };
 
 function useDeviceState() {
   var context = useContext(DeviceStateContext);
@@ -66,7 +72,9 @@ export {
   useDeviceState,
   useDeviceDispatch,
   getDeviceData,
-  setPaired,
+  deleteDevice,
+  validateDeviceToken,
+  waterPump,
 };
 // ###########################################################
 
@@ -86,10 +94,34 @@ function getDeviceData(dispatch) {
     .catch((err) => console.log('DeviceContext: getDeviceData: ERROR: ' + err));
 }
 
-function setPaired(dispatch) {
-  dispatch({type: 'SET_PAIRED'});
+// TODO: Finish this function -- delete device by id
+function deleteDevice(dispatch) {
+  // dispatch({ type: LOADING_Device });
+  // .get(`/Device/${diegovfeder@gmail.com}`)
+  axios
+    .delete('/device/culltive000')
+    .then((res) => {
+      console.log('getDevice: ' + JSON.stringify(res));
+      dispatch({
+        type: 'GET_DEVICE',
+        payload: res.data,
+      });
+    })
+    .catch((err) => console.log('DeviceContext: getDeviceData: ERROR: ' + err));
 }
-// setAuthorizationHeader(res.data.token); // ???
+
+// const storeDeviceToken = async (value) => {
+//   try {
+//     console.log('storeDeviceToken: ' + value);
+//     AsyncStorage.setItem('@deviceToken', value);
+//   } catch (e) {
+//     console.log(e.error);
+//   }
+// };
+
+function validateDeviceToken(dispatch, deviceToken) {
+  dispatch({type: 'VALIDATE_TOKEN', token: deviceToken});
+}
 
 function waterPump(dispatch, setLoading) {
   setLoading(true);
@@ -97,6 +129,8 @@ function waterPump(dispatch, setLoading) {
     dispatch({type: 'WATER_PUMP'});
   }, 2000);
 }
+
+// setAuthorizationHeader(res.data.token); // ???
 
 // function validateDeviceToken(dispatch, deviceToken) {
 //   dispatch({type: 'VALIDATE_DEVICE_TOKEN', token: deviceToken});

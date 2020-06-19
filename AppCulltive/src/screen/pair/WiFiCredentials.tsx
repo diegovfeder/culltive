@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -17,15 +18,16 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 
 // Hooks
-import {useDataDispatch} from '../context/DataContext';
+import {useDataDispatch} from '../../context/DataContext';
+import {useUserState} from '../../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
 // Components
-import InputTextField from '../component/InputTextField';
+import InputTextField from '../../component/InputTextField';
 import {Input} from 'react-native-elements';
 
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../Styles';
 
 const WiFiCredentials: React.FC = () => {
   console.log('-- WiFiCredentials.tsx');
@@ -36,24 +38,8 @@ const WiFiCredentials: React.FC = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  const _storeData = async (values) => {
-    try {
-      console.log('_storeData: ' + values.ssid + ' - ' + values.password);
-      const items = [
-        ['@ssid', values.ssid],
-        ['@password', values.password],
-        ['@user', 'getUserFromContext'], //// FIXME: change to useDataContext -> getUserData
-      ];
-      // JSON Object multiSet
-      AsyncStorage.setItem('@WIFI', JSON.stringify(items));
-      // std multiSet from lib
-      AsyncStorage.multiSet(items, () => {
-        //to do something
-      });
-    } catch (e) {
-      console.log(e.error);
-    }
-  };
+  let {user} = useUserState();
+  console.log('user = ' + user);
 
   return (
     <SafeAreaView
@@ -70,11 +56,13 @@ const WiFiCredentials: React.FC = () => {
           password: Yup.string().required('*Obrigatório'),
         })}
         onSubmit={(values) => {
+          // const props = JSON.stringify({...values, })
           // TODO: if all wi-fi data is validated (ssid and password verifies)
           // save data to asyncStorage,
-          _storeData(values);
+          // _storeData(values);
           // navigate to select device / device finder / connect to soft ap Wi-Fi
-          navigation.navigate('ConnectDevice');
+          console.log('values: ' + JSON.stringify(values));
+          navigation.navigate('ConnectionHandshake', values);
         }}>
         {({
           handleChange,
@@ -108,6 +96,10 @@ const WiFiCredentials: React.FC = () => {
                   onBlur={handleBlur('ssid')}
                   errorStyle={{color: 'red'}}
                   errorMessage={errors.ssid ? errors.ssid : ''}
+                  onSubmitEditing={() => {
+                    _passwordInput.focus();
+                  }}
+                  blurOnSubmit={false}
                 />
                 <Input
                   ref={(component) => (_passwordInput = component)}
@@ -119,18 +111,21 @@ const WiFiCredentials: React.FC = () => {
                   errorMessage={
                     errors.password && touched.password ? errors.password : ''
                   }
-                  secureTextEntry={true}
+                  onSubmitEditing={handleSubmit}
+                  // secureTextEntry={true}
                 />
               </View>
             </View>
-            <TouchableOpacity
+            <TouchableHighlight
+              underlayColor="#3ea341"
+              activeOpacity={1}
               style={[
                 someStyles.button,
                 {position: 'absolute', bottom: 0, width: '100%'},
               ]}
               onPress={handleSubmit}>
               <Text style={someStyles.textButton}>Continuar</Text>
-            </TouchableOpacity>
+            </TouchableHighlight>
           </KeyboardAvoidingView>
         )}
       </Formik>
@@ -138,27 +133,4 @@ const WiFiCredentials: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({});
-
 export default WiFiCredentials;
-
-// const storeWiFiCredentials = async () => {
-//   try {
-//     await AsyncStorage.multiSet([['TECHNO', 'MELODICO'], ['k2', 'val2']], cb);
-//     ('@DeviceToken', 'culltiveXXX');
-//   } catch (e) {
-//     console.log(e.error);
-//   }
-// };
-
-// async function storeWiFiCredentials(values) {
-//   try {
-//     console.log('WiFiCredentials: ' + values);
-//     await AsyncStorage.multiSet([
-//       ['@ssid', values.ssid],
-//       ['@password', values.password],
-//     ]);
-//   } catch (e) {
-//     console.log(e.error);
-//   }
-// }

@@ -1,39 +1,38 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   ActivityIndicator,
-  Button,
-  Dimensions,
+  Alert,
   KeyboardAvoidingView,
-  Linking,
   SafeAreaView,
   Text,
-  TextInput,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
 
+import {Input} from 'react-native-elements';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
 // Hooks
-import {useFirebaseDispatch, resetPassword} from '../context/FirebaseContext';
-import {useUserDispatch, signinUser} from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
+import {
+  useUserDispatch,
+  useUserState,
+  signinUser,
+  clearErrors,
+} from '../context/UserContext';
+import {useFirebaseDispatch, resetPassword} from '../context/FirebaseContext';
 
 // Components
-import Logo from '../component/Logo'; //TODO: create & change to assets
-import {Input} from 'react-native-elements';
 import ForgotPasswordModal from '../component/ForgotPasswordModal';
-import EmailSentModal from '../component/EmailSentModal';
+// TODO: Finish emailSent / forgotPassword state process
+// import EmailSentModal from '../component/EmailSentModal';
 
 // Styles
 import {someStyles} from '../Styles';
 
-// TODO: Linking openURL && openSettings
-// const supportedURL = 'https://google.com';
-// const unsupportedURL = 'slack://open?team=123456';
-
-// TODO: Fix modalState. maybe embbed code from import
+//TODO: Timeout and retry signIn()
 const Signin: React.FC = () => {
   console.log('-- Signin.tsx');
 
@@ -41,9 +40,44 @@ const Signin: React.FC = () => {
   let _passwordInput;
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
-  const [modalState, setModalState] = useState(false); //FIXME: odd state res
   const [loading, setLoading] = useState(false);
-  // const [errors, setErrors] = useState(null); // connection Errors coming from userContext
+
+  //FIXME: handle modal state using context
+  const [modalState, setModalState] = useState(false);
+
+  let {errors} = useUserState();
+
+  useEffect(() => {
+    const _handleContextErrors = () => {
+      if (typeof errors === 'undefined' || errors === null) {
+        console.log('errors is undefiend or null// there is no error');
+        // return <></>;
+      } else {
+        console.log('errors is ' + errors);
+        Alert.alert(
+          'Ops...',
+          'Encontramos um problema durante a autenticação.',
+          // \nVerifique se digitou as credenciais corretamente e se possui conexão com a internet.
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                console.log('OK Pressed');
+                // errors = null;
+                clearErrors(userDispatch);
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+        // return <Text style={someStyles.textError}>{errors.message}</Text>;
+      }
+    };
+    return _handleContextErrors();
+  }, [errors]);
+
+  //TODO: handle authentication errors from userContext
+  // const [errors, setErrors] = useState(null);
 
   useEffect(() => {
     navigation.setOptions({
@@ -54,10 +88,6 @@ const Signin: React.FC = () => {
         </View>
       ),
     });
-    // if (_emailInput) {
-    //   // _emailInput.shake();
-    //   _emailInput.focus();
-    // }
   });
 
   return (
@@ -102,6 +132,10 @@ const Signin: React.FC = () => {
                 onBlur={handleBlur('email')}
                 errorStyle={{color: 'red'}}
                 errorMessage={errors.email ? errors.email : ''}
+                onSubmitEditing={() => {
+                  _passwordInput.focus();
+                }}
+                blurOnSubmit={false}
               />
               <Input
                 ref={(component) => (_passwordInput = component)}
@@ -114,29 +148,40 @@ const Signin: React.FC = () => {
                   errors.password && touched.password ? errors.password : ''
                 }
                 secureTextEntry={true}
+                onSubmitEditing={handleSubmit}
               />
 
+              {/* TODO: handleErrors from Context -> auth response */}
+              {/* <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}> */}
+              {/* {_handleContextErrors()} */}
               <TouchableOpacity
-                style={{justifyContent: 'center', alignSelf: 'flex-end'}}
+                style={{justifyContent: 'flex-end', alignSelf: 'flex-end'}}
                 onPress={() => {
                   setModalState(!modalState);
                 }}>
                 <Text style={someStyles.textLink}>Esqueceu sua senha?</Text>
               </TouchableOpacity>
+              {/* </View> */}
 
               <ForgotPasswordModal modalState={modalState} />
-              {/* // TODO: Finish forgot password - send email flow*/}
+              {/* TODO: Finish firebaseForgotPassword mehtod and modal activity progress*/}
               {/*<EmailSentModal modalState={!modalState} />*/}
 
-              <TouchableOpacity
+              <TouchableHighlight
+                onPress={handleSubmit}
                 style={someStyles.button}
-                onPress={handleSubmit}>
+                underlayColor="#3ea341"
+                activeOpacity={1}>
                 {loading ? (
                   <ActivityIndicator color={'white'} />
                 ) : (
                   <Text style={[someStyles.textButton]}>Continuar</Text>
                 )}
-              </TouchableOpacity>
+              </TouchableHighlight>
             </View>
           )}
         </Formik>

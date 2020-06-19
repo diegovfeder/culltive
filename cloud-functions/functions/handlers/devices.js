@@ -87,7 +87,7 @@ exports.postDevice = (req, res) => {
         body: 'Device ' + newDevice.qrCode + ' created successfully'
       });
     })
-    .catch(err => {
+    .catch(err => { 
       console.error(err);
       if (err.code === "auth/device-already-created") {
         return res.status(400).json({
