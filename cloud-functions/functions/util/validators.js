@@ -24,11 +24,6 @@ exports.validateSignupData = data => {
 
   if (isEmpty(data.password)) errors.password = "Must not be empty";
 
-  // FIXME: Taken out, app singup only requires Name / Email / Password
-  // if (data.password !== data.confirmPassword)
-  //   errors.confirmPassword = "Passwords must match";
-  // if (isEmpty(data.handle)) errors.handle = "Must not be empty";
-
   return {
     errors,
     valid: Object.keys(errors).length === 0 ? true : false

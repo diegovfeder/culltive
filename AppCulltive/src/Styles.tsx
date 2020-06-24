@@ -1,13 +1,13 @@
 import React from 'react';
 import {StyleSheet, Dimensions} from 'react-native';
 
-import {
-  material,
-  human,
-  iOSUIKit,
-  iOSColors,
-  systemWeights,
-} from 'react-native-typography';
+// import {
+//   material,
+//   human,
+//   iOSUIKit,
+//   iOSColors,
+//   systemWeights,
+// } from 'react-native-typography';
 
 export const someStyles = StyleSheet.create({
   primary: {
@@ -100,10 +100,27 @@ export const someStyles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
+  text: {
+    fontSize: 20,
+    fontFamily: 'Montserrat-Bold',
+    color: '#FFFFFF',
+  },
+
   textButton: {
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
     color: '#fff',
+  },
+  textError: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: '#E24F32',
+    textDecorationLine: 'underline',
+  },
+  textGreen: {
+    fontSize: 20,
+    fontFamily: 'Montserrat-Bold',
+    color: '#3cbc40',
   },
   textLink: {
     fontSize: 12,

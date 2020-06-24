@@ -8,104 +8,159 @@ app.use(cors());
 
 const { db } = require("./util/admin");
 
-// baseURL = "https://us-central1-culltive.cloudfunctions.net/api";
-
-// TODO: Create firebase functions calls for Hours / Days / Week readings
-// organizing data for UI
-
-// Readings routes
-const { getAllReadings, postNewReading } = require("./handlers/readings");
-
-app.get("/readings", getAllReadings);
-app.post("/reading", postNewReading);
+const fs = require('fs'); 
+const path = require('path'); 
+const nodemailer = require('nodemailer');
 
 // User routes
 const {
   signup,
   signin,
-  getAllUsers,
-  getUser
-
-  // uploadImage,
-  // addUserDetails,
-  // getAuthenticatedUser,
-  // markNotificationsRead
+  getUsers,
+  getUser,
 } = require("./handlers/users");
 
 app.post("/signup", signup);
 app.post("/signin", signin);
-app.get("/users", getAllUsers);
-app.get("/user/:userId", getUser);
-// app.post("/user/image", FBAuth, uploadImage);
-// app.post("/user", FBAuth, addUserDetails);
-// app.get("/user", FBAuth, getAuthenticatedUser);
-// app.get("/user/:handle", getUserDetails);
-// app.post("/notifications", FBAuth, markNotificationsRead);
+app.get("/users", FBAuth, getUsers);
+app.get("/user/:userId", FBAuth, getUser);
+
 
 // Device routes
 const {
   getDevices,
   getDevice,
   postDevice,
-
-  // deleteDevice,
+  deleteDevice,
 } = require("./handlers/devices");
 
 app.get("/devices", getDevices);
 app.get("/device/:deviceId", getDevice);
-app.post("/device", postDevice);
-// app.delete("/device/:deviceId", FBAuth, deleteDevice);
+app.post("/device", postDevice);  
+app.delete("/device/:deviceId", FBAuth, deleteDevice);
 
-// exports the above api to firebase cloud functions @ https://baseurl.com/api/
+
+// Reading sensor routes
+const { getReadings, getLastReading, postReading } = require("./handlers/readings");
+const { error } = require("util");
+
+app.get("/readings", getReadings);
+app.get("/reading/:deviceId", getLastReading);
+app.post("/reading", postReading);
+
+
 exports.api = functions.https.onRequest(app);
+// baseURL = "https://us-central1-culltive.cloudfunctions.net/api";
 
 
-// Trigger function when newReading is created @ readings collection
-exports.transposeReading = functions.firestore
-.document('readings/{readingsId}')
-.onCreate(async (snap, context) => {
-  const qrCode = snap.data().qrCode;
-  const air = snap.data().air;
-  const lumi = snap.data().lumi;
-  const soil = snap.data().soil;
-  const temp = snap.data().temp;
-  const ledState = snap.data().ledState;
-  const waterLevel = snap.data().waterLevel;
-  const waterPumpState = snap.data().waterPumpState;
+//---------------------------------------------------------------
+// TRIGGERS // SCHEDULER // NOT API RELATED CLOUD FUNCTIONS //
+//--------------------------------------------------------------
 
-  //TODO: Verify if doc exists, catch error
-  await db
-    .doc(`devices/${qrCode}`)
-    .set({
-      air,
-      lumi,
-      soil,
-      temp,
-      ledState,
-      waterLevel,
-      waterPumpState
+
+
+// Listen for new document created in the 'devices' collection
+exports.tieDeviceToUser = functions.firestore
+    .document('devices/{deviceId}')
+    .onCreate((snap, context) => {
+      console.log('tieDeviceToUser');
+
+      // Get an object representing the document
+      const newDevice = snap.data();
+
+      // perform desired operations ...
+      db.doc(`/users/${newDevice.user}`)
+        .get()
+        .then(doc => {
+          if (!doc.exists) {
+            return res.status(404).json({
+              error: "User not found"
+            });
+          }
+          return doc.update({device: `${newDevice.deviceId}`})
+        })
+        .then(() => {
+          console.log("Document successfully updated!");
+        })
+        .catch(err => {
+            // The document probably doesn't exist.
+            console.error("Error updating document: ", err);
+        });
     });
 
-  console.log('transposeReading');
+
+// Trigger a welcomeEmail function on user creation
+//FIXME: https://softauthor.com/firebase-functions-send-email/
+// Error: Process exited with code 16
+//     at process.on.code (/layers/google.nodejs.functions-framework/functions-framework/node_modules/@google-cloud/functions-framework/build/src/invoker.js:396:29)
+//     at process.emit (events.js:198:13)
+//     at process.EventEmitter.emit (domain.js:448:20)
+//     at process.exit (internal/process/per_thread.js:168:15)
+//     at logAndSendError (/layers/google.nodejs.functions-framework/functions-framework/node_modules/@google-cloud/functions-framework/build/src/invoker.js:184:9)
+//     at process.on.err (/layers/google.nodejs.functions-framework/functions-framework/node_modules/@google-cloud/functions-framework/build/src/invoker.js:393:13)
+//     at process.emit (events.js:198:13)
+//     at process.EventEmitter.emit (domain.js:448:20)
+//     at emitPromiseRejectionWarnings (internal/process/promises.js:140:18)
+//     at process._tickCallback (internal/process/next_tick.js:69:34) 
+
+const welcomePath = path.join(__dirname, 'public', 'welcome.html');
+var htmlmail = fs.readFileSync(welcomePath,"utf-8").toString();
+
+const gmailEmail = "culltiveme@gmail.com";
+const gmailPassword = "W_project";
+const mailTransport = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: gmailEmail,
+    pass: gmailPassword,
+  },
 });
 
-// Trigger a function on user creation
 exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
-  // TODO: Send the email...
+  const recipent_email = user.email; 
+   
+  const mailOptions = {
+      from: '"Culltive" <culltiveme@gmail.com>',
+      to: recipent_email,
+      subject: 'Bem vindo a Culltive!',
+      html: htmlmail,
+  };
 
+  try {
+    mailTransport.sendMail(mailOptions);
+    console.log('mail sent');
+  } catch(error) {
+    console.error('There was an error while sending the email:', error);
+  }
+
+  return null; 
 });
 
-// Schedule function to run every 3 hours
-exports.scheduledFunction =
-functions.pubsub.schedule('every 3 hours').onRun((context) => {
-    console.log('This will be run every 3 hours daily')
-})
+// Handle the response within this function. It can be extended to include more data.
+function _geolocation(req, res) {
+  // res.header('Cache-Control','no-cache');
+  const data = {
+    country: req.headers["x-appengine-country"],
+    region: req.headers["x-appengine-region"],
+    city: req.headers["x-appengine-city"],
+    cityLatLong: req.headers["x-appengine-citylatlong"],
+    userIP: req.headers["x-appengine-user-ip"],
+    // cityData: cityTimezones.lookupViaCity(req.headers["x-appengine-city"])
+  }
 
+  res.json(data)
+};
+
+exports.geolocation = functions.https.onRequest(_geolocation);
 
 
 // --------------------------------------------------------
 //               FIREBASE RELATED... well, ofc
 // --------------------------------------------------------
+// -- DEPLOY
+// cd culltive/cloud-functions
+// firebase deploy --only functions 
+//
 // -- Deploying Firebase Locally (https://firebase.google.com/docs/functions/local-emulator)
 // cd functions
 // set GOOGLE_APPLICATION_CREDENTIALS=.\serviceAccountKey.json
@@ -124,20 +179,52 @@ functions.pubsub.schedule('every 3 hours').onRun((context) => {
 // --------------------------------------------------------
 //               THE FORGOTTHEN FUNCTIONS 
 // --------------------------------------------------------
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
+// // Options when not using the whitelist.
+// const corsOptions = {
+//   origin: true
+// }
+
+// // Export the cloud function.
+// exports.geolocation = (req, res) => {
+//   const corsHandler = cors(corsOptions);
+//   return corsHandler(req, res, function() {
+//     return _geolocation(req, res);
+//   });
+// };
+// exports.geolocation = functions.https.onRequest(app);
+
+
+// Trigger function when newReading is created @ readings collection
+// exports.transposeReading = functions.firestore
+// .document('readings/{readingsId}')
+// .onCreate(async (snap, context) => {
+//   const deviceId = snap.data().deviceId;
+//   const air = snap.data().air;
+//   const lumi = snap.data().lumi;
+//   const soil = snap.data().soil;
+//   const temp = snap.data().temp;
+//   const ledState = snap.data().ledState;
+//   const waterLevel = snap.data().waterLevel;
+//   const waterPumpState = snap.data().waterPumpState;
+
+//   //TODO: Verify if doc exists, catch error
+//   await db
+//     .doc(`devices/${qrCode}`)
+//     .set({
+//       air,
+//       lumi,
+//       soil,
+//       temp,
+//       ledState,
+//       waterLevel,
+//       waterPumpState
+//     });
+
+//   console.log('transposeReading');
 // });
 
-// -- Listen for changes in all documents in the 'users' collection
-// exports.userSomething = functions.firestore
-//     .document('user/{userId}')
-//     .onCreate((snap, context) => {
-//     // Get an object representing the document
-//     const newValue = snap.data();
-
-//     // access a particular field as you would any JS property
-//     const name = newValue.name;
-
-//     // perform desired operations ...
-
-//     });
+// Schedule function to run every 3 hours
+// exports.scheduledFunction =
+// functions.pubsub.schedule('every 3 hours').onRun((context) => {
+//     console.log('This will be run every 3 hours daily')
+// });

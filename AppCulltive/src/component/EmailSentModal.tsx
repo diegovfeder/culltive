@@ -1,24 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {
-  ActivityIndicator,
-  Button,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import * as Svg from 'react-native-svg';
 
 // Components
-import {Input} from 'react-native-elements';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Space from '../component/Space';
 
 // Assets
 import EmailUndraw from '../../assets/undraw/mail.svg';
@@ -49,7 +37,7 @@ const EmailSentModal: React.FC = (props) => {
       transparent={true}
       visible={modalState}
       onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
+        console.log('TODO: handlCloseModal');
       }}>
       <View style={someStyles.modalView}>
         {closeIcon}
@@ -74,7 +62,9 @@ const EmailSentModal: React.FC = (props) => {
                 .email('Email inválido')
                 .required('*Obrigatório'),
             })}
-            onSubmit={(values) => alert(JSON.stringify(values))}>
+            onSubmit={(values) =>
+              console.log('TODO: firebaseForgotPassword - email form')
+            }>
             {({
               handleChange,
               handleBlur,
@@ -101,7 +91,5 @@ const EmailSentModal: React.FC = (props) => {
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default EmailSentModal;

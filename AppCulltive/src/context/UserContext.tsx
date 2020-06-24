@@ -1,9 +1,13 @@
-import React, {createContext, useContext, useReducer} from 'react';
+import React, {createContext, useContext, useReducer, useState} from 'react';
 import {AsyncStorage} from 'react-native';
 import api from 'axios';
 
 var UserStateContext = createContext(undefined);
 var UserDispatchContext = createContext(undefined);
+
+//TODO: get data from UserContext
+// -- There is problem when passing {user} to device as "" so state stays on validatingCredentials
+// -- Fix state-machine logic // add timeOut for app and esp8266.
 
 console.log('-- UserContext.tsx: ');
 
@@ -11,7 +15,8 @@ function UserProvider({children}) {
   const [state, dispatch] = useReducer(userReducer, {
     authenticated: false,
     loading: true,
-    userData: null,
+    user: '',
+    // userData: null,
   });
 
   return (
@@ -26,7 +31,6 @@ function UserProvider({children}) {
 function userReducer(state, action) {
   switch (action.type) {
     case 'VALIDATE_TOKEN':
-      // console.log('VALIDATE_TOKEN');
       return {
         ...state,
         authenticated: !!action.token,
@@ -34,20 +38,22 @@ function userReducer(state, action) {
       };
     case 'SIGNUP_SUCCESS': {
       console.log('userReducer: SIGNUP_SUCCESS');
-      return {...state, authenticated: true};
+      console.log('user: ' + action.payload);
+      return {...state, authenticated: true, user: action.payload};
     }
     case 'SIGNUP_FAILURE': {
       // TODO: create a message to the user explaining signup fail
       console.log('userReducer: SIGNUP_FAILURE');
-      return {...state, signupFailed: action.payload, authenticated: false};
+      return {...state, authenticated: false, errors: action.payload};
     }
     case 'SIGNIN_SUCCESS':
       console.log('userReducer: SIGNIN_SUCCESS');
-      return {...state, authenticated: true};
+      console.log('user: ' + action.payload);
+      return {...state, authenticated: true, user: action.payload};
     case 'SIGNIN_FAILURE': {
       // TODO: create a message to the user explaining SIGNIN fail
       console.log('userReducer: SIGNIN_FAILURE');
-      return {...state, signinFailed: action.payload, authenticated: false};
+      return {...state, authenticated: false, errors: action.payload};
     }
     case 'SIGN_OUT_SUCCESS':
       return {...state, authenticated: false};
@@ -64,7 +70,7 @@ function userReducer(state, action) {
     case 'GET_USER':
       return {
         ...state,
-        userData: action.payload,
+        user: action.payload,
       };
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -95,8 +101,9 @@ export {
   signupUser,
   signinUser,
   signOut,
-  getUserData,
+  getUser,
   validateUserToken,
+  clearErrors,
 };
 // ###########################################################
 
@@ -109,12 +116,6 @@ function signupUser(
   password: any,
   setLoading: any,
 ) {
-  // console.log('* signupUser: ');
-  // console.log('name: ' + name);
-  // console.log('email: ' + email);
-  // console.log('password: ' + password);
-  // TODO: set Errors (connection errors) 404, 500 etc...
-  // setErrors(null);
   setLoading(true);
 
   const user = {
@@ -124,28 +125,25 @@ function signupUser(
   };
 
   console.log('user: ' + JSON.stringify(user));
-  // dispatch({ type: LOADING_UI });
+
   api
     .post('/signup', user)
     .then((res) => {
       console.log(res.data); //Auth token
       setAuthorizationHeader(res.data.token);
-      // dispatch(getUserData());
-      // setErrors(false);
       setLoading(false);
-      dispatch({type: 'SIGNUP_SUCCESS'});
-      // dispatch({ type: CLEAR_ERRORS });
+      dispatch({type: 'SIGNUP_SUCCESS', payload: user.email});
+      dispatch({type: 'CLEAR_ERRORS'});
     })
     .catch((err) => {
-      // dispatch({
-      //   type: SET_ERRORS,
-      //   payload: err.response.data
-      // });
-      console.log(err.response.data);
+      dispatch({
+        type: 'SET_ERRORS',
+        payload: err.response.data,
+      });
+      console.log('signUpUser: ' + err);
       setLoading(false);
-      dispatch({type: 'SIGNUP_FAILURE', payload: []});
-      // dispatch({ type: "SET_ERRORS", payload: err.response.data });
-      // setErrors(true); // change This to payload response data...
+      dispatch({type: 'SIGNUP_FAILURE', payload: err.response.data});
+      // dispatch({type: 'SET_ERRORS', payload: err.response.data});
     });
 }
 
@@ -157,33 +155,30 @@ function signinUser(
   setLoading: any,
   // setErrors,
 ) {
-  console.log('UserContext: signinUser: email: ' + email);
-  console.log('UserContext: signinUser: password: ' + password);
   // TODO: set Errors (connection issues?) 404, 500 etc...
-  // setErrors(false);
   setLoading(true);
 
   const user = {
     email: email,
     password: password,
   };
+  console.log('user: ' + JSON.stringify(user));
 
+  //TODO: Find a way to retrieve userName and save to context State.
   api
     .post('/signin', user)
     .then((res) => {
       console.log(res.data); //Auth token
       setAuthorizationHeader(res.data.token);
 
-      // setErrors(false);
       setLoading(false);
-      dispatch({type: 'SIGNIN_SUCCESS'});
+      dispatch({type: 'SIGNIN_SUCCESS', payload: user.email});
     })
     .catch((err) => {
-      console.log(err);
+      console.log('signIn ( ): ' + err);
       setLoading(false);
-      dispatch({type: 'SIGNIN_FAILURE', payload: []});
-      // dispatch({ type: "SET_ERRORS", payload: err.response.data });
-      // setErrors(true); // change This to payload response data...
+      dispatch({type: 'SIGNIN_FAILURE', payload: err});
+      // dispatch({type: 'SET_ERRORS', payload: err.response.data});
     });
 }
 
@@ -195,11 +190,11 @@ function signOut(dispatch: any) {
 
 // TODO: Finish function dispatch, userHandle, /user/${userHandle}
 // maybe save the user Logged in data in AsyncStorage?..
-function getUserData(dispatch) {
+function getUser(dispatch: any, handle: string) {
   // dispatch({ type: LOADING_USER });
   // .get(`/user/${diegovfeder@gmail.com}`)
   api
-    .get('/user/diegovfeder@gmail.com')
+    .get(`/user/${handle}`)
     .then((res) => {
       console.log('getUser: ' + JSON.stringify(res));
       dispatch({
@@ -217,4 +212,9 @@ function validateUserToken(dispatch, userToken) {
 const setAuthorizationHeader = (token) => {
   const FBIdToken = `Bearer ${token}`;
   AsyncStorage.setItem('@FBIdToken', FBIdToken);
+  api.defaults.headers.common['Authorization'] = FBIdToken;
+};
+
+const clearErrors = (dispatch) => {
+  dispatch({type: 'CLEAR_ERRORS'});
 };

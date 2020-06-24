@@ -1,15 +1,19 @@
 import React from 'react';
 import {Dimensions, TouchableOpacity, Text, View} from 'react-native';
 
-import HomeNavigator from './HomeNavigator';
-
 // Hooks
+import {useDeviceState} from '../context/DeviceContext';
 import {useUserDispatch, signOut} from '../context/UserContext';
-import {useNavigation} from '@react-navigation/native';
+import {
+  useNavigation,
+  NavigationAction,
+  DrawerActions,
+} from '@react-navigation/native';
 
-// Screens
-import Home from '../screen/Home';
-import Settings from '../screen/Settings';
+// Navigator / Screens
+import HomeNavigator from './HomeNavigator';
+import SettingsNavigator from './SettingsNavigator';
+
 //... Devices, Help,
 
 import {
@@ -32,6 +36,7 @@ const CustomDrawerContent = (props: any) => {
   let userDispatch = useUserDispatch();
   return (
     <DrawerContentScrollView {...props}>
+      {/* TODO: Create a header for the Drawer */}
       <DrawerItemList {...props} />
       <DrawerItem
         label="Sair"
@@ -43,56 +48,61 @@ const CustomDrawerContent = (props: any) => {
   );
 };
 
-const DrawerNavigator: React.FC = () => {
+export const DrawerButton = (props) => {
+  const navigation = useNavigation();
+  return (
+    <View style={{flexDirection: 'row'}}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.dispatch(DrawerActions.openDrawer());
+        }}>
+        <Ionicons
+          name="md-menu"
+          style={someStyles.headerButton}
+          size={24}
+          color="#fff"
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export const DrawerNavigator: React.FC = ({nav, route}) => {
   console.log('-- DrawerNavigator.tsx');
 
-  const navigation = useNavigation();
+  const {paired} = useDeviceState();
+
+  // const navigation = useNavigation();
 
   const Drawer = createDrawerNavigator();
 
-  const DrawerButton = () => {
-    return (
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity
-          onPress={() => {
-            // navigation.toggleDrawer();
-            // navigation.setOptions;
-          }}>
-          <Ionicons
-            name="md-menu"
-            style={someStyles.headerButton}
-            size={24}
-            color="#fff"
-          />
-        </TouchableOpacity>
-      </View>
-    );
+  const _getRouteStateFromIndex = (route) => {
+    if (typeof route.state === 'undefined') {
+      return true;
+    } else {
+      // console.log('route.state' + JSON.stringify(route.state));
+      return route.state.index > 0 ? false : true;
+    }
   };
 
   return (
     <Drawer.Navigator
-      edgeWidth={192}
+      edgeWidth={384}
       drawerStyle={{width: 256}}
       drawerType={Dimensions.get('window').width > 900 ? 'permanent' : 'front'}
       drawerContentOptions={{
         activeTintColor: '#3ea341',
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Início" component={HomeNavigator} />
       <Drawer.Screen
-        name="Configurações"
-        component={Settings}
-        options={() => ({
-          title: 'Home',
-          headerTitle: () => (
-            <View style={someStyles.headerView}>
-              <Text style={someStyles.headerTitle}>Configurações</Text>
-            </View>
-          ),
-        })}
+        name="Início"
+        component={HomeNavigator}
+        options={({route}) => ({swipeEnabled: _getRouteStateFromIndex(route)})}
       />
+      {paired ? (
+        <Drawer.Screen name="Configurações" component={SettingsNavigator} />
+      ) : null}
+      {/* TODO: Create a buy this product Drawer.Screen */}
     </Drawer.Navigator>
   );
 };
-
-export default DrawerNavigator;

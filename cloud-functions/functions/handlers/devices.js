@@ -55,23 +55,21 @@ exports.getDevice = (req, res) => {
 exports.postDevice = (req, res) => {
   if (req.body.user.trim() === "") {
     return res.status(400).json({
-      body: "User must exist to be assigned"
+      body: "You need to send an deviceId to instantiate the object on firebase..."
     });
   }
 
   const newDevice = {
-    user: req.body.user, // TODO: This user received from esp8266 should be tested
+    user: req.body.user,
     geolocation: req.body.geolocation,
     productType: req.body.productType,
-    qrCode: req.body.qrCode, 
-    version: req.body.version,
-    wifiSSID: req.body.wifiSSID,
-    wifiPassword: req.body.wifiPassword,
+    deviceId: req.body.deviceId, 
+    firmwareVersion: req.body.firmwareVersion,
     wifiStatus: req.body.wifiStatus,
     createdAt: new Date().toISOString(),
   };
 
-  db.doc(`/devices/${newDevice.qrCode}`)
+  db.doc(`/devices/${newDevice.deviceId}`)
     .get()
     .then(doc => {
       if (doc.exists) {
@@ -79,15 +77,15 @@ exports.postDevice = (req, res) => {
           body: "This device is already created / paired."
         });
       } else {
-        return db.doc(`/devices/${newDevice.qrCode}`).set(newDevice);
+        return db.doc(`/devices/${newDevice.deviceId}`).set(newDevice);
        }
     })
     .then(() => {
       return res.status(201).json({
-        body: 'Device ' + newDevice.qrCode + ' created successfully'
+        body: 'Device ' + newDevice.deviceId + ' created successfully'
       });
     })
-    .catch(err => {
+    .catch(err => { 
       console.error(err);
       if (err.code === "auth/device-already-created") {
         return res.status(400).json({
@@ -99,53 +97,27 @@ exports.postDevice = (req, res) => {
         });
       }
     });
-
-
-  //FIXME: Old cold... chanong to above one
-  // db.collection("devices")
-  //   .add(newDevice)
-  //   .then(doc => {
-  //     const resDevice = newDevice;
-  //     resDevice.deviceId = doc.id;
-  //     return res.json({
-  //       resDevice
-  //     });
-  //   })
-  //   .catch(err => {
-  //     return res.status(500).json({
-  //       error: "something went wrong"
-  //     });
-  //     console.error(err);
-  //   });
 };
 
-// Delete a device
-// exports.deleteDevice = (req, res) => {
-//   const document = db.doc(`/devices/${req.params.deviceId}`)
-//   document.get()
-//     .then(doc => {
-//       if (!doc.exists) {
-//         return res.status(404).json({
-//           error: 'Device not found'
-//         })
-//       }
-//       if (doc.data().userHandle !== req.user.handle) {
-//         return res.status(403).json({
-//           error: 'Unauthorized'
-//         })
-//       } else {
-//         return document.delete()
-//       }
-//     })
-//     .then(() => {
-//       res.json({
-//         message: 'Device deleted successfully'
-//       })
-//     })
-//     .catch(err => {
-//       console.error(err)
-//       return res.status(500).json({
-//         error: err.code
-//       })
-//     })
-// }
+exports.deleteDevice = (req, res) => {
+  const document = db.doc(`/devices/${req.params.deviceId}`)
+  document
+    .get()
+    .then(doc => {
+      if (!doc.exists) {
+        return res.status(404).json({error: 'Device not found'})
+      }
+      if (doc.data().user !== req.user.userId) {
+        return res.status(403).json({error: 'Unauthorized'})
+      } else {
+        return document.delete()
+      }
+    })
+    .then(() => {
+      res.json({message: 'Device deleted successfully'})
+    })
+    .catch(err => {
+      console.error(err)
+      return res.status(500).json({error: err.code})
+    })
+};

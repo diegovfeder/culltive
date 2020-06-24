@@ -1,10 +1,8 @@
 import React, {useEffect} from 'react';
 import {
-  Button,
-  Dimensions,
-  StyleSheet,
   SafeAreaView,
   Text,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -19,6 +17,7 @@ import {someStyles} from '../Styles';
 // Assets
 import WelcomeUndraw from '../../assets/undraw/welcome.svg';
 
+//TODO: Layout should be responsive or at least tested in small / medium / large screens
 const Welcome: React.FC = () => {
   console.log('-- Welcome.tsx');
 
@@ -36,11 +35,6 @@ const Welcome: React.FC = () => {
           }}>
           culltive
         </Text>
-        // Removed this view and inserted culltive, name on the navigation header.
-        // Postponing work-- This needs to be a responsive grid / flex environment...
-        // <View style={someStyles.headerView}>
-        //   <Text style={someStyles.headerTitle}>culltive</Text>
-        // </View>
       ),
     });
   });
@@ -77,23 +71,28 @@ const Welcome: React.FC = () => {
       <WelcomeUndraw width={320} height={320} style={{alignSelf: 'center'}} />
 
       <View style={{width: '100%'}}>
-        <TouchableOpacity
+        <TouchableHighlight
+          underlayColor="#3ea341"
+          activeOpacity={1}
           onPress={() => {
             navigation.navigate('Signup');
           }}
           style={someStyles.button}>
-          <Text style={[styles.text]}>Criar nova conta</Text>
-        </TouchableOpacity>
+          <Text style={someStyles.text}>Criar nova conta</Text>
+        </TouchableHighlight>
 
-        <TouchableOpacity
+        <TouchableHighlight
+          underlayColor="#f7f8f9ee"
+          activeOpacity={1}
           onPress={() => {
             navigation.navigate('Signin');
           }}
           style={someStyles.buttonWhite}>
-          <Text style={[styles.textGreen]}>Já possuo cadastro</Text>
-        </TouchableOpacity>
+          <Text style={someStyles.textGreen}>Já possuo cadastro</Text>
+        </TouchableHighlight>
 
         <TouchableOpacity
+          activeOpacity={0.5}
           onPress={() => {
             navigation.navigate('Terms');
           }}>
@@ -105,18 +104,5 @@ const Welcome: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    fontFamily: 'Montserrat-Bold',
-    color: '#FFFFFF',
-  },
-  textGreen: {
-    fontSize: 20,
-    fontFamily: 'Montserrat-Bold',
-    color: '#3cbc40',
-  },
-});
 
 export default Welcome;

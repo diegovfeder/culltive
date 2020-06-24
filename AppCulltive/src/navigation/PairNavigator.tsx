@@ -1,19 +1,26 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
+
+// Navigation
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
-// import SplashScreen from "../screen/SplashScreen";
 
-import GrantPermissions from '../screen/GrantPermissions';
-import WiFiCredentials from '../screen/WiFiCredentials';
-import ConnectDevice from '../screen/ConnectDevice';
-
-import LookingForDevices from '../screen/pair/LookingForDevices';
-import DeviceFound from '../screen/pair/DeviceFound';
-import DeviceNotFound from '../screen/pair/DeviceNotFound';
-import DeviceVerification from '../screen/pair/DeviceVerification';
-
+// Screens
+import GrantPermissions from '../screen/pair/GrantPermissions';
+import DeviceCertification from '../screen/pair/DeviceCertification';
+import WiFiCredentials from '../screen/pair/WiFiCredentials';
+import ConnectionHandshake from '../screen/pair/ConnectionHandshake';
+import Fail from '../screen/pair/Fail';
 import Confirmation from '../screen/pair/Confirmation';
-import DataAgreements from '../screen/DataAgreements';
+import DataAgreements from '../screen/pair/DataAgreements';
+
+// import ConnectDevice from '../screen/ConnectDevice';
+
+//TODO: Google chromecast pair process*
+// import LookingForDevices from '../screen/pair/LookingForDevices';
+// import DeviceFound from '../screen/pair/DeviceFound';
+// import DeviceNotFound from '../screen/pair/DeviceNotFound';
+// import DeviceVerification from '../screen/pair/DeviceVerification';
+
 import PlantProfile from '../screen/PlantProfile';
 
 const Stack = createStackNavigator();
@@ -24,7 +31,7 @@ const PairNavigator: React.FC = () => {
       initialRouteName="Pair"
       headerMode="float"
       screenOptions={{
-        ...TransitionPresets.RevealFromBottomAndroid,
+        ...TransitionPresets.ScaleFromCenterAndroid,
         gestureEnabled: true,
         gestureDirection: 'horizontal',
         headerShown: false,
@@ -32,42 +39,23 @@ const PairNavigator: React.FC = () => {
       <Stack.Screen
         name="GrantPermissions"
         component={GrantPermissions}
-        options={{headerTitle: () => <View style={styles.headerView} />}}
+        // options={{headerTitle: () => <View style={styles.headerView} />}}
       />
       <Stack.Screen
-        name="WiFiCredentials"
-        component={WiFiCredentials}
-        options={{headerTitle: () => <View style={styles.headerView} />}}
+        name="DeviceCertification"
+        component={DeviceCertification}
       />
+      <Stack.Screen name="WiFiCredentials" component={WiFiCredentials} />
       <Stack.Screen
-        name="ConnectDevice"
-        component={ConnectDevice}
-        options={{headerTitle: () => <View style={styles.headerView} />}}
+        name="ConnectionHandshake"
+        component={ConnectionHandshake}
       />
-      <Stack.Screen
-        name="Confirmation"
-        component={Confirmation}
-        options={{headerTitle: () => <View style={styles.headerView} />}}
-      />
-      <Stack.Screen
-        name="DataAgreements"
-        component={DataAgreements}
-        options={{headerTitle: () => <View style={styles.headerView} />}}
-      />
-      <Stack.Screen
-        name="PlantProfile"
-        component={PlantProfile}
-        options={{headerTitle: () => <View style={styles.headerView} />}}
-      />
+      <Stack.Screen name="Fail" component={Fail} />
+      <Stack.Screen name="Confirmation" component={Confirmation} />
+      <Stack.Screen name="DataAgreements" component={DataAgreements} />
+      <Stack.Screen name="PlantProfile" component={PlantProfile} />
     </Stack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  headerTitle: {
-    fontFamily: 'Montserrat-Bold',
-    color: '#fff',
-  },
-});
 
 export default PairNavigator;

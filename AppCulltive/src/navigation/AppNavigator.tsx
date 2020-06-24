@@ -7,39 +7,32 @@ import {
 } from '@react-navigation/stack';
 
 // Context
-import {useUserDispatch, validateUserToken} from '../context/UserContext';
-import {useUserState} from '../context/UserContext';
-import {useDeviceDispatch, setPaired} from '../context/DeviceContext';
-import {useDeviceState} from '../context/DeviceContext';
-
-// Hooks
-// TODO: Create a useAsyncStorage custom hook
-// import {useAsyncStorage} from '../util/useAsyncStorage';
+import {
+  useUserDispatch,
+  useUserState,
+  validateUserToken,
+} from '../context/UserContext';
+import {
+  useDeviceDispatch,
+  useDeviceState,
+  validateDeviceToken,
+} from '../context/DeviceContext';
 
 //Screens || Navigators
-import Splash from '../screen/Splash';
-// import HomeNavigator from './HomeNavigator';
-import DrawerNavigator from './DrawerNavigator';
-import PairNavigator from './PairNavigator';
+import SplashNavigator from './SplashNavigator';
 import AuthNavigator from './AuthNavigator';
+import {DrawerNavigator} from './DrawerNavigator';
 
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
   let userDispatch = useUserDispatch();
-  let userToken: string | null;
   let {authenticated, loading} = useUserState();
-
-  let deviceDispatch = useDeviceDispatch();
-  let deviceStatus: string | null;
-  let {paired} = useDeviceState();
-
+  let userToken: string | null;
   console.log('AppNavigator: authenticated: ' + authenticated);
   console.log('AppNavigator: loading: ' + loading);
-  console.log('AppNavigator: paired: ' + paired);
 
   useEffect(() => {
-    // Fetch userToken -> toggle authenticated via dispatcher
     const retrieveTokenAsync = async () => {
       try {
         userToken = await AsyncStorage.getItem('@FBIdToken');
@@ -50,49 +43,64 @@ const AppNavigator: React.FC = () => {
       validateUserToken(userDispatch, userToken);
     };
     retrieveTokenAsync();
+  }, [userDispatch]);
 
-    //FIXME: @PAIR from asyncStorage is waiting too much to load.
-    // You should re-organize this structure, or get from ContextState
-    // fix this in general... it is a async await problem syncing with state thing.
-    //TODO: validateDevice using dataDispatcher
-    // Fetch deviceToken -> toggle 'paired' flag
-    const retrievePairStatusAsync = async () => {
+  let deviceDispatch = useDeviceDispatch();
+  let {paired} = useDeviceState();
+  let deviceToken: string | null;
+  console.log('AppNavigator: paired: ' + paired);
+
+  //FIXME: handle deviceToken better...
+  // need to sync paired state with deviceToken?
+  useEffect(() => {
+    const restoreDeviceToken = async () => {
       try {
-        deviceStatus = await AsyncStorage.getItem('@PAIR');
+        deviceToken = await AsyncStorage.getItem('@deviceToken');
       } catch (e) {
-        console.log('AppNavigator: Restoring device status failed');
+        console.log('AppNavigator: Restoring deviceToken failed');
       }
-      console.log('AppNavigator: setPaired: ' + deviceStatus);
-      if (deviceStatus != null) {
-        setPaired(deviceDispatch, true);
-      } else {
-        setPaired(deviceDispatch, false);
-      }
+      console.log('AppNavigator: deviceToken: ' + deviceToken);
+      validateDeviceToken(deviceDispatch, deviceToken);
     };
-    retrievePairStatusAsync();
-  }, [userDispatch, deviceDispatch]);
+    restoreDeviceToken();
+  }, []);
 
   return (
-    <Stack.Navigator
-      headerMode="none"
-      screenOptions={{
-        cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
-        gestureEnabled: true,
-        gestureDirection: 'horizontal',
-      }}>
+    // {loading ? (
+    //   <Stack.Screen name="Splash" component={Splash} />
+    // ) : authenticated ? (
+    //   <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
+    // ) : (
+    //   <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
+    // )}
+    <>
       {loading ? (
-        <Stack.Screen name="Splash" component={Splash} />
+        <SplashNavigator />
       ) : authenticated ? (
-        paired ? (
-          <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
-        ) : (
-          <Stack.Screen name="PairNavigator" component={PairNavigator} />
-        )
+        <DrawerNavigator />
       ) : (
-        <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
+        <AuthNavigator />
       )}
-    </Stack.Navigator>
+    </>
   );
 };
 
 export default AppNavigator;
+
+// { !authenticated && <AuthNavigator/>}
+
+// <Stack.Navigator
+//   headerMode="none"
+//   screenOptions={{
+//     cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
+//     gestureEnabled: true,
+//     gestureDirection: 'horizontal',
+//   }}>
+//   {loading ? (
+//     <Stack.Screen name="Splash" component={Splash} />
+//   ) : authenticated ? (
+//     <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
+//   ) : (
+//     <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
+//   )}
+// </Stack.Navigator>

@@ -1,14 +1,5 @@
 import React, {useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  Text,
-  TextInput,
-  Button,
-  Dimensions,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {ScrollView, Text, TouchableHighlight, View} from 'react-native';
 
 // import {CulltiveButton} from '../component/CulltiveButton';
 import * as Svg from 'react-native-svg';
@@ -42,11 +33,6 @@ const Welcome: React.FC = () => {
             {Strings.termsHeader}
           </Text>
         </View>
-        // Removed this view and inserted culltive, name on the navigation header.
-        // Postponing work-- This needs to be a responsive grid / flex environment...
-        // <View style={someStyles.headerView}>
-        //   <Text style={someStyles.headerTitle}>culltive</Text>
-        // </View>
       ),
     });
   });
@@ -60,18 +46,6 @@ const Welcome: React.FC = () => {
         justifyContent: 'space-between',
         alignItems: 'stretch',
       }}>
-      {/* <View style={{}}>
-        <Text
-          style={{
-            color: '#6c6c6c',
-            fontSize: 24,
-            fontFamily: 'Montserrat-Bold',
-            textAlign: 'center',
-          }}>
-          {Strings.termsHeader}
-        </Text>
-      </View> */}
-
       <ScrollView style={{marginBottom: 32}}>
         <Text
           style={{
@@ -85,32 +59,18 @@ const Welcome: React.FC = () => {
       </ScrollView>
 
       <View style={{bottom: 0, position: 'absolute', width: '100%'}}>
-        <TouchableOpacity
-          style={someStyles.button}
+        <TouchableHighlight
+          underlayColor="#3ea341"
+          activeOpacity={1}
+          style={[someStyles.button, {marginHorizontal: 16}]}
           onPress={() => {
-            navigation.navigate('Welcome');
+            navigation.goBack();
           }}>
-          <Text style={[styles.text]}>OK</Text>
-        </TouchableOpacity>
+          <Text style={someStyles.text}>OK</Text>
+        </TouchableHighlight>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    fontFamily: 'Montserrat-Bold',
-    color: '#FFFFFF',
-  },
-  textLink: {
-    marginVertical: 8,
-    alignSelf: 'center',
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: '#3cbc40',
-    textDecorationLine: 'underline',
-  },
-});
 
 export default Welcome;
