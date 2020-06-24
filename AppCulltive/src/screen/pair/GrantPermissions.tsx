@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {
+  AppState,
   Button,
   Linking,
   Platform,
@@ -29,10 +30,6 @@ import {someStyles} from '../../Styles';
 // Assets
 import LocationUndraw from '../../../assets/undraw/location.svg';
 
-{
-  /*  */
-}
-
 const OpenSettingsButton = () => {
   const handlePress = useCallback(async () => {
     // Open the custom settings if the app has one
@@ -52,19 +49,32 @@ const OpenSettingsButton = () => {
   );
 };
 
-// TODO: If permissions are granted, this page should not even be loaded...
-
 const GrantPermissions: React.FC = ({nav, route}) => {
   console.log('-- GrantPermissions.tsx');
-
-  //TODO: Receive params from check in Home.tsx and act accordingly
-  // console.log('route.params...' + route.params.screen);
-
   const navigation = useNavigation();
 
-  // TODO: feat (permissionsGranted) -> Verify state, re-direct user accordingly
-  // TODO: Switch console.log() to state logic -> navigating to screens (Verify Permissions)
-  // FIXME: Simplify code below with select as switch statement.
+  //TODO: Receive params from check in Home.tsx and act accordingly
+  const [permissionState, setPermissionState] = useState('');
+  console.log('route.params... ' + route.params.permissions);
+
+  // Manages appState (onFocus / onBackground)
+  //FIXME: appState is glitching navigation
+  const [appState, setAppState] = useState(AppState.currentState);
+  const _handleAppStateChange = (nextAppState) => {
+    if (appState.match(/inactive|background/) && nextAppState === 'active') {
+      console.log('App has come to the foreground!');
+    }
+    setAppState(nextAppState);
+  };
+
+  useEffect(() => {
+    AppState.addEventListener('change', _handleAppStateChange);
+
+    return () => {
+      AppState.removeEventListener('change', _handleAppStateChange);
+    };
+  }, []);
+
   useEffect(() => {
     setTimeout(requestPermissions, 1000);
   });
@@ -80,21 +90,21 @@ const GrantPermissions: React.FC = ({nav, route}) => {
       //TODO: Handle permissions states.
       switch (res) {
         case 'unavailable':
-          console.log('Unavailable');
-          setPermissionState('Unavailable');
+          console.log('unavailable');
+          setPermissionState('unavailable');
           //Then?
           break;
         case 'denied':
-          console.log('Denied');
-          setPermissionState('Denied');
+          console.log('denied');
+          setPermissionState('denied');
           //Ask again?
           break;
         case 'blocked':
-          console.log('Blocked');
-          setPermissionState('Blocked');
+          console.log('blocked');
+          setPermissionState('blocked');
           break;
         case 'granted':
-          console.log('Granted');
+          console.log('granted');
           navigation.dispatch(StackActions.replace('DeviceCertification'));
           break;
       }
@@ -121,19 +131,9 @@ const GrantPermissions: React.FC = ({nav, route}) => {
         configurar e gerenciar dispositivos próximos.
       </Text>
       <LocationUndraw width={320} height={320} style={{alignSelf: 'center'}} />
-      {/* FIXME: enable this button ONLY if permissions is denied or something... */}
-      {/* <TouchableOpacity
-        onPress={() => {
-          console.log('GrantPermissions: openSettings()');
-          openSettings().catch(() =>
-            console.warn('GrantPermissions: Cannot open settings'),
-          );
-        }}
-        style={someStyles.button}>
-        <Text style={[someStyles.textButton]}>Abrir configurações</Text>
-      </TouchableOpacity> */}
       <View
         style={{
+          alignItems: 'center',
           paddingVertical: 8,
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -141,12 +141,13 @@ const GrantPermissions: React.FC = ({nav, route}) => {
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
-            // TODO: go to HomeScreen but without paired?
-            // goes to hasAccount, notPairedDeviceScreen?
-            // create a screen for that transitory State
-            // navigation.navigate('Home0');
           }}
-          style={{alignSelf: 'center'}}>
+          style={{
+            justifyContent: 'center',
+            alignSelf: 'center',
+            marginVertical: 6,
+            minHeight: 48,
+          }}>
           <Text
             style={[
               someStyles.textButton,
@@ -155,7 +156,15 @@ const GrantPermissions: React.FC = ({nav, route}) => {
             Voltar
           </Text>
         </TouchableOpacity>
-        <OpenSettingsButton />
+        {/* TODO: OpenSettingsButton should only toggle if permissions are Blocked. */}
+        {/* TODO: Also, the header Text should change for different states */}
+        {route.params.permissions === 'blocked' ||
+        permissionState === 'blocked' ? (
+          <OpenSettingsButton />
+        ) : (
+          <></>
+        )}
+        {/* <OpenSettingsButton /> */}
       </View>
     </SafeAreaView>
   );

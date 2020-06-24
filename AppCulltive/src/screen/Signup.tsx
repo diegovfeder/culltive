@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   SafeAreaView,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
   View,
-  ActivityIndicator,
 } from 'react-native';
 
 import {Input} from 'react-native-elements';
@@ -22,6 +23,9 @@ import {
 } from '../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
+// Icons
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 // Styles
 import {someStyles} from '../Styles';
 
@@ -34,6 +38,9 @@ const Signup: React.FC = () => {
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+
+  const [secureTextState, setSecureTextState] = React.useState(true);
+  const [eyeState, setEyeState] = React.useState(true);
 
   // TODO: handleError useUserCntext
   let {errors} = useUserState();
@@ -148,19 +155,33 @@ const Signup: React.FC = () => {
                 }}
                 blurOnSubmit={false}
               />
-              <Input
-                ref={(component) => (_passwordInput = component)}
-                placeholder="Senha"
-                secureTextEntry={true}
-                value={values.password}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                errorStyle={{color: 'red'}}
-                errorMessage={
-                  errors.password && touched.password ? errors.password : ''
-                }
-                onSubmitEditing={handleSubmit}
-              />
+              <View>
+                <Input
+                  ref={(component) => (_passwordInput = component)}
+                  placeholder="Senha"
+                  secureTextEntry={secureTextState}
+                  value={values.password}
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={
+                    errors.password && touched.password ? errors.password : ''
+                  }
+                  onSubmitEditing={handleSubmit}
+                />
+                <TouchableOpacity
+                  style={{left: '90%', top: '20%', position: 'absolute'}}
+                  onPress={() => {
+                    setSecureTextState(!secureTextState);
+                    setEyeState(!eyeState);
+                  }}>
+                  <Ionicons
+                    name={eyeState ? 'ios-eye' : 'ios-eye-off'}
+                    size={24}
+                    color="#3ea341"
+                  />
+                </TouchableOpacity>
+              </View>
               <TouchableHighlight
                 onPress={handleSubmit}
                 style={someStyles.button}

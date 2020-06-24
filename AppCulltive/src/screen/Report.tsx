@@ -3,8 +3,9 @@ import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
 
 import {useNavigation, useRoute} from '@react-navigation/native';
 
-import api from 'axios';
 import axios from 'axios';
+
+// Moment
 import moment from 'moment';
 import 'moment/locale/pt-br';
 // import tz from 'moment-timezone';
@@ -15,28 +16,29 @@ import MyCarousel from '../component/MyCarousel';
 
 // Styles
 import {someStyles} from '../Styles';
-import AppNavigator from 'src/navigation/AppNavigator';
 const {height, width} = Dimensions.get('window');
 
 const Report: React.FC = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  const [loadingWeather, setLoadingWeather] = useState(true);
+  const [weather, setWeather] = useState('');
+
+  const [city, setCity] = useState('');
+  const [temperature, setTemperature] = useState('');
+  const [fetchingError, setFetchingError] = useState(false);
+
   moment.locale('pt-BR');
   const timezone = 'America/Sao_Paulo';
   const format = 'MMMM Do YYYY, h:mm:ss a';
   // console.log(tz('America/Los_Angeles').format('ha z'));
   // const dateMoment = moment.tz(date, format, timezone);
 
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  const [loadingWeather, setLoadingWeather] = useState(true);
-  const [city, setCity] = useState('');
-  const [temperature, setTemperature] = useState('');
-  const [weather, setWeather] = useState('');
-  const [fetchingError, setFetchingError] = useState(false);
-
   // TODO: feat (Calendar picker -> retrieve data from firestore for selected date)
   // const [calendarView, setCalendarView] = useState(false);
 
+  //TODO: useQuery fetch data from readings...
   // const fetchLastReading = (key, device = 0) =>
   //   fetch('/api/readings?device=' + device);
 
@@ -88,6 +90,7 @@ const Report: React.FC = () => {
       ),
     });
 
+    //TODO: FEATURE: Insert lat / lon in request -> getLatLon from esp8266...
     // TODO: Make this get request better...
     // `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
     axios
@@ -194,7 +197,7 @@ const Report: React.FC = () => {
             ]}>
             {moment().format('LLL')}
           </Text>
-          <Text style={[someStyles.h1, {fontSize: 32}]}>{temperature} ˚C</Text>
+          <Text style={[someStyles.h1, {fontSize: 32}]}>{temperature}˚C</Text>
           {/* TODO: WeatherIcons */}
           {/* <Text style={[someStyles.h2, {alignSelf: 'center'}]}>{weather}</Text> */}
         </View>

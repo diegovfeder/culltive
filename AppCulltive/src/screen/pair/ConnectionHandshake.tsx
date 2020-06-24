@@ -79,8 +79,9 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
   const [connected, setConnected] = useState(false);
 
   const {ssid, password} = route.params;
+  const [deviceId, setDeviceId] = useState('');
 
-  //TODO: set and get user in AsyncStorage or getUserData from firebase...
+  //TODO: set and get user in AsyncStorage or getUser from firebase...
   const {user} = useUserState();
   // console.log('user: ' + user);
 
@@ -168,7 +169,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
           console.log(res);
           if (res.status === 200) {
             //TODO: handle connection success / credentials verified...
-            console.log('Got {credentials} values: ');
+            console.log('Credentials validation: ');
             console.log('res.data: ' + JSON.stringify(res.data));
             const {credentials} = res.data;
             if (credentials === 'VERIFIED') {
@@ -215,9 +216,12 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
         (res) => {
           console.log(res);
           if (res.status === 200) {
-            console.log('Got {connection} values: ');
+            console.log('Connection verification: ');
             console.log('res.data: ' + JSON.stringify(res.data));
             const {connection} = res.data;
+            console.log('res.data.deviceId: ' + res.data.deviceId);
+            setDeviceId(res.data.deviceId);
+            console.log('deviceId: ' + deviceId);
             if (connection === 'SUCCESS') {
               setStatusSubtitle(
                 'Conexão verificada.\nRealizando ajustes finais...',
@@ -291,7 +295,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
                   textAlign: 'center',
                 },
               ]}>
-              Estabelecendo vínculo com seu dispositivo culltive
+              Emparelhando dispositivo
             </Text>
             <Text
               style={[
@@ -307,7 +311,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
           </View>
           <ActivityIndicator
             size={220}
-            animating={connecting && !connected}
+            animating={connecting} //connecting && !connected
             color={'#3cbc40'}
           />
           <TouchableOpacity

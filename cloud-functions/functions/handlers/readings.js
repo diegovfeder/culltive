@@ -1,6 +1,6 @@
 const { db } = require("../util/admin");
 
-exports.getAllReadings = (req, res) => {
+exports.getReadings = (req, res) => {
   db.collection("readings")
     .orderBy("createdAt", "desc")
     .get()
@@ -10,7 +10,6 @@ exports.getAllReadings = (req, res) => {
         readings.push({
           readingsId: doc.id,
           ...doc.data()
-          //this is called spread operator - works in node 8
         });
       });
       return res.json(readings);
@@ -18,71 +17,83 @@ exports.getAllReadings = (req, res) => {
     .catch(err => console.error(err));
 };
 
-exports.postNewReading = (req, res) => {
-  if (req.body.qrCode.trim() === "") {
+exports.getLastReading = (req, res) => {
+
+  if (req.params.deviceId.trim() === "") {
     return res.status(400).json({
-      body: "qrCode must not be empty"
+      body: "You need to send an deviceId to query its latest reading."
     });
   }
 
-  //TODO: change this to req.body.qrCode / req.body.air etc...
-  const newReading = {
-    qrCode: req.body.qrCode,
-    createdAt: new Date().toISOString(),
-    air: req.body.air,
-    lumi: req.body.lumi,
-    soil: req.body.soil,
-    temp: req.body.temp,
-    waterLevel: req.body.waterLevel
-  };
+  console.log("req.params.deviceId: " + req.params.deviceId);
+  let reading = [];
 
   db.collection("readings")
-    .add(newReading)
-    .then(doc => {
-      const resReading = newReading;
-      resReading.readingsId = doc.id;
-      res.json({
-        resReading
+    .where("deviceId", "==", req.params.deviceId)
+    .orderBy("createdAt", "desc")
+    .limit(1)
+    .get()
+    .then((data) => {
+      data.forEach(doc => {
+      reading.push({
+        deviceId: doc.id,
+        ...doc.data()
       });
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: "Something went wrong"
-      });
-      console.error(err);
     });
+    return res.json(reading);
+  })
+  .catch(err => console.error(err));
+  
 };
 
-// Fetch one device
-// exports.getDevice = (req, res) => {
-//   let deviceData = {};
-//   db.doc(`/devices/${req.params.deviceId}`)
-//     .get()
-//     .then(doc => {
-//       if (!doc.exists) {
-//         return res.status(404).json({
-//           error: "Device not found"
-//         });
-//       }
-//       deviceData = doc.data();
-//       deviceData.deviceId = doc.id;
-//       return db
-//         .collection("comments")
-//         .orderBy("createdAt", "desc")
-//         .where("deviceId", "==", req.params.deviceId)
-//         .get();
-//     })
-//     .then(data => {
-//       deviceData.comments = [];
-//       data.forEach(doc => {
-//         deviceData.comments.push(doc.data());
-//       });
-//       return res.json(deviceData);
-//     })
-//     .catch(err => {
-//       console.error(err);
-//       return res.status(500).json({
-//         error: err.code
-//       });
-//     });
-// };
+
+exports.postReading = (req, res) => {
+  if (req.body.deviceId.trim() === "") {
+    return res.status(400).json({
+      body: "You need to send an deviceId to instantiate the object on firebase..."
+    });
+  }
+
+  const newReading = {
+    createdAt: new Date().toISOString(),
+    deviceId: req.body.deviceId,
+    air: req.body.air, // TODO: This user received from esp8266 should be tested
+    lumi1: req.body.lumi1,
+    lumi2: req.body.lumi2,
+    soil1: req.body.soil1,
+    soil2: req.body.soil2,
+    temp: req.body.temp, 
+    ledTape: req.body.ledTape,
+    waterLevel: req.body.waterLevel,
+    waterPump: req.body.waterPump,
+  };
+
+  db.doc(`/readings/${newReading.deviceId}:${newReading.createdAt}`)
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        return res.status(400).json({
+          body: "This reading already exists."
+        });
+      } else {
+        return  db.doc(`/readings/${newReading.deviceId}:${newReading.createdAt}`).set(newReading);
+       }
+    })
+    .then(() => {
+      return res.status(201).json({
+        body: 'Reading ' + newReading.deviceId + ':' + newReading.createdAt +' created successfully'
+      });
+    })
+    .catch(err => { 
+      console.error(err);
+      if (err.code === "auth/reading-already-created") {
+        return res.status(400).json({
+          device: "Reading id is already in use"
+        });
+      } else {
+        return res.status(500).json({
+          general: "Something went wrong, please try again"
+        });
+      }
+    })
+  }

@@ -25,8 +25,6 @@ function dataReducer(state, action) {
   switch (action.type) {
     case 'LOADING_DEVICES':
       return {...state, loadingDevices: true};
-    case 'GET_DEVICES':
-      return {...state, devices: action.payload, loadingDevices: false};
     case 'LOADING_READINGS':
       return {...state, loadingReadings: true};
     case 'GET_READINGS':
@@ -53,21 +51,8 @@ function useDataDispatch() {
   return context;
 }
 
-export {DataProvider, useDataState, useDataDispatch, getDevices, getReadings};
+export {DataProvider, useDataState, useDataDispatch, getReadings};
 // ###########################################################
-
-function getDevices(dispatch) {
-  dispatch({type: 'LOADING_DEVICES'});
-  axios
-    .get('/devices')
-    .then((res) => {
-      // console.log("devices: ", res);
-      dispatch({type: 'GET_DEVICES', payload: res.data});
-    })
-    .catch((err) => {
-      dispatch({type: 'GET_DEVICES', payload: []});
-    });
-}
 
 function getReadings(dispatch) {
   dispatch({type: 'LOADING_READINGS'});

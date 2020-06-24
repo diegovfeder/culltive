@@ -5,6 +5,10 @@ import api from 'axios';
 var UserStateContext = createContext(undefined);
 var UserDispatchContext = createContext(undefined);
 
+//TODO: get data from UserContext
+// -- There is problem when passing {user} to device as "" so state stays on validatingCredentials
+// -- Fix state-machine logic // add timeOut for app and esp8266.
+
 console.log('-- UserContext.tsx: ');
 
 function UserProvider({children}) {
@@ -97,7 +101,7 @@ export {
   signupUser,
   signinUser,
   signOut,
-  getUserData,
+  getUser,
   validateUserToken,
   clearErrors,
 };
@@ -186,7 +190,7 @@ function signOut(dispatch: any) {
 
 // TODO: Finish function dispatch, userHandle, /user/${userHandle}
 // maybe save the user Logged in data in AsyncStorage?..
-function getUserData(dispatch: any, handle: string) {
+function getUser(dispatch: any, handle: string) {
   // dispatch({ type: LOADING_USER });
   // .get(`/user/${diegovfeder@gmail.com}`)
   api
@@ -208,6 +212,7 @@ function validateUserToken(dispatch, userToken) {
 const setAuthorizationHeader = (token) => {
   const FBIdToken = `Bearer ${token}`;
   AsyncStorage.setItem('@FBIdToken', FBIdToken);
+  api.defaults.headers.common['Authorization'] = FBIdToken;
 };
 
 const clearErrors = (dispatch) => {

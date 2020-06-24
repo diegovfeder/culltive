@@ -61,8 +61,7 @@ const Confirmation: React.FC = () => {
       <View>
         <Text style={[someStyles.h1, {color: '#3cbc40'}]}>Parabéns</Text>
         <Text style={[someStyles.h3, {textAlign: 'center'}]}>
-          A conexão do seu dispositivo com a internet foi estabelecida com
-          sucesso!
+          A conexão do seu dispositivo foi estabelecida com sucesso!
         </Text>
       </View>
 

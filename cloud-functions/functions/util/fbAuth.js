@@ -5,6 +5,8 @@ const {
 
 
 module.exports = (req, res, next) => {
+  console.log('Called fbAuth...')
+
   let idToken
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
     idToken = req.headers.authorization.split('Bearer ')[1]
@@ -20,7 +22,7 @@ module.exports = (req, res, next) => {
     .verifyIdToken(idToken)
     .then(decodedToken => {
       req.user = decodedToken
-      // console.log(decodedToken)
+      console.log('req.user: ' + req.user)
       return db
         .collection('users')
         .where('userId', '==', req.user.uid)
@@ -28,8 +30,8 @@ module.exports = (req, res, next) => {
         .get()
     })
     .then((data) => {
-      req.user.handle = data.docs[0].data().handle;
-      req.user.imageUrl = data.docs[0].data().imageUrl;
+      req.user.userId = data.docs[0].data().userId;
+      // req.user.imageUrl = data.docs[0].data().imageUrl;
       return next();
     })
     .catch(err => {

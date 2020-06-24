@@ -64,43 +64,21 @@ const Home: React.FC = () => {
         case 'unavailable':
           console.log('Unavailable');
           //Then?
+          //TODO: Finish and test these stuff...
           break;
         case 'denied':
           console.log('Denied');
-          navigation.navigate('PairNavigator', {screen: 'GrantPermissions'});
+          navigation.navigate('PairNavigator', {
+            screen: 'GrantPermissions',
+            params: {permissions: res},
+          });
           break;
         case 'blocked':
           console.log('Blocked');
           navigation.navigate('PairNavigator', {
             screen: 'GrantPermissions',
+            params: {permissions: res},
           });
-          // navigation.navigate('GrantPermissions', res);
-          break;
-        case 'granted':
-          console.log('Granted');
-          navigation.navigate('PairNavigator', {screen: 'DeviceCertification'});
-          break;
-      }
-    });
-  };
-
-  const handlePairContainerClick = () => {
-    console.log('handlePairContainerClick');
-    request(
-      Platform.select({
-        android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-        ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-      }),
-    ).then((res: string) => {
-      switch (res) {
-        case 'unavailable':
-          console.log('Unavailable');
-          break;
-        case 'denied':
-          console.log('Denied');
-          break;
-        case 'blocked':
-          console.log('Blocked');
           // navigation.navigate('GrantPermissions', res);
           break;
         case 'granted':
@@ -245,10 +223,12 @@ const Home: React.FC = () => {
 
           {plantContainer}
 
-          <Divider style={{marginVertical: 8}} />
+          <Divider style={{marginTop: 8}} />
 
           <View style={{}}>
-            <Text style={someStyles.h4}>ATIVIDADES RECENTES</Text>
+            <Text style={[someStyles.h4, {paddingBottom: 4}]}>
+              ATIVIDADES RECENTES
+            </Text>
             {activityContainer}
           </View>
 

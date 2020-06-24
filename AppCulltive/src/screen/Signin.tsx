@@ -22,12 +22,17 @@ import {
   signinUser,
   clearErrors,
 } from '../context/UserContext';
+
+//TODO: reset Password modal and action.
 import {useFirebaseDispatch, resetPassword} from '../context/FirebaseContext';
 
 // Components
 import ForgotPasswordModal from '../component/ForgotPasswordModal';
 // TODO: Finish emailSent / forgotPassword state process
 // import EmailSentModal from '../component/EmailSentModal';
+
+// Icons
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Styles
 import {someStyles} from '../Styles';
@@ -41,6 +46,9 @@ const Signin: React.FC = () => {
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+
+  const [secureTextState, setSecureTextState] = React.useState(true);
+  const [eyeState, setEyeState] = React.useState(true);
 
   //FIXME: handle modal state using context
   const [modalState, setModalState] = useState(false);
@@ -137,19 +145,33 @@ const Signin: React.FC = () => {
                 }}
                 blurOnSubmit={false}
               />
-              <Input
-                ref={(component) => (_passwordInput = component)}
-                placeholder="Senha"
-                value={values.password}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                errorStyle={{color: 'red'}}
-                errorMessage={
-                  errors.password && touched.password ? errors.password : ''
-                }
-                secureTextEntry={true}
-                onSubmitEditing={handleSubmit}
-              />
+              <View>
+                <Input
+                  ref={(component) => (_passwordInput = component)}
+                  placeholder="Senha"
+                  value={values.password}
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={
+                    errors.password && touched.password ? errors.password : ''
+                  }
+                  secureTextEntry={secureTextState}
+                  onSubmitEditing={handleSubmit}
+                />
+                <TouchableOpacity
+                  style={{left: '90%', top: '20%', position: 'absolute'}}
+                  onPress={() => {
+                    setSecureTextState(!secureTextState);
+                    setEyeState(!eyeState);
+                  }}>
+                  <Ionicons
+                    name={eyeState ? 'ios-eye' : 'ios-eye-off'}
+                    size={24}
+                    color="#3ea341"
+                  />
+                </TouchableOpacity>
+              </View>
 
               {/* TODO: handleErrors from Context -> auth response */}
               {/* <View

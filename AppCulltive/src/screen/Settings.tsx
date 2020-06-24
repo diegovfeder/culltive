@@ -18,6 +18,7 @@ import {Divider, Slider} from 'react-native-elements';
 // Hooks
 import {
   useDeviceDispatch,
+  useDeviceState,
   deleteDevice,
   waterPump,
 } from '../context/DeviceContext';
@@ -32,7 +33,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {someStyles} from '../Styles';
 
 interface Device {
-  name: string;
+  deviceId: string;
   geolocation: string;
   productType: string;
   firmwareVersion: string;
@@ -43,12 +44,15 @@ interface Device {
 
 const Settings: React.FC = () => {
   console.log('-- Settings.tsx');
-  //TODO: Save these states to database, and fetch with useEffect()
-
-  const [device, setDevice] = useState<Device>({name: 'CULLTIVE-CWB'});
-
-  const deviceDispatch = useDeviceDispatch();
   const navigation = useNavigation();
+  const deviceDispatch = useDeviceDispatch();
+
+  //TODO: Save these states to database, and fetch with useEffect()
+  // const [device, setDevice] = useState<Device>({deviceId: 'CULLTIVE-000'});
+
+  //TODO: getDevice from context || getUser with its devices names...
+  // setDevice with the fetched data
+  const {device} = useDeviceState();
 
   const [isLEDEnabled, setIsLEDEnabled] = useState(true);
   const toggleLEDSwitch = () =>
@@ -322,30 +326,27 @@ const Settings: React.FC = () => {
         </TouchableHighlight>
 
         {/* TODO: Get DEVICE-ID and set its name dynamically */}
+        {/* TODO: Feature: textInput for deviceId verification -> make the user type deviceId to delete device */}
         <TouchableOpacity
           onPress={() => {
             console.log(
               'TODO: handleDeleteDevice(deviceDispatch, ...) -> should remove from db and go back to HomeScreen making SettingsScreen inaccessible again',
             );
             Alert.alert(
-              `Deseja deletar ${device.name}?`,
-              'Ao clicar em OK voce ira desvincular o seu aplicativo do dispositivo Culltive.',
-              // \nVerifique se digitou as credenciais corretamente e se possui conexão com a internet.
+              'Deseja mesmo desvincular o seu dispositivo?',
+              `Ao remover seu dispositivo ${device.deviceId}, seus dados e suas informações referentes a conectividade serão apagadas.`,
               [
                 {
                   text: 'Cancelar',
                   onPress: () => {
-                    console.log('OK Pressed');
-                    // errors = null;
-                    deleteDevice(deviceDispatch);
+                    // ...
                   },
                 },
                 {
-                  text: 'OK',
+                  text: 'Sim',
                   onPress: () => {
-                    console.log('OK Pressed');
-                    // errors = null;
-                    deleteDevice(deviceDispatch);
+                    //TODO: Handle Error (404) ===  Device not found
+                    deleteDevice(deviceDispatch, device.deviceId);
                   },
                 },
               ],
@@ -357,12 +358,6 @@ const Settings: React.FC = () => {
               flexDirection: 'row',
               justifyContent: 'center',
             }}>
-            {/* <Ionicons
-              name="ios-close-circle"
-              size={24}
-              color="#353535"
-              style={{marginHorizontal: 22, alignSelf: 'center'}}
-            /> */}
             <Text
               style={[
                 someStyles.h3,
@@ -376,7 +371,7 @@ const Settings: React.FC = () => {
                   justifyContent: 'center',
                 },
               ]}>
-              Remover dispositivo {device.name}?
+              Remover dispositivo {device.deviceId}?
             </Text>
           </View>
         </TouchableOpacity>
