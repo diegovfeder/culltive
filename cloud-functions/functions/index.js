@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path'); 
 const nodemailer = require('nodemailer');
 
+
 // User routes
 const {
   signup,
@@ -54,55 +55,46 @@ exports.api = functions.https.onRequest(app);
 
 
 //---------------------------------------------------------------
-// TRIGGERS // SCHEDULER // NOT API RELATED CLOUD FUNCTIONS //
+// TRIGGERS // SCHEDULERS // NOT API RELATED CLOUD FUNCTIONS //
 //--------------------------------------------------------------
-
-
 
 // Listen for new document created in the 'devices' collection
 exports.tieDeviceToUser = functions.firestore
     .document('devices/{deviceId}')
     .onCreate((snap, context) => {
-      console.log('tieDeviceToUser');
 
       // Get an object representing the document
       const newDevice = snap.data();
+      var userRef = db.collection("users").doc(`${newDevice.user}`);
 
-      // perform desired operations ...
-      db.doc(`/users/${newDevice.user}`)
-        .get()
-        .then(doc => {
-          if (!doc.exists) {
-            return res.status(404).json({
-              error: "User not found"
-            });
-          }
-          return doc.update({device: `${newDevice.deviceId}`})
-        })
-        .then(() => {
+      // Update deviceId of a specific user
+      return userRef.update({
+          device: `${newDevice.deviceId}`
+      })
+      .then(function() {
           console.log("Document successfully updated!");
-        })
-        .catch(err => {
-            // The document probably doesn't exist.
-            console.error("Error updating document: ", err);
-        });
+      })
+      .catch(function(error) {
+          // The document probably doesn't exist.
+          console.error("Error updating document: ", error);
+      });
     });
 
 
-// Trigger a welcomeEmail function on user creation
-//FIXME: https://softauthor.com/firebase-functions-send-email/
-// Error: Process exited with code 16
-//     at process.on.code (/layers/google.nodejs.functions-framework/functions-framework/node_modules/@google-cloud/functions-framework/build/src/invoker.js:396:29)
-//     at process.emit (events.js:198:13)
-//     at process.EventEmitter.emit (domain.js:448:20)
-//     at process.exit (internal/process/per_thread.js:168:15)
-//     at logAndSendError (/layers/google.nodejs.functions-framework/functions-framework/node_modules/@google-cloud/functions-framework/build/src/invoker.js:184:9)
-//     at process.on.err (/layers/google.nodejs.functions-framework/functions-framework/node_modules/@google-cloud/functions-framework/build/src/invoker.js:393:13)
-//     at process.emit (events.js:198:13)
-//     at process.EventEmitter.emit (domain.js:448:20)
-//     at emitPromiseRejectionWarnings (internal/process/promises.js:140:18)
-//     at process._tickCallback (internal/process/next_tick.js:69:34) 
+//TODO: Clean device from users when deleted / unpaired
+// exports.tieDeviceToUser = functions.firestore
+//     .document('devices/{deviceId}')
+//     .onDelete((snap, context) => {
+//       // Get an object representing the document prior to deletion
+//       // e.g. {'name': 'Marie', 'age': 66}
+//       const deletedValue = snap.data();
 
+//       // perform desired operations ...
+
+//     });
+
+
+// Send welcome email from user signup
 const welcomePath = path.join(__dirname, 'public', 'welcome.html');
 var htmlmail = fs.readFileSync(welcomePath,"utf-8").toString();
 
@@ -136,7 +128,8 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
   return null; 
 });
 
-// Handle the response within this function. It can be extended to include more data.
+
+// Get aproximated geolocation from client IP by GCP app engine
 function _geolocation(req, res) {
   // res.header('Cache-Control','no-cache');
   const data = {

@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from 'react-native';
 
 import * as Svg from 'react-native-svg';

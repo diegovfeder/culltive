@@ -15,10 +15,22 @@ import {someStyles} from '../Styles';
 const {height, width} = Dimensions.get('window');
 
 const MyCarousel: React.FC = (props) => {
-  const carouselRef = useRef('');
+  // const carouselRef = useRef('');
 
-  const [slider1ActiveSlide, setSlider1ActiveSlide] = useState(0);
+  const [data, setData] = useState(props);
+
+  useEffect(() => {
+    console.log('Props:' + JSON.stringify(props.data));
+  }, [data]);
+
+  //FIXME: Pagination, index slowly moving
   const [index, setIndex] = useState(0);
+  const [slider1ActiveSlide, setSlider1ActiveSlide] = useState(0);
+
+  //TODO: handle onPress goes to respective Chart.tsx passing id as props.
+  const _onPressCarouselButton = () => {
+    // here handle carousel press
+  };
 
   const renderItem = ({item}) => {
     return (
@@ -37,10 +49,21 @@ const MyCarousel: React.FC = (props) => {
           borderRadius: 16,
           elevation: 5,
           alignSelf: 'center',
+          justifyContent: 'space-around',
         }}>
         <Text style={someStyles.h1_regular}>{item.title}</Text>
-        <Text style={[someStyles.h3, {alignSelf: 'center'}]}>{item.text}</Text>
-        <Text style={[someStyles.h3, {alignSelf: 'center'}]}>{item.value}</Text>
+        <Text
+          style={[
+            someStyles.h3,
+            {
+              textAlign: 'center',
+              alignSelf: 'center',
+              color: '#b5b6b7',
+            },
+          ]}>
+          {item.text}
+        </Text>
+        <Text style={[someStyles.h1, {alignSelf: 'center'}]}>{item.value}</Text>
       </View>
     );
   };
@@ -55,34 +78,6 @@ const MyCarousel: React.FC = (props) => {
         loop={true}
         onSnapToItem={(index) => setIndex(index)}
       />
-      {/* <Carousel
-        layout={'default'}
-        data={props.data}
-        inactiveSlideOpacity={0.2}
-        inactiveSlideScale={0.5}
-        sliderWidth={width}
-        itemWidth={width}
-        itemHeight={height}
-        renderItem={renderItem}
-        containerCustomStyle={{overflow: 'visible'}}
-        contentContainerCustomStyle={{overflow: 'visible'}}
-        loopClonesPerSide={3}
-        activeAnimationType={'timing'}
-        loop={true}
-        swipeThreshold={5}
-        lockScrollTimeoutDuration={10}
-        onSnapToItem={(index) => setIndex(index)}
-      /> */}
-      {/* <Pagination
-        dotsLength={props.data.length}
-        activeDotIndex={index}
-        containerStyle={styles.paginationContainer}
-        dotColor={'#3cbc40'}
-        dotStyle={styles.paginationDot}
-        inactiveDotColor={'lightgrey'}
-        inactiveDotOpacity={2}
-        inactiveDotScale={1}
-      /> */}
     </View>
   );
 };
@@ -111,20 +106,32 @@ const styles = StyleSheet.create({
 
 export default MyCarousel;
 
-//Carousel props
-//loop={true}
-//firstItem={renderFirstItem}
-//apparitionDelay={2}//estar al loro de esta propiedad
-//loop={true}
-//enableMomentum={false}
-//lockScrollWhileSnapping={true}
-//autoplay={true}
-//autoplayDelay={3000}
-//autoplayInterval={2000}
-/*activeAnimationOptions={{
-        friction: 8,
-        tension: 10
-      }}*/
+/* <Carousel
+        layout={'default'}
+        data={props.data}
+        inactiveSlideOpacity={0.2}
+        inactiveSlideScale={0.5}
+        sliderWidth={width}
+        itemWidth={width}
+        itemHeight={height}
+        renderItem={renderItem}
+        containerCustomStyle={{overflow: 'visible'}}
+        contentContainerCustomStyle={{overflow: 'visible'}}
+        loopClonesPerSide={3}
+        activeAnimationType={'timing'}
+        loop={true}
+        swipeThreshold={5}
+        lockScrollTimeoutDuration={10}
+        onSnapToItem={(index) => setIndex(index)}
+      /> */
 
-// Pagination props
-//tappableDots={!!carouselRef}
+/* <Pagination
+        dotsLength={props.data.length}
+        activeDotIndex={index}
+        containerStyle={styles.paginationContainer}
+        dotColor={'#3cbc40'}
+        dotStyle={styles.paginationDot}
+        inactiveDotColor={'lightgrey'}
+        inactiveDotOpacity={2}
+        inactiveDotScale={1}
+      /> */
