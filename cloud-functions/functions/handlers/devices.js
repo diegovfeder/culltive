@@ -60,10 +60,10 @@ exports.postDevice = (req, res) => {
   }
 
   const newDevice = {
+    deviceId: req.body.deviceId, 
     user: req.body.user,
     geolocation: req.body.geolocation,
     productType: req.body.productType,
-    deviceId: req.body.deviceId, 
     firmwareVersion: req.body.firmwareVersion,
     wifiStatus: req.body.wifiStatus,
     createdAt: new Date().toISOString(),

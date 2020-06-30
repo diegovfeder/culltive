@@ -6192,10 +6192,10 @@ react-native@^0.62.2:
     use-subscription "^1.0.0"
     whatwg-fetch "^3.0.0"
 
-react-query@^1.5.8:
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.5.8.tgz#80cd99cb279d1ff0ac64122761d95a3e4b014d49"
-  integrity sha512-tQIndH00/pJ21jCIche2jwcoflNGPrSBx0m9MxuDEbTwbQztp5dCzN+3/tKWk6dRw2jrhsV78KhoeYrR21SkZQ==
+react-query@^2.4.5:
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.4.5.tgz#3f72f8695430c5c4d9dd4a84fe2e6fa4a3e68445"
+  integrity sha512-q1OLp+FcME56m7o/ZPjbdx3VRucWOAM+S6oJRQEoxTRckUoZTcW+Ep1xpWUKes57CNea2Je5xYSc9nEg5VxAmw==
   dependencies:
     "@scarf/scarf" "^1.0.6"
     ts-toolbelt "^6.9.4"

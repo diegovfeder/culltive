@@ -147,4 +147,23 @@ export const someStyles = StyleSheet.create({
   headerButton: {
     margin: 16,
   },
+  sensorContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  weatherContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 4,
+    marginHorizontal: 16,
+    padding: 8,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {width: 5, height: 5},
+    shadowOpacity: 10,
+    shadowRadius: 20,
+    borderRadius: 16,
+    elevation: 5,
+  },
 });
