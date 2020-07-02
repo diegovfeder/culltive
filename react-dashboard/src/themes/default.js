@@ -1,14 +1,6 @@
 import tinycolor from "tinycolor2";
 
-// const primary = "#536DFE"; //std blue
 const primary = "#3EA341"; //culltive app dark green
-// const primary = "#68c66b"; //culltive app dark green
-// const primary = "#60c958";
-// const secondary = "#5aed83";
-// const secondary = "#FF5C93";
-// const secondary = "#c158c9";
-// const secondary = "#cf6bd6";
-// const secondary = "#aa4786";
 const secondary = "#536DFE";
 const warning = "#FFC260";
 const success = "#3CD4A0";

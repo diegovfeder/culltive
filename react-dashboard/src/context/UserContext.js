@@ -7,11 +7,11 @@ var UserDispatchContext = React.createContext();
 
 function userReducer(state, action) {
   switch (action.type) {
-    case "LOGIN_SUCCESS":
+    case "SIGNIN_SUCCESS":
       return { ...state, isAuthenticated: true };
-    case "LOGIN_FAILURE": {
-      // TODO: create a message to the user explaining login failed
-      console.log("LOGIN_FAILURE");
+    case "SIGNIN_FAILURE": {
+      // TODO: create a message to the user explaining SIGNIN failed
+      console.log("SIGNIN_FAILURE");
       return { ...state, isAuthenticated: false };
     }
     case "SIGN_OUT_SUCCESS":
@@ -56,16 +56,16 @@ export {
   UserProvider,
   useUserState,
   useUserDispatch,
-  loginUser,
+  signinUser,
   signupUser,
   signOut,
   autoSignIn
 };
 // ###########################################################
 
-function loginUser(
+function signinUser(
   dispatch,
-  loginValue,
+  emailValue,
   passwordValue,
   history,
   setIsLoading,
@@ -74,12 +74,12 @@ function loginUser(
   setError(false);
   setIsLoading(true);
 
-  console.log('UserContext: loginUser'); 
-  console.log(loginValue); 
+  console.log('UserContext: signinUser'); 
+  console.log(emailValue); 
   console.log(passwordValue); 
 
   const userData = {
-    email: loginValue,
+    email: emailValue,
     password: passwordValue
   };
 
@@ -91,12 +91,12 @@ function loginUser(
       setAuthorizationHeader(res.data.token);
       setError(null);
       setIsLoading(false);
-      dispatch({ type: "LOGIN_SUCCESS" });
+      dispatch({ type: "SIGNIN_SUCCESS" });
       history.push("/app/home");
     })
     .catch(err => {
       console.log(err);
-      dispatch({ type: "LOGIN_FAILURE" });
+      dispatch({ type: "SIGNIN_FAILURE" });
       setError(true);
       setIsLoading(false);
     });
@@ -105,7 +105,7 @@ function loginUser(
 // TODO: FINISH THIS METHOD
 function signupUser(
   dispatch,
-  loginValue,
+  emailValue,
   passwordValue,
   confirmPasswordValue,
   handleValue,
@@ -117,7 +117,7 @@ function signupUser(
   setIsLoading(true);
 
   const newUserData = {
-    email: loginValue,
+    email: emailValue,
     password: passwordValue,
     confirmPassword: confirmPasswordValue,
     handle: handleValue
@@ -144,12 +144,12 @@ function signOut(dispatch, history) {
   localStorage.removeItem("FBIdToken");
   delete axios.defaults.headers.common["Authorization"];
   dispatch({ type: "SIGN_OUT_SUCCESS" });
-  history.push("/login");
+  history.push("/signin");
 }
 
 // TODO: Finish this local storage verification thing
 function autoSignIn(dispatch, history) {
-  dispatch({ type: "LOGIN_SUCCESS" });
+  dispatch({ type: "SIGNIN_SUCCESS" });
   // history.push("/app/home");
 }
 

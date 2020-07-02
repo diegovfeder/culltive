@@ -1,26 +1,18 @@
 import React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Grid from "@material-ui/core/Grid";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
+
+// Components
 import YouTube from "react-youtube";
-// logo
-// import logo from "../images/culltive.jpeg";
-import logo from "../../images/culltive_logo_1500t.png";
-import logo_small from "../../images/culltive_small.jpeg";
+
+// Material UI
+import {AppBar, Button, Container, CssBaseline, Grid, Link, makeStyles, Toolbar, Typography} from "@material-ui/core";
+
+// Logo
+import logo from "../../images/culltive-logo.png";
+import logo_small from "../../images/culltive-logo-sm.jpeg";
 
 
-import axios from 'axios'
-
-// styles
-// import useStyles from "../styles";
-
+// Styles
 const useStyles = makeStyles(theme => ({
   "@global": {
     ul: {
@@ -47,7 +39,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "#f7f7f7"
   },
   logotypeContainer: {
-    // backgroundColor: "#f7f7f7",
     height: "100%",
     display: "flex",
     flexDirection: "column",
@@ -57,11 +48,9 @@ const useStyles = makeStyles(theme => ({
   logotypeImage: {
     margin: theme.spacing(5),
     width: 260
-    // width: 200
-    // color: "white",
+
   },
   appBar: {
-    // backgroundColor: "white",
     borderBottom: `1px solid ${theme.palette.divider}`
   },
   toolbar: {
@@ -78,7 +67,7 @@ const useStyles = makeStyles(theme => ({
   toolbarImage: {
     width: 64
   },
-  loginButton: {
+  signinButton: {
     // left: "93%",
     // margin: theme.spacing(1, 1.5)
   },
@@ -120,7 +109,7 @@ function Copyright() {
   );
 }
 
-export default function Pricing() {
+export default function Landing() {
   const classes = useStyles();
   const history = useHistory();
 
@@ -151,11 +140,11 @@ export default function Pricing() {
             <Button
               color="primary"
               variant="outlined"
-              className={classes.loginButton}
-              onClick={() => history.replace("/login")}
+              className={classes.signinButton}
+              onClick={() => history.replace("/signin")}
               type="button"
             >
-              Login
+              Entrar
             </Button>
           </Grid>
         </Toolbar>

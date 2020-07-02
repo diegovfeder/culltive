@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-//context
+// Context
 import {
   useDataState,
   useDataDispatch,
@@ -8,12 +8,12 @@ import {
   getReadings
 } from "../../context/DataContext";
 
-//components
-import Widget from "../../components/Widget";
+// Components
 import PageTitle from "../../components/PageTitle";
-import ApexLineChart from "./components/Chart/ApexLineChart";
+// import Widget from "../../components/Widget";
+// import ApexLineChart from "./components/Chart/ApexLineChart";
 
-//Material UI
+// Material UI
 import { Grid } from "@material-ui/core";
 import MUIDataTable from "mui-datatables";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -22,23 +22,24 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import useStyles from "./styles";
 
 const devicesColumns = [
-  { label: "Assigned User", name: "assignedUser" },
+  { label: "User", name: "user" },
   { label: "Created At", name: "createdAt" },
   { label: "Device Id", name: "deviceId" },
   { label: "Geolocation", name: "geolocation" },
   { label: "Product Type", name: "productType" },
-  { label: "QR Code", name: "qrCode" },
-  { label: "Version", name: "version" },
+  { label: "Firmware", name: "firmwareVersion" },
   { label: "Wifi Status", name: "wifiStatus" }
 ];
 
 const readingsColumns = [
-  { label: "Sensor Data Id", name: "readingsId" },
-  { label: "QR Code", name: "qrCode" },
+  // { label: "Sensor Data Id", name: "readingsId" },
+  { label: "Device", name: "deviceId" },
   { label: "Created At", name: "createdAt" },
   { label: "Air Humidity", name: "air" },
-  { label: "Soil Humidity", name: "soil" },
-  { label: "Luminosity", name: "lumi" },
+  { label: "Lumi.1", name: "lumi1" },
+  { label: "Lumi.2", name: "lumi2" },
+  { label: "Soil Hum.1", name: "soil1" },
+  { label: "Soil Hum.2", name: "soil2" },
   { label: "Temperature", name: "temp" }
 ];
 
@@ -47,7 +48,6 @@ const options = {
   responsive: "stacked"
 };
 
-// TODO: re-base match all devices/readings collection
 export default function Home(props) {
   var classes = useStyles();
   const dataDispatch = useDataDispatch();
@@ -103,21 +103,6 @@ export default function Home(props) {
         </Grid>
         <Grid item xs={12}>
           {readingsMUIDataTable}
-        </Grid>
-        <Grid item xs={12}>
-          <Widget title="Humidity" upperTitle noBodyPadding>
-            <ApexLineChart />
-          </Widget>
-        </Grid>
-        <Grid item xs={12}>
-          <Widget title="Luminosity" upperTitle noBodyPadding>
-            <ApexLineChart />
-          </Widget>
-        </Grid>
-        <Grid item xs={12}>
-          <Widget title="Temperature" upperTitle noBodyPadding>
-            <ApexLineChart />
-          </Widget>
         </Grid>
       </Grid>
     </>
