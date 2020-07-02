@@ -108,6 +108,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
         console.log(
           'ConnectDevice: Your current connected wifi SSID is ' + connectedSsid,
         );
+        //FIXME: includes 'culltive' in ssid is not the best validator but works for now...
         if (connectedSsid.includes('culltive')) {
           setConnecting(true);
         } else {
@@ -218,10 +219,14 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
           if (res.status === 200) {
             console.log('Connection verification: ');
             console.log('res.data: ' + JSON.stringify(res.data));
+
             const {connection} = res.data;
+
+            // Receivied deviceId as response from ESP8266
             console.log('res.data.deviceId: ' + res.data.deviceId);
             setDeviceId(res.data.deviceId);
             console.log('deviceId: ' + deviceId);
+
             if (connection === 'SUCCESS') {
               setStatusSubtitle(
                 'Conexão verificada.\nRealizando ajustes finais...',

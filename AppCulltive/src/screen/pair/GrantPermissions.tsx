@@ -49,35 +49,41 @@ const OpenSettingsButton = () => {
   );
 };
 
+const checkPermissions = (navigation) => {
+  check(
+    Platform.select({
+      android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      ios: PERMISSIONS.IOS.LOCATION_ALWAYS,
+    }),
+  ).then((res: string) => {
+    console.log('checkPermissions: ' + res);
+    switch (res) {
+      case 'unavailable':
+        break;
+      case 'denied':
+        break;
+      case 'blocked':
+        break;
+      case 'granted':
+        navigation.dispatch(StackActions.replace('DeviceCertification'));
+        break;
+    }
+  });
+};
+
 const GrantPermissions: React.FC = ({nav, route}) => {
   console.log('-- GrantPermissions.tsx');
   const navigation = useNavigation();
 
-  //TODO: Receive params from check in Home.tsx and act accordingly
   const [permissionState, setPermissionState] = useState('');
-  console.log('route.params... ' + route.params.permissions);
+  const [deniedCount, setDeniedCount] = useState(0);
 
-  // Manages appState (onFocus / onBackground)
-  //FIXME: appState is glitching navigation
-  const [appState, setAppState] = useState(AppState.currentState);
-  const _handleAppStateChange = (nextAppState) => {
-    if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log('App has come to the foreground!');
+  useEffect(() => {
+    if (permissionState === 'granted') {
+      navigation.dispatch(StackActions.replace('DeviceCertification'));
     }
-    setAppState(nextAppState);
-  };
-
-  useEffect(() => {
-    AppState.addEventListener('change', _handleAppStateChange);
-
-    return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    setTimeout(requestPermissions, 1000);
-  });
+    setTimeout(requestPermissions, 800);
+  }, [permissionState, deniedCount]);
 
   const requestPermissions = () => {
     request(
@@ -86,30 +92,44 @@ const GrantPermissions: React.FC = ({nav, route}) => {
         ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
       }),
     ).then((res: string) => {
-      console.log('useEffect: requestPermissions (callback)');
+      console.log('requestPermissions: ' + res);
       //TODO: Handle permissions states.
       switch (res) {
         case 'unavailable':
-          console.log('unavailable');
           setPermissionState('unavailable');
-          //Then?
+          //TODO: Message user explaining / advising unavailability
           break;
         case 'denied':
-          console.log('denied');
           setPermissionState('denied');
-          //Ask again?
+          setDeniedCount(deniedCount + 1);
+          // requestPermissions(navigation, setPermissionState);
           break;
         case 'blocked':
-          console.log('blocked');
           setPermissionState('blocked');
           break;
         case 'granted':
-          console.log('granted');
-          navigation.dispatch(StackActions.replace('DeviceCertification'));
+          setPermissionState('granted');
+          // navigation.dispatch(StackActions.replace('DeviceCertification'));
           break;
       }
     });
   };
+
+  // Manages appState (onFocus / onBackground)
+  const [appState, setAppState] = useState(AppState.currentState);
+  const _handleAppStateChange = (nextAppState) => {
+    if (appState.match(/inactive|background/) && nextAppState === 'active') {
+      checkPermissions(navigation);
+    }
+    setAppState(nextAppState);
+  };
+  useEffect(() => {
+    AppState.addEventListener('change', _handleAppStateChange);
+
+    return () => {
+      AppState.removeEventListener('change', _handleAppStateChange);
+    };
+  }, [appState]);
 
   return (
     <SafeAreaView

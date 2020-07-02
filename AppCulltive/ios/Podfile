@@ -44,8 +44,8 @@ def flipper_post_install(installer)
   end
 end
 
-target 'AppCulltive' do
-  # Pods for AppCulltive
+target 'Culltive' do
+  # Pods for Culltive
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -77,7 +77,7 @@ target 'AppCulltive' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  target 'AppCulltiveTests' do
+  target 'CulltiveTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -94,10 +94,10 @@ target 'AppCulltive' do
   end
 end
 
-target 'AppCulltive-tvOS' do
-  # Pods for AppCulltive-tvOS
+target 'Culltive-tvOS' do
+  # Pods for Culltive-tvOS
 
-  target 'AppCulltive-tvOSTests' do
+  target 'Culltive-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

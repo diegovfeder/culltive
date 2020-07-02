@@ -1,7 +1,7 @@
 <manifest
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
-  package="com.appculltive">
+  package="com.culltive">
 
     <!-- 🚨 Keep only the permissions used in your app 🚨 -->
     <uses-permission android:name="android.permission.INTERNET" />

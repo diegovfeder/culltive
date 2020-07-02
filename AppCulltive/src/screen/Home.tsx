@@ -21,8 +21,11 @@ import {Divider} from 'react-native-elements';
 
 // Hooks & Context
 import {useNavigation} from '@react-navigation/native';
-import {useDeviceDispatch, setDeviceToken} from '../context/DeviceContext';
-import {useDeviceState} from '../context/DeviceContext';
+import {
+  useDeviceDispatch,
+  useDeviceState,
+  setDeviceToken,
+} from '../context/DeviceContext';
 
 // import FirstSigninModal from '../component/FirstSigninModal';
 
@@ -53,37 +56,34 @@ const Home: React.FC = () => {
   // }, [null]);
 
   const checkPermissionsOnClick = () => {
-    console.log('checkPermissionsOnClick');
     check(
       Platform.select({
         android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
         ios: PERMISSIONS.IOS.LOCATION_ALWAYS,
       }),
     ).then((res: string) => {
+      console.log('checkPermissionsOnClick: ' + res);
       switch (res) {
-        case 'unavailable':
-          console.log('Unavailable');
-          //Then?
-          //TODO: Finish and test these stuff...
+        case 'granted':
+          navigation.navigate('PairNavigator', {screen: 'DeviceCertification'});
           break;
         case 'denied':
-          console.log('Denied');
           navigation.navigate('PairNavigator', {
             screen: 'GrantPermissions',
             params: {permissions: res},
           });
           break;
         case 'blocked':
-          console.log('Blocked');
           navigation.navigate('PairNavigator', {
             screen: 'GrantPermissions',
             params: {permissions: res},
           });
-          // navigation.navigate('GrantPermissions', res);
           break;
-        case 'granted':
-          console.log('Granted');
-          navigation.navigate('PairNavigator', {screen: 'DeviceCertification'});
+        case 'unavailable':
+          //TODO: Message user explaining / advising unavailability
+          break;
+        default:
+          //...
           break;
       }
     });
@@ -92,9 +92,7 @@ const Home: React.FC = () => {
   const pairContainer = (
     <TouchableHighlight
       onPress={() => {
-        console.log('onPress');
         checkPermissionsOnClick();
-        // handlePairContainerClick();
       }}
       underlayColor="#3ea341"
       activeOpacity={0.8}

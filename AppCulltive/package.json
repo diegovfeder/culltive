@@ -1,5 +1,5 @@
 {
-  "name": "AppCulltive",
+  "name": "Culltive",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -22,7 +22,7 @@
     "axios": "^0.19.2",
     "firebase": "^7.14.2",
     "formik": "^2.1.4",
-    "jetifier": "^1.6.5",
+    "jetifier": "^1.6.6",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
     "react": "16.11.0",
