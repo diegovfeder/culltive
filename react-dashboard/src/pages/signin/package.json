@@ -1,6 +1,6 @@
 {
-  "name": "Login",
+  "name": "Signin",
   "version": "0.0.0",
-  "main": "Login.js",
+  "main": "Signin.js",
   "private": true
 }

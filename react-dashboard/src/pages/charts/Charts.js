@@ -15,7 +15,7 @@ import {
   YAxis,
 } from "recharts";
 
-// components
+// Components
 import Widget from "../../components/Widget/Widget";
 import ApexLineChart from "./components/ApexLineChart";
 import ApexHeatmap from "./components/ApexHeatmap";
@@ -81,7 +81,33 @@ export default function Charts(props) {
 
   return (
     <>
-      <PageTitle title="Charts Page - Data Display" button="Latest Reports" />
+      <PageTitle title="Charts" button="Latest Reports" />
+
+      {/* TODO: Device and Chart Selector */}
+      <Grid container spacing={2}>
+      <Grid item xs={12}>
+          <Widget title="Air Humidity" upperTitle noBodyPadding>
+            <ApexLineChart />
+          </Widget>
+        </Grid>
+        <Grid item xs={12}>
+          <Widget title="Luminosity" upperTitle noBodyPadding>
+            <ApexLineChart />
+          </Widget>
+        </Grid>
+        <Grid item xs={12}>
+          <Widget title="Soil Humidity" upperTitle noBodyPadding>
+            <ApexLineChart />
+          </Widget>
+        </Grid>
+        <Grid item xs={12}>
+          <Widget title="Temperature" upperTitle noBodyPadding>
+            <ApexLineChart />
+          </Widget>
+        </Grid>
+        </Grid>
+
+      {/* UI EXAMPLE */}
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
           <Widget title="Apex Line Chart" upperTitle noBodyPadding>

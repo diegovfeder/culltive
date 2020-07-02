@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 
-// redux
+// Redux
 import { useSelector } from "react-redux";
 // import { connect } from "react-redux";
 
@@ -18,7 +18,7 @@ export default function AuthRoute({
       {...rest}
       render={props =>
         authenticated === true ? (
-          <Redirect to="/login" />
+          <Redirect to="/signin" />
         ) : (
           <Component {...props} />
         )

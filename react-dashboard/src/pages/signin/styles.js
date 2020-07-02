@@ -98,7 +98,7 @@ export default makeStyles(theme => ({
     justifyContent: "center",
     alignItems: "center"
   },
-  loginButton: {
+  signinButton: {
     height: 50,
     textTransform: "none"
   },
@@ -150,7 +150,7 @@ export default makeStyles(theme => ({
     textTransform: "none",
     fontWeight: 400
   },
-  loginLoader: {
+  signinLoader: {
     margin: "auto"
   },
   copyright: {

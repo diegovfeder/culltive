@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 
-// Material ui
+// Material UI
 import {
   Grid,
   CircularProgress,
@@ -14,24 +14,24 @@ import {
   Fade
 } from "@material-ui/core";
 
-// styles
+// Styles
 import useStyles from "./styles";
 
-// logo
-import logo from "../../images/culltive_logo_1500t.png";
+// Logo
+import logo from "../../images/culltive-logo.png";
 
-// context
+// Context
 import {
   useUserDispatch,
-  loginUser,
+  signinUser,
   signupUser
 } from "../../context/UserContext";
 
-const Login = props => {
+const Signin = props => {
   var classes = useStyles();
   var userDispatch = useUserDispatch();
 
-  console.log('-- Login.js'); 
+  console.log('-- Signin.js'); 
 
 
 
@@ -41,7 +41,7 @@ const Login = props => {
   const [error, setError] = useState(null);
   const [activeTabId, setActiveTabId] = useState(0);
   const [nameValue, setNameValue] = useState("");
-  const [loginValue, setLoginValue] = useState("");
+  const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
 
   return (
@@ -59,18 +59,18 @@ const Login = props => {
             textColor="primary"
             centered
           >
-            <Tab label="Sign In" classes={{ root: classes.tab }} />
+            <Tab label="Acessar" classes={{ root: classes.tab }} />
             {/* <Tab label="Sign Up" classes={{ root: classes.tab }} /> */}
           </Tabs>
           {/*SIGN IN TAB*/}
           {activeTabId === 0 && (
             <React.Fragment>
               <Typography variant="h1" className={classes.greeting}>
-                Are you ready to grow?
+                Culltive, a natureza perto de você!
               </Typography>
               <Fade in={error}>
                 <Typography color="secondary" className={classes.errorMessage}>
-                  Something is wrong with your login or password :(
+                  Verifique se seu e-mail e senha estão corretos.
                 </Typography>
               </Fade>
               <TextField
@@ -81,10 +81,10 @@ const Login = props => {
                     input: classes.textField
                   }
                 }}
-                value={loginValue}
-                onChange={e => setLoginValue(e.target.value)}
+                value={emailValue}
+                onChange={e => setEmailValue(e.target.value)}
                 margin="normal"
-                placeholder="Email Adress"
+                placeholder="E-mail"
                 type="email"
                 fullWidth
               />
@@ -99,22 +99,22 @@ const Login = props => {
                 value={passwordValue}
                 onChange={e => setPasswordValue(e.target.value)}
                 margin="normal"
-                placeholder="Password"
+                placeholder="Senha"
                 type="password"
                 fullWidth
               />
               <div className={classes.formButtons}>
                 {isLoading ? (
-                  <CircularProgress size={26} className={classes.loginLoader} />
+                  <CircularProgress size={26} className={classes.signinLoader} />
                 ) : (
                   <Button
                     disabled={
-                      loginValue.length === 0 || passwordValue.length === 0
+                      emailValue.length === 0 || passwordValue.length === 0
                     }
                     onClick={() =>
-                      loginUser(
+                      signinUser(
                         userDispatch,
-                        loginValue,
+                        emailValue,
                         passwordValue,
                         props.history,
                         setIsLoading,
@@ -125,23 +125,23 @@ const Login = props => {
                     variant="contained"
                     color="primary"
                     fullWidth
-                    className={classes.loginButton}
+                    className={classes.signinButton}
                   >
-                    Sign In
+                    Entrar
                   </Button>
                 )}
               </div>
-            </React.Fragment>
+            </React.Fragment> 
           )}
           {/*SIGN UP TAB*/}
           {activeTabId === 1 && (
             <React.Fragment>
               <Typography variant="h1" className={classes.greeting}>
-                Welcome!
+                Bem vindo!
               </Typography>
               <Fade in={error}>
                 <Typography color="secondary" className={classes.errorMessage}>
-                  Something is wrong with your login or password :(
+                  Verifique se seu e-mail e senha estão corretos.
                 </Typography>
               </Fade>
               <TextField
@@ -167,8 +167,8 @@ const Login = props => {
                     input: classes.textField
                   }
                 }}
-                value={loginValue}
-                onChange={e => setLoginValue(e.target.value)}
+                value={emailValue}
+                onChange={e => setEmailValue(e.target.value)}
                 margin="normal"
                 placeholder="Email Adress"
                 type="email"
@@ -185,7 +185,7 @@ const Login = props => {
                 value={passwordValue}
                 onChange={e => setPasswordValue(e.target.value)}
                 margin="normal"
-                placeholder="Password"
+                placeholder="Senha"
                 type="password"
                 fullWidth
               />
@@ -195,10 +195,10 @@ const Login = props => {
                 ) : (
                   <Button
                     onClick={() =>
-                      signupUser(loginValue, passwordValue, props.history)
+                      signupUser(emailValue, passwordValue, props.history)
                     }
                     disabled={
-                      loginValue.length === 0 ||
+                      emailValue.length === 0 ||
                       passwordValue.length === 0 ||
                       nameValue.length === 0
                     }
@@ -220,8 +220,8 @@ const Login = props => {
   );
 };
 
-Login.propTypes = {
-  loginValue: PropTypes.string
+Signin.propTypes = {
+  emailValue: PropTypes.string
 };
 
-export default withRouter(Login);
+export default withRouter(Signin);

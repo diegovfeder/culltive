@@ -61,7 +61,7 @@ class TaskComponent extends React.Component {
   };
 
   componentDidMount() {
-    base.listenToDoc("tasks/user", {
+    base.listenToDoc("tasks/admin", {
       context: this,
       then(data) {
         if (data.tasks === undefined) {
@@ -76,7 +76,7 @@ class TaskComponent extends React.Component {
         //handle error
       }
     });
-    base.bindDoc("tasks/user", {
+    base.bindDoc("tasks/admin", {
       context: this,
       then() {
         // this.setState({
@@ -89,10 +89,10 @@ class TaskComponent extends React.Component {
     });
   }
 
-  //TODO: get and use the userHandle instead of 'user'
+  //TODO: get and use the userHandle instead of 'admin'
   addToTasksCollection = tasks => {
     base
-      .addToCollection("tasks", { tasks: tasks }, "user") //userHandle
+      .addToCollection("tasks", { tasks: tasks }, "admin") //userHandle
       .then(() => {
         //document is added to the collection, do?
       })

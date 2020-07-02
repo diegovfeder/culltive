@@ -2,31 +2,35 @@ import React from "react";
 import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 import classnames from "classnames";
 
-// styles
+// Styles
 import useStyles from "./styles";
 
-// components
+// Components
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 
-// pages
+// Custom Pages
 import Home from "../../pages/home";
 import Tasks from "../../pages/tasks";
+
+//TODO: Make Charts.js meet our custom needs...
+import Charts from "../../pages/charts";
+
+
+// Example / Template Pages
 import Dashboard from "../../pages/dashboard";
 import Typography from "../../pages/typography";
 import Notifications from "../../pages/notifications";
 import Maps from "../../pages/maps";
 import Tables from "../../pages/tables";
 import Icons from "../../pages/icons";
-import Charts from "../../pages/charts";
 
-// context
+// Context
 import { useLayoutState } from "../../context/LayoutContext";
 
 function Layout(props) {
+  // Global
   var classes = useStyles();
-
-  // global
   var layoutState = useLayoutState();
 
   return (
@@ -42,7 +46,9 @@ function Layout(props) {
           <div className={classes.fakeToolbar} />
           <Switch>
             <Route path="/app/home" component={Home} />
+            <Route path="/app/charts" component={Charts}/>
             <Route path="/app/tasks" component={Tasks} />
+
             {/*<Route path="/app/add" component={Add} />*/}
 
             <Route path="/app/dashboard_example" component={Dashboard} />
@@ -59,7 +65,6 @@ function Layout(props) {
             />
             <Route path="/app/ui/maps_example" component={Maps} />
             <Route path="/app/ui/icons_example" component={Icons} />
-            <Route path="/app/ui/charts_example" component={Charts} />
           </Switch>
         </div>
       </>

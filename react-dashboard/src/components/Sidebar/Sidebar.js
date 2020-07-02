@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
+import classNames from "classnames";
+
 import { Drawer, IconButton, List } from "@material-ui/core";
 import {
   Home as HomeIcon,
@@ -7,23 +10,19 @@ import {
   FormatSize as TypographyIcon,
   FilterNone as UIElementsIcon,
   BorderAll as TableIcon,
-  // QuestionAnswer as SupportIcon,
-  // LibraryBooks as LibraryIcon,
-  // HelpOutline as FAQIcon,
+  InsertChart as ChartIcon,
   ArrowBack as ArrowBackIcon
 } from "@material-ui/icons";
 import { useTheme } from "@material-ui/styles";
-import { withRouter } from "react-router-dom";
-import classNames from "classnames";
 
-// styles
+// Styles
 import useStyles from "./styles";
 
-// components
+// Components
 import SidebarLink from "./components/SidebarLink/SidebarLink";
 // import Dot from "./components/Dot";
 
-// context
+// Context
 import {
   useLayoutState,
   useLayoutDispatch,
@@ -32,12 +31,16 @@ import {
 
 const structure = [
   { id: 0, label: "Home", link: "/app/home", icon: <HomeIcon /> },
-  { id: 1, label: "Tasks", link: "/app/tasks", icon: <CheckCircleIcon /> },
-  // TODO: Continue to develop sidebar drawer menus.
+  
+  // Charts for selected device and sensor values
+  { id: 1, label: "Charts", link: "/app/charts", icon: <ChartIcon /> },
+  
+  // Tasks / Todo 
+  { id: 2, label: "Tasks", link: "/app/tasks", icon: <CheckCircleIcon /> },
 
+  // Following UI / Feature examples that could be developed...
   { id: 5, type: "divider" },
   { id: 6, type: "title", label: "EXAMPLES" },
-
   {
     id: 10,
     label: "Dashboard",
@@ -68,42 +71,17 @@ const structure = [
       { label: "Maps", link: "/app/ui/maps_example" }
     ]
   }
-  // { id: 5, type: "divider" },
-  // { id: 6, type: "title", label: "HELP" },
-  // { id: 7, label: "Library", link: "", icon: <LibraryIcon /> },
-  // { id: 8, label: "Support", link: "", icon: <SupportIcon /> },
-  // { id: 9, label: "FAQ", link: "", icon: <FAQIcon /> },
-  // { id: 10, type: "divider" },
-  // { id: 11, type: "title", label: "PROJECTS" },
-  // {
-  //   id: 12,
-  //   label: "My recent",
-  //   link: "",
-  //   icon: <Dot size="large" color="warning" />,
-  // },
-  // {
-  //   id: 13,
-  //   label: "Starred",
-  //   link: "",
-  //   icon: <Dot size="large" color="primary" />,
-  // },
-  // {
-  //   id: 14,
-  //   label: "Background",
-  //   link: "",
-  //   icon: <Dot size="large" color="secondary" />,
-  // },
 ];
 
 function Sidebar({ location }) {
   var classes = useStyles();
   var theme = useTheme();
 
-  // global
+  // Global
   var { isSidebarOpened } = useLayoutState();
   var layoutDispatch = useLayoutDispatch();
 
-  // local
+  // Local
   var [isPermanent, setPermanent] = useState(true);
 
   useEffect(function() {
