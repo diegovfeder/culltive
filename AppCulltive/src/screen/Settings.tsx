@@ -22,6 +22,7 @@ import {
   deleteDevice,
   waterPump,
 } from '../context/DeviceContext';
+import {useUserDispatch, useUserState} from '../context/UserContext';
 
 // Navigation
 import {DrawerActions, useNavigation} from '@react-navigation/native';
@@ -53,6 +54,9 @@ const Settings: React.FC = () => {
   //TODO: getDevice from context || getUser with its devices names...
   // setDevice with the fetched data
   const {device} = useDeviceState();
+
+  // const {userData} = useUserState();
+  // console.log('userData: ' + JSON.stringify(userData));
 
   const [isLEDEnabled, setIsLEDEnabled] = useState(true);
   const toggleLEDSwitch = () =>

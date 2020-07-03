@@ -11,7 +11,6 @@ import {
 import {useNavigation} from '@react-navigation/native';
 
 // Context
-import {useDeviceDispatch, setDeviceToken} from '../../context/DeviceContext';
 import {useDeviceState} from '../../context/DeviceContext';
 
 // Styles
@@ -25,7 +24,6 @@ const DataAgreements: React.FC = () => {
   console.log('-- DataAgreements.tsx');
 
   const navigation = useNavigation();
-  const deviceDispatch = useDeviceDispatch();
   let {paired} = useDeviceState();
 
   console.log('Paired: ' + paired);

@@ -14,8 +14,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AppNavigator from './navigation/AppNavigator';
 
 // API
-import api from 'axios';
-api.defaults.baseURL = 'https://us-central1-culltive.cloudfunctions.net/api';
+import api from './util/api';
 
 const App: React.FC = () => {
   console.log('-- App.tsx');

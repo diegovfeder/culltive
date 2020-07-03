@@ -21,6 +21,8 @@ import {Divider} from 'react-native-elements';
 
 // Hooks & Context
 import {useNavigation} from '@react-navigation/native';
+
+import {useUserDispatch, useUserState} from '../context/UserContext';
 import {
   useDeviceDispatch,
   useDeviceState,
@@ -47,6 +49,18 @@ const Home: React.FC = () => {
   let deviceDispatch = useDeviceDispatch();
   let {paired} = useDeviceState();
   console.log('Paired: ' + paired);
+
+  // let {userData} = useUserDispatch();
+
+  // useEffect(() => {
+  //   if (!!token) {
+  //     console.log('TODO: getUser without handle, only Authorization header');
+  //     // console.log('getUser! ' + 'diegovfeder@gmail.com' + token);
+  //     getUser(userDispatch, 'diegovfeder@gmail.com', token);
+  //   } else {
+  //     console.log('user is not signed yet / no token');
+  //   }
+  // }, [userData]);
 
   // FIXME: Open FirstSigninModal if !paired
   // useEffect(() => {

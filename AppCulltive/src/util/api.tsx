@@ -1,7 +1,9 @@
-// import axios from 'axios';
+import axios from 'axios';
 
-// const api = axios.create({
-//   baseURL: 'https://us-central1-culltive.cloudfunctions.net/api',
-// });
+const api = axios.create({
+  baseURL: 'https://us-central1-culltive.cloudfunctions.net/api',
+});
 
-// export {api};
+//TODO: setAuthorizationHeader
+
+export default api;

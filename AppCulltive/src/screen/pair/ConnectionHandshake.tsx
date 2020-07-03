@@ -14,6 +14,7 @@ import {
 import * as Svg from 'react-native-svg';
 
 import axios from 'axios';
+// import api from 'axios';
 
 // TODO: Try below lib after system is manually working / pairing
 import WifiManager from 'react-native-wifi-reborn';
@@ -34,6 +35,7 @@ import WifiUndraw from '../../../assets/undraw/interfaceWifi.svg';
 
 import {useUserState} from '../../context/UserContext';
 
+//TODO: setTimeout for connectionStates
 //TODO: Finish logic
 enum Status {
   waitingForConnection,
@@ -42,7 +44,6 @@ enum Status {
 }
 
 //TODO: handle 3g connection bug -> make sure App is sending data to Esp8266 SoftAP (IP)
-
 const OpenWifiButton = ({action}) => {
   const handlePress = useCallback(async () => {
     try {
@@ -77,13 +78,15 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
   const [validating, setValidating] = useState(false);
   const [validated, setValidated] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [pairing, setPairing] = useState(false);
+  const [done, setDone] = useState(false);
 
   const {ssid, password} = route.params;
   const [deviceId, setDeviceId] = useState('');
 
   //TODO: set and get user in AsyncStorage or getUser from firebase...
   const {user} = useUserState();
-  // console.log('user: ' + user);
+  console.log('user: ' + user);
 
   // Manages appState (onFocus / onBackground)
   const [appState, setAppState] = useState(AppState.currentState);
@@ -187,7 +190,14 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
               );
               //...
             } else {
+              // credentials is ""
               //...
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{name: 'Fail', params: {error: 'Credentials'}}],
+                }),
+              );
             }
           } else if (res.status === 400) {
             console.log('400 Bad Request');
@@ -226,12 +236,16 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
             console.log('res.data.deviceId: ' + res.data.deviceId);
             setDeviceId(res.data.deviceId);
             console.log('deviceId: ' + deviceId);
+            //TODO: getUser / device name and compare to this one?...
+            // receive trigger function and devices names are equal means success
 
             if (connection === 'SUCCESS') {
               setStatusSubtitle(
                 'Conexão verificada.\nRealizando ajustes finais...',
               );
-              setConnected(true);
+
+              setPairing(true);
+              // setConnected(true);
             } else if (connection === 'FAIL') {
               navigation.dispatch(
                 CommonActions.reset({
@@ -263,6 +277,54 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
       console.log('Validated: ' + validated);
     }
   }, [validated]);
+
+  // LAST VERIFICATION POSTDEVICE FIREBASE
+  useEffect(() => {
+    if (pairing) {
+      axios.get('http://192.168.11.4/paired').then(
+        (res) => {
+          // console.log(res);
+          if (res.status === 200) {
+            console.log('http://192.168.11.4/paired return 200');
+            console.log('res.data: ' + JSON.stringify(res.data));
+            // Receivied boolean pairedState as response from ESP8266
+            const {paired} = res.data;
+
+            // I was thinking to compared user/device with esp8266deviceId to verify postDevice
+            // but that would be very difficult as it would need to disconnect from esp8266
+            // reconnect to Wi-Fi and then get data... So I will leave the pairing like this atm
+
+            if (paired === true) {
+              setStatusSubtitle('Dispositivo pareado!');
+              setConnected(true);
+            } else {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{name: 'Fail', params: {error: 'Connection'}}],
+                }),
+              );
+            }
+          } else if (res.status === 400) {
+            console.log('400 Bad Request');
+          } else {
+            console.log('Unfamiliar response: ' + res);
+          }
+        },
+        (err) => {
+          console.log('ERROR: ' + JSON.stringify(err));
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: 'Fail', params: {error: JSON.stringify(err)}}],
+            }),
+          );
+        },
+      );
+    } else {
+      console.log('Paired: ' + pairing);
+    }
+  }, [pairing]);
 
   useEffect(() => {
     console.log('Connected: ' + connected.toString());
@@ -467,3 +529,23 @@ export default ConnectionHandshake;
 //   });
 //   return unsubscribe;
 // }, [navigation]);
+
+// useEffect(() => {
+//   api
+//     .get(`/user/${user}`)
+//     .then((res) => {
+//       console.log('POSTDEVICE?? res.data: ' + JSON.stringify(res.data));
+//       if (pairing && res.data.device === 'CULLTIVE-000') {
+//         console.log(res.data.device);
+//         console.log(deviceId);
+//         console.log('NICE!');
+//         setConnected(true);
+//       } else {
+//         console.log('not nice...');
+//       }
+//     })
+//     .catch((err) => {
+//       //TODO: Set another state to try to load data again // handle Error routine...
+//       console.log('api/reading: ERROR: ' + err);
+//     });
+// }, [user, done]);

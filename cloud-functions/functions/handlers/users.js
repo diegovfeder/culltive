@@ -128,15 +128,36 @@ exports.getUsers = (req, res) => {
     .catch(err => console.error(err));
 };
 
+// Fetch user by auth token
+exports.getAuthenticatedUser = (req, res) => {
+  let userData = {};
+  db.doc(`/users/${req.user.handle}`)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        userData = doc.data();
+        return res.json(userData);
+      } else {
+        return res.status(404).json({
+          error: "User not found" 
+        });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
+    });
+  }
+
 // Fetch one user
 exports.getUser = (req, res) => {
   let userData = {};
   db.doc(`/users/${req.params.userId}`)
     .get()
     .then(doc => {
-      if (!doc.exists) {
+     if (!doc.exists) {
         return res.status(404).json({
-          error: "User not found"
+          error: "User not found" 
         });
       } else {
         return res.json(doc.data());

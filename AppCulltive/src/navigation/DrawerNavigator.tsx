@@ -3,7 +3,7 @@ import {Dimensions, TouchableOpacity, Text, View} from 'react-native';
 
 // Hooks
 import {useDeviceState} from '../context/DeviceContext';
-import {useUserDispatch, signOut} from '../context/UserContext';
+import {useUserDispatch, useUserState, signOut} from '../context/UserContext';
 import {
   useNavigation,
   NavigationAction,
@@ -34,9 +34,14 @@ import {someStyles} from '../Styles';
 
 const CustomDrawerContent = (props: any) => {
   let userDispatch = useUserDispatch();
+  let {user} = useUserState();
   return (
     <DrawerContentScrollView {...props}>
       {/* TODO: Create a header for the Drawer */}
+      <View style={someStyles.container}>
+        <Text style={someStyles.h2}>Bem vindo!</Text>
+        <Text style={someStyles.h3}>{user}</Text>
+      </View>
       <DrawerItemList {...props} />
       <DrawerItem
         label="Sair"
@@ -68,7 +73,7 @@ export const DrawerButton = (props) => {
 };
 
 export const DrawerNavigator: React.FC = ({nav, route}) => {
-  console.log('-- DrawerNavigator.tsx');
+  console.log('*** DrawerNavigator.tsx ***');
 
   const {paired} = useDeviceState();
 

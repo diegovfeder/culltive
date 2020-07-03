@@ -55,7 +55,7 @@ exports.getDevice = (req, res) => {
 exports.postDevice = (req, res) => {
   if (req.body.user.trim() === "") {
     return res.status(400).json({
-      body: "You need to send an deviceId to instantiate the object on firebase..."
+      body: "You need to send an user to instantiate the object on firebase..."
     });
   }
 
@@ -65,7 +65,6 @@ exports.postDevice = (req, res) => {
     geolocation: req.body.geolocation,
     productType: req.body.productType,
     firmwareVersion: req.body.firmwareVersion,
-    wifiStatus: req.body.wifiStatus,
     createdAt: new Date().toISOString(),
   };
 

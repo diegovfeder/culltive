@@ -48,10 +48,9 @@ const Signup: React.FC = () => {
   useEffect(() => {
     const _handleContextErrors = () => {
       if (typeof errors === 'undefined' || errors === null) {
-        console.log('errors is undefiend or null// there is no error');
         // return <></>;
       } else {
-        console.log('errors is ' + errors);
+        console.log('ERROR: ' + errors);
         Alert.alert(
           'Ops...',
           'Encontramos um problema durante a autenticação.',

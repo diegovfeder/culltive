@@ -18,12 +18,14 @@ const {
   signup,
   signin,
   getUsers,
+  getAuthenticatedUser,
   getUser,
 } = require("./handlers/users");
 
 app.post("/signup", signup);
 app.post("/signin", signin);
 app.get("/users", FBAuth, getUsers);
+app.get("/user", FBAuth, getAuthenticatedUser);
 app.get("/user/:userId", FBAuth, getUser);
 
 

@@ -116,7 +116,8 @@ const Signin: React.FC = () => {
             password: Yup.string().required('*Obrigatório'),
           })}
           onSubmit={(values) => {
-            console.log(JSON.stringify(values));
+            // console.log(JSON.stringify(values));
+            //TODO: Keyboard ref lower / close when submitting, onPress()
             signinUser(userDispatch, values.email, values.password, setLoading);
           }}>
           {({

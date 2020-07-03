@@ -2,16 +2,6 @@ import React, {createContext, useContext, useReducer} from 'react';
 import {AsyncStorage} from 'react-native';
 import api from 'axios';
 
-// interface Device {
-//   deviceId: string;
-//   geolocation: string;
-//   productType: string;
-//   firmwareVersion: string;
-//   wifiPassword: string;
-//   wifiSSID: string;
-//   wifiStatus: string;
-// }
-
 //TODO: useReducer with typescript but passing Types for initial values
 var DeviceStateContext = createContext(undefined);
 
@@ -34,6 +24,11 @@ function deviceReducer(state, action) {
         paired: false,
         //TODO: remove pairedToken
       };
+    case 'SET_DEVICE':
+      return {
+        ...state,
+        name: action.payload.name,
+      };
     case 'VALIDATE_TOKEN':
       return {
         ...state,
@@ -53,6 +48,7 @@ function deviceReducer(state, action) {
 function DeviceProvider({children}) {
   const [state, dispatch] = useReducer(deviceReducer, {
     paired: false,
+    name: '',
     device: {
       deviceId: 'CULLTIVE-CWB',
       geolocation: 'Curitiba',
@@ -149,6 +145,12 @@ function deleteDevice(dispatch, deviceId) {
     .catch((err) => console.log('DeviceContext: deleteDevice: ERROR: ' + err));
 }
 
+function setDeviceName(dispatch, deviceId) {
+  // dispatch({ type: LOADING_Device });
+  console.log(`deviceId = ${deviceId}`);
+  dispatch({type: 'SET_DEVICE', name: deviceId});
+}
+
 // const storeDeviceToken = async (value) => {
 //   try {
 //     console.log('storeDeviceToken: ' + value);
@@ -169,19 +171,37 @@ function waterPump(dispatch, setLoading) {
   }, 2000);
 }
 
-// setAuthorizationHeader(res.data.token); // ???
+// TODO: Set device token when all the validation from esp8266 and firebase and user are ready!
+// Reducer for Device Token
+// case 'SET_DEVICE_TOKEN':
+//   console.log('DeviceContext: deviceReducer: SET_DEVICE_TOKEN');
+//   console.log('pairState: action.payload = ' + action.payload);
+//   return {
+//     ...state,
+//     paired: action.payload,
+//   };
 
 // function validateDeviceToken(dispatch, deviceToken) {
 //   dispatch({type: 'VALIDATE_DEVICE_TOKEN', token: deviceToken});
 // }
 
-// Not sure why is this for?...
-// Probably to delete the state from a selected array of devices...
+// --   The following code was found social-ape study project // context // dispatch
+// -- and meantdelete the state from a selected array of devices...
 // let index = state.devices.findIndex(
 //   (device) => device.deviceId === action.payload,
 // );
 // state.devices.splice(index, 1);
 
+// --   The following code was an attempt to instantiate a DeviceContext with Typescript using, well Types...
+// interface Device {
+//   deviceId: string;
+//   geolocation: string;
+//   productType: string;
+//   firmwareVersion: string;
+//   wifiPassword: string;
+//   wifiSSID: string;
+//   wifiStatus: string;
+// }
 // const DeviceContext = createContext<Device>({
 //   deviceId: 'CULLTIVE-000',
 //   geolocation: 'Curitiba',
@@ -191,11 +211,3 @@ function waterPump(dispatch, setLoading) {
 //   wifiSSID: 'MELODICO',
 //   wifiStatus: 'connected',
 // });
-
-// case 'SET_DEVICE_TOKEN':
-//   console.log('DeviceContext: deviceReducer: SET_DEVICE_TOKEN');
-//   console.log('pairState: action.payload = ' + action.payload);
-//   return {
-//     ...state,
-//     paired: action.payload,
-//   };

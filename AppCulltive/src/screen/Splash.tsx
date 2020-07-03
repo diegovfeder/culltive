@@ -9,9 +9,16 @@ import Logo from '../component/Logo';
 const Splash: React.FC = () => {
   console.log('-- Splash.tsx');
 
+  //TODO: Animate something hereusing React Animated :)
+  //-- do coooool stuff!
   return (
     <SafeAreaView
-      style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      style={{
+        backgroundColor: '#3ea341',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
       <Logo />
     </SafeAreaView>
   );

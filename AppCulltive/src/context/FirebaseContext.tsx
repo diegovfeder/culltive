@@ -62,7 +62,7 @@ function resetPassword(dispatch, email, setIsLoading) {
 
   console.log('resetPassword - email: ' + email);
 
-  // email validation
+  // Email validation
   if (email !== '') {
     Firebase.auth
       .sendPasswordResetEmail(email)
@@ -86,21 +86,4 @@ function resetPassword(dispatch, email, setIsLoading) {
     alert('Please write your email first');
     setIsLoading(false);
   }
-
-  // axios
-  //   .post("/login", userData)
-  //   .then(res => {
-  //     console.log(res.data); //Auth token
-  //     setAuthorizationHeader(res.data.token);
-  //
-  //     setErrors(false);
-  //     setIsLoading(false);
-  //     dispatch({ type: "LOGIN_SUCCESS" });
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //     dispatch({ type: "LOGIN_FAILURE", payload: [] });
-  //     setErrors(true); // change This to payload response data...
-  //     setIsLoading(false);
-  //   });
 }
