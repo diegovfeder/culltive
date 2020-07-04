@@ -1,5 +1,6 @@
 import React, {createContext, useContext, useReducer, useState} from 'react';
 import {AsyncStorage} from 'react-native';
+
 import api from '../util/api';
 import {analytics} from 'firebase';
 
@@ -245,17 +246,14 @@ const setAuthorizationHeader = async (dispatch, token) => {
 // maybe save the user Logged in data in AsyncStorage?..
 // const bodyParameters = {
 //   key: "value"
-function getUser(dispatch: any, handle: string, userToken: string | null) {
-  //??
+function getUser(dispatch: any, userToken: string | null) {
   // dispatch({ type: LOADING_USER });
-  // console.log(
-  //   'UserContext: getUser! ' + ' handle: ' + handle + ' token: ' + userToken,
-  // );
+  console.log('UserContext: getUser():' + ' token: ' + userToken);
   const config = {
     headers: {Authorization: `Bearer ${userToken}`},
   };
   api
-    .get(`/user/${handle}?${userToken}`, config)
+    .get(`/user`, config)
     .then((res) => {
       console.log('getUser: ' + JSON.stringify(res.data));
       dispatch({

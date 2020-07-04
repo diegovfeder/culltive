@@ -131,7 +131,8 @@ exports.getUsers = (req, res) => {
 // Fetch user by auth token
 exports.getAuthenticatedUser = (req, res) => {
   let userData = {};
-  db.doc(`/users/${req.user.handle}`)
+  console.log('user: ' + req.user.email)
+  db.doc(`/users/${req.user.email}`)
     .get()
     .then((doc) => {
       if (doc.exists) {
@@ -139,7 +140,7 @@ exports.getAuthenticatedUser = (req, res) => {
         return res.json(userData);
       } else {
         return res.status(404).json({
-          error: "User not found" 
+          error: "User not found ???" 
         });
       }
     })
