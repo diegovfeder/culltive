@@ -21,7 +21,7 @@ import DataAgreements from '../screen/pair/DataAgreements';
 // import DeviceNotFound from '../screen/pair/DeviceNotFound';
 // import DeviceVerification from '../screen/pair/DeviceVerification';
 
-import PlantProfile from '../screen/PlantProfile';
+import PlantProfile from '../screen/drawer/plantprofile/PlantProfile';
 
 const Stack = createStackNavigator();
 

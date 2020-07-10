@@ -16,18 +16,21 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 
 // Hooks
-import {useDataDispatch} from '../context/DataContext';
-import {useDeviceDispatch, setDeviceToken} from '../context/DeviceContext';
+import {useDataDispatch} from '../../../context/ReadingContext';
+import {
+  useDeviceDispatch,
+  setDeviceToken,
+} from '../../../context/DeviceContext';
 import {useNavigation} from '@react-navigation/native';
 
 // Components
 import {Input} from 'react-native-elements';
 
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../../Styles';
 
 // Assets
-import PlantHandUndraw from '../../assets/undraw/plantHand.svg';
+import PlantHandUndraw from '../../../../assets/undraw/plantHand.svg';
 
 const PlantProfile: React.FC = () => {
   console.log('-- PlantProfile.tsx');

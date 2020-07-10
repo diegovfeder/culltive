@@ -20,14 +20,17 @@ import {
   useUserDispatch,
   useUserState,
   signinUser,
-  clearErrors,
-} from '../context/UserContext';
+  clearError,
+} from '../../context/UserContext';
 
 //TODO: reset Password modal and action.
-import {useFirebaseDispatch, resetPassword} from '../context/FirebaseContext';
+import {
+  useFirebaseDispatch,
+  resetPassword,
+} from '../../context/FirebaseContext';
 
 // Components
-import ForgotPasswordModal from '../component/ForgotPasswordModal';
+import ForgotPasswordModal from '../../component/ForgotPasswordModal';
 // TODO: Finish emailSent / forgotPassword state process
 // import EmailSentModal from '../component/EmailSentModal';
 
@@ -35,7 +38,7 @@ import ForgotPasswordModal from '../component/ForgotPasswordModal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../Styles';
 
 //TODO: Timeout and retry signIn()
 const Signin: React.FC = () => {
@@ -58,10 +61,8 @@ const Signin: React.FC = () => {
   useEffect(() => {
     const _handleContextErrors = () => {
       if (typeof errors === 'undefined' || errors === null) {
-        console.log('errors is undefiend or null// there is no error');
-        // return <></>;
+        //...
       } else {
-        console.log('errors is ' + errors);
         Alert.alert(
           'Ops...',
           'Encontramos um problema durante a autenticação.',
@@ -72,7 +73,7 @@ const Signin: React.FC = () => {
               onPress: () => {
                 console.log('OK Pressed');
                 // errors = null;
-                clearErrors(userDispatch);
+                clearError(userDispatch);
               },
             },
           ],
@@ -118,7 +119,8 @@ const Signin: React.FC = () => {
             password: Yup.string().required('*Obrigatório'),
           })}
           onSubmit={(values) => {
-            console.log(JSON.stringify(values));
+            // console.log(JSON.stringify(values));
+            //TODO: Keyboard ref lower / close when submitting, onPress()
             signinUser(userDispatch, values.email, values.password, setLoading);
           }}>
           {({

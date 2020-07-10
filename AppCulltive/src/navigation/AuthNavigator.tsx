@@ -3,10 +3,10 @@ import {StyleSheet, View} from 'react-native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 // import SplashScreen from "../screen/SplashScreen";
 
-import Welcome from '../screen/Welcome';
-import Terms from '../screen/Terms';
-import Signin from '../screen/Signin';
-import Signup from '../screen/Signup';
+import Welcome from '../screen/auth/Welcome';
+import Terms from '../screen/auth/Terms';
+import Signin from '../screen/auth/Signin';
+import Signup from '../screen/auth/Signup';
 
 const Stack = createStackNavigator();
 

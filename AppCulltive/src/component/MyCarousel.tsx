@@ -3,8 +3,8 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   StyleSheet,
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 

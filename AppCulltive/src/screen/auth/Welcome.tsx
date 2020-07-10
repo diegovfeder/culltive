@@ -12,10 +12,10 @@ import * as Svg from 'react-native-svg';
 import {useNavigation} from '@react-navigation/native';
 
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../Styles';
 
 // Assets
-import WelcomeUndraw from '../../assets/undraw/welcome.svg';
+import WelcomeUndraw from '../../../assets/undraw/welcome.svg';
 
 //TODO: Layout should be responsive or at least tested in small / medium / large screens
 const Welcome: React.FC = () => {

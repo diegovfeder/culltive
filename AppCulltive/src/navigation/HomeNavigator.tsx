@@ -17,9 +17,9 @@ import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 // Navigators || Screens
 // import {DrawerButton} from './DrawerNavigator';
 import PairNavigator from './PairNavigator';
-import Home from '../screen/Home';
-import Report from '../screen/Report';
-import Chart from '../screen/Chart';
+import Home from '../screen/home/Home';
+import Report from '../screen/home/Report';
+import Chart from '../screen/home/Chart';
 
 // Assets
 import Ionicons from 'react-native-vector-icons/Ionicons';

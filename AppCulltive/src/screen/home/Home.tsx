@@ -18,33 +18,39 @@ import {
 } from 'react-native-permissions';
 
 import {Divider} from 'react-native-elements';
+import {ScrollView} from 'react-native-gesture-handler';
+// import {ListItem} from 'react-native-elements';
 
 // Hooks & Context
 import {useNavigation} from '@react-navigation/native';
-import {useDeviceDispatch, setDeviceToken} from '../context/DeviceContext';
-import {useDeviceState} from '../context/DeviceContext';
+
+import {useUserDispatch, useUserState} from '../../context/UserContext';
+import {
+  useDeviceDispatch,
+  useDeviceState,
+  setDeviceToken,
+} from '../../context/DeviceContext';
 
 // import FirstSigninModal from '../component/FirstSigninModal';
 
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../Styles';
 
 // Assets
 import * as Svg from 'react-native-svg';
+import PlantHomeUndraw from '../../../assets/undraw/plantHome.svg';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import PlantHomeUndraw from '../../assets/undraw/plantHome.svg';
-import {ScrollView} from 'react-native-gesture-handler';
-import {ListItem} from 'react-native-elements';
 
 const Home: React.FC = () => {
   console.log('-- Home.tsx');
   const navigation = useNavigation();
-  const [modalState, setModalState] = useState(false);
 
   let deviceDispatch = useDeviceDispatch();
   let {paired} = useDeviceState();
-  console.log('Paired: ' + paired);
+  //TODO: handlePair, user, etc... load stuff also
+  useEffect(() => {}, [paired]);
 
+  const [modalState, setModalState] = useState(false);
   // FIXME: Open FirstSigninModal if !paired
   // useEffect(() => {
   //   setTimeout(() => {
@@ -53,48 +59,61 @@ const Home: React.FC = () => {
   // }, [null]);
 
   const checkPermissionsOnClick = () => {
-    console.log('checkPermissionsOnClick');
     check(
       Platform.select({
         android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
         ios: PERMISSIONS.IOS.LOCATION_ALWAYS,
       }),
     ).then((res: string) => {
+      console.log('checkPermissionsOnClick: ' + res);
       switch (res) {
-        case 'unavailable':
-          console.log('Unavailable');
-          //Then?
-          //TODO: Finish and test these stuff...
+        case 'granted':
+          navigation.navigate('PairNavigator', {screen: 'DeviceCertification'});
           break;
         case 'denied':
-          console.log('Denied');
           navigation.navigate('PairNavigator', {
             screen: 'GrantPermissions',
             params: {permissions: res},
           });
           break;
         case 'blocked':
-          console.log('Blocked');
           navigation.navigate('PairNavigator', {
             screen: 'GrantPermissions',
             params: {permissions: res},
           });
-          // navigation.navigate('GrantPermissions', res);
           break;
-        case 'granted':
-          console.log('Granted');
-          navigation.navigate('PairNavigator', {screen: 'DeviceCertification'});
+        case 'unavailable':
+          //TODO: Message user explaining / advising unavailability
+          break;
+        default:
+          //...
           break;
       }
     });
   };
 
+  const loadingContainer = (
+    <View
+      style={{
+        alignSelf: 'center',
+        marginTop: 48,
+        borderRadius: 128,
+        width: 128,
+        height: 128,
+        backgroundColor: '#DDD',
+      }}>
+      <ActivityIndicator
+        color={'#3cbc40'}
+        size={'large'}
+        style={{alignItems: 'center', justifyContent: 'center', flex: 1}}
+      />
+    </View>
+  );
+
   const pairContainer = (
     <TouchableHighlight
       onPress={() => {
-        console.log('onPress');
         checkPermissionsOnClick();
-        // handlePairContainerClick();
       }}
       underlayColor="#3ea341"
       activeOpacity={0.8}
@@ -122,24 +141,6 @@ const Home: React.FC = () => {
     </TouchableHighlight>
   );
 
-  const loadingContainer = (
-    <View
-      style={{
-        alignSelf: 'center',
-        marginTop: 48,
-        borderRadius: 128,
-        width: 128,
-        height: 128,
-        backgroundColor: '#DDD',
-      }}>
-      <ActivityIndicator
-        color={'#3cbc40'}
-        size={'large'}
-        style={{alignItems: 'center', justifyContent: 'center', flex: 1}}
-      />
-    </View>
-  );
-
   const plantContainer = (
     <View
       style={{
@@ -155,6 +156,7 @@ const Home: React.FC = () => {
     </View>
   );
 
+  //TODO: LogContext // Activity LogContainer
   const activityContainer = (
     <ScrollView style={{height: 96, marginStart: 8}}>
       {/* FIXME: turn into a list */}
@@ -215,10 +217,7 @@ const Home: React.FC = () => {
             justifyContent: 'space-between',
             alignItems: 'stretch',
           }}>
-          {/*TODO: Ask if user already set up with device pairing*/}
-          {/*<FirstSigninModal modalState={modalState} />*/}
-
-          {/*MAIN CIRCLE / LAZY LOADING*/}
+          {/* TODO: LOADING*/}
           {/* {loadingContainer} */}
 
           {plantContainer}

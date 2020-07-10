@@ -1,22 +1,34 @@
-import React, {createContext, useContext, useReducer, useState} from 'react';
+import React, {createContext, useContext, useReducer} from 'react';
 import {AsyncStorage} from 'react-native';
-import api from 'axios';
+
+import api from '../util/api';
 
 var UserStateContext = createContext(undefined);
 var UserDispatchContext = createContext(undefined);
 
-//TODO: get data from UserContext
-// -- There is problem when passing {user} to device as "" so state stays on validatingCredentials
-// -- Fix state-machine logic // add timeOut for app and esp8266.
+console.log('*** UserContext.tsx ***');
 
-console.log('-- UserContext.tsx: ');
+export {
+  UserProvider,
+  useUserState,
+  useUserDispatch,
+  signupUser,
+  signinUser,
+  signOut,
+  getAuthenticatedUser,
+  setLoadingUser,
+  setError,
+  storeUserToken,
+  clearError,
+};
 
-function UserProvider({children}) {
+function UserProvider({children}: any) {
   const [state, dispatch] = useReducer(userReducer, {
-    authenticated: false,
     loading: true,
-    user: '',
-    // userData: null,
+    authenticated: false,
+    authToken: '',
+    user: {},
+    error: null,
   });
 
   return (
@@ -28,49 +40,71 @@ function UserProvider({children}) {
   );
 }
 
-function userReducer(state, action) {
+function userReducer(state: any, action: any) {
   switch (action.type) {
-    case 'VALIDATE_TOKEN':
-      return {
-        ...state,
-        authenticated: !!action.token,
-        loading: false,
-      };
     case 'SIGNUP_SUCCESS': {
       console.log('userReducer: SIGNUP_SUCCESS');
-      console.log('user: ' + action.payload);
-      return {...state, authenticated: true, user: action.payload};
+      return {
+        ...state,
+        authenticated: true,
+        authToken: action.token,
+        user: action.user,
+        error: action.error,
+      };
     }
     case 'SIGNUP_FAILURE': {
-      // TODO: create a message to the user explaining signup fail
       console.log('userReducer: SIGNUP_FAILURE');
-      return {...state, authenticated: false, errors: action.payload};
+      return {...state, authenticated: false, error: action.error};
     }
     case 'SIGNIN_SUCCESS':
       console.log('userReducer: SIGNIN_SUCCESS');
-      console.log('user: ' + action.payload);
-      return {...state, authenticated: true, user: action.payload};
+      return {
+        ...state,
+        authenticated: true,
+        authToken: action.token,
+        user: action.user,
+        error: action.error,
+      };
     case 'SIGNIN_FAILURE': {
-      // TODO: create a message to the user explaining SIGNIN fail
       console.log('userReducer: SIGNIN_FAILURE');
-      return {...state, authenticated: false, errors: action.payload};
+      return {...state, authenticated: false, error: action.error};
     }
     case 'SIGN_OUT_SUCCESS':
-      return {...state, authenticated: false};
-    case 'SET_ERRORS':
+      console.log('userReducer: SIGN_OUT_SUCCESS');
       return {
         ...state,
-        errors: action.payload,
-      };
-    case 'CLEAR_ERRORS':
-      return {
-        ...state,
-        errors: null,
+        authenticated: false,
+        authToken: null,
+        user: {},
       };
     case 'GET_USER':
+      console.log('userReducer: GET_USER');
       return {
         ...state,
         user: action.payload,
+      };
+    case 'SET_LOADING':
+      console.log('userReducer: SET_LOADING');
+      return {...state, loading: action.loading};
+    case 'SET_ERROR':
+      console.log('userReducer: SET_ERROR');
+      return {
+        ...state,
+        error: action.error,
+      };
+    case 'STORE_TOKEN':
+      console.log('userReducer: STORE_TOKEN');
+      return {
+        ...state,
+        loading: false,
+        authenticated: !!action.token,
+        authToken: action.token,
+      };
+    case 'CLEAR_ERROR':
+      console.log('userReducer: CLEAR_ERROR');
+      return {
+        ...state,
+        error: null,
       };
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -94,21 +128,11 @@ function useUserDispatch() {
   return context;
 }
 
-export {
-  UserProvider,
-  useUserState,
-  useUserDispatch,
-  signupUser,
-  signinUser,
-  signOut,
-  getUser,
-  validateUserToken,
-  clearErrors,
-};
+// ###########################################################
+// ###############   EXPORTABLE FUNCTIONS    #################
 // ###########################################################
 
 // SIGN UP
-// TODO: Infer the right types
 function signupUser(
   dispatch: any,
   name: any,
@@ -124,97 +148,101 @@ function signupUser(
     password: password,
   };
 
-  console.log('user: ' + JSON.stringify(user));
-
   api
     .post('/signup', user)
-    .then((res) => {
-      console.log(res.data); //Auth token
-      setAuthorizationHeader(res.data.token);
+    .then((response) => {
+      console.log(response.data); //Auth token
+      storeUserToken(dispatch, response.data.token);
       setLoading(false);
-      dispatch({type: 'SIGNUP_SUCCESS', payload: user.email});
-      dispatch({type: 'CLEAR_ERRORS'});
+      dispatch({
+        type: 'SIGNUP_SUCCESS',
+        user: {email: user.email},
+        token: response.data.token,
+        error: null,
+      });
     })
-    .catch((err) => {
+    .catch((error) => {
       dispatch({
         type: 'SET_ERRORS',
-        payload: err.response.data,
+        payload: error.response.data,
       });
-      console.log('signUpUser: ' + err);
+      console.log('signUpUser: ' + error);
       setLoading(false);
-      dispatch({type: 'SIGNUP_FAILURE', payload: err.response.data});
-      // dispatch({type: 'SET_ERRORS', payload: err.response.data});
+      dispatch({type: 'SIGNUP_FAILURE', error: error.response.data});
     });
 }
 
 // SIGN IN
-function signinUser(
-  dispatch: any,
-  email: any,
-  password: any,
-  setLoading: any,
-  // setErrors,
-) {
-  // TODO: set Errors (connection issues?) 404, 500 etc...
+function signinUser(dispatch: any, email: any, password: any, setLoading: any) {
   setLoading(true);
 
   const user = {
     email: email,
     password: password,
   };
-  console.log('user: ' + JSON.stringify(user));
 
-  //TODO: Find a way to retrieve userName and save to context State.
   api
     .post('/signin', user)
-    .then((res) => {
-      console.log(res.data); //Auth token
-      setAuthorizationHeader(res.data.token);
-
+    .then((response) => {
+      storeUserToken(dispatch, response.data.token);
       setLoading(false);
-      dispatch({type: 'SIGNIN_SUCCESS', payload: user.email});
+      dispatch({
+        type: 'SIGNIN_SUCCESS',
+        user: {email: user.email},
+        token: response.data.token,
+        error: null,
+      });
     })
-    .catch((err) => {
-      console.log('signIn ( ): ' + err);
+    .catch((error) => {
+      console.log('signIn (): ERROR: ' + error);
       setLoading(false);
-      dispatch({type: 'SIGNIN_FAILURE', payload: err});
-      // dispatch({type: 'SET_ERRORS', payload: err.response.data});
+      dispatch({type: 'SIGNIN_FAILURE', errors: error});
     });
 }
 
+//SIGN OUT
 function signOut(dispatch: any) {
-  console.log('UserContext: signOut' + dispatch);
-  AsyncStorage.removeItem('@FBIdToken');
+  console.log('UserContext: signOut');
+  AsyncStorage.removeItem('@authToken');
   dispatch({type: 'SIGN_OUT_SUCCESS'});
 }
 
-// TODO: Finish function dispatch, userHandle, /user/${userHandle}
-// maybe save the user Logged in data in AsyncStorage?..
-function getUser(dispatch: any, handle: string) {
-  // dispatch({ type: LOADING_USER });
-  // .get(`/user/${diegovfeder@gmail.com}`)
+//GET USER
+function getAuthenticatedUser(dispatch: any) {
+  setLoadingUser(dispatch, true);
   api
-    .get(`/user/${handle}`)
-    .then((res) => {
-      console.log('getUser: ' + JSON.stringify(res));
+    .get('/user')
+    .then((response) => {
+      console.log('getAuthenticatedUser: ' + JSON.stringify(response.data));
       dispatch({
         type: 'GET_USER',
-        payload: res.data,
+        payload: response.data,
       });
     })
-    .catch((err) => console.log('getUser ERROR: ' + err));
+    .catch((error) => {
+      console.log('getAuthenticatedUser ERROR: ' + JSON.stringify(error));
+    });
 }
 
-function validateUserToken(dispatch, userToken) {
-  dispatch({type: 'VALIDATE_TOKEN', token: userToken});
+// SET LOADING
+function setLoadingUser(dispatch: any, loading: boolean) {
+  dispatch({type: 'SET_LOADING', loading});
 }
 
-const setAuthorizationHeader = (token) => {
-  const FBIdToken = `Bearer ${token}`;
-  AsyncStorage.setItem('@FBIdToken', FBIdToken);
-  api.defaults.headers.common['Authorization'] = FBIdToken;
-};
+// SET ERROR
+function setError(dispatch: any, error: any) {
+  dispatch({type: 'SET_ERROR', error});
+}
 
-const clearErrors = (dispatch) => {
-  dispatch({type: 'CLEAR_ERRORS'});
+// STORE TOKEN
+async function storeUserToken(dispatch: any, token: string) {
+  const authToken = `Bearer ${token}`;
+  api.defaults.headers.common['Authorization'] = authToken;
+  await AsyncStorage.setItem('@authToken', token);
+  dispatch({type: 'STORE_TOKEN', token: token});
+}
+
+// CLEAR ERROR
+const clearError = (dispatch: any) => {
+  dispatch({type: 'CLEAR_ERROR'});
 };

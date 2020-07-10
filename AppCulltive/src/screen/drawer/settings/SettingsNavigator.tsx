@@ -2,7 +2,7 @@ import React from 'react';
 
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 
-import Settings from '../screen/Settings';
+import Settings from './Settings';
 
 const Stack = createStackNavigator();
 

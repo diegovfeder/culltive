@@ -22,7 +22,7 @@ module.exports = (req, res, next) => {
     .verifyIdToken(idToken)
     .then(decodedToken => {
       req.user = decodedToken
-      console.log('req.user: ' + req.user)
+      console.log('req.user: ' + JSON.stringify(req.user))
       return db
         .collection('users')
         .where('userId', '==', req.user.uid)

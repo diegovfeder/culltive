@@ -21,7 +21,8 @@ import {
   useDeviceState,
   deleteDevice,
   waterPump,
-} from '../context/DeviceContext';
+} from '../../../context/DeviceContext';
+import {useUserDispatch, useUserState} from '../../../context/UserContext';
 
 // Navigation
 import {DrawerActions, useNavigation} from '@react-navigation/native';
@@ -30,7 +31,7 @@ import {DrawerActions, useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../../Styles';
 
 interface Device {
   deviceId: string;
@@ -50,9 +51,15 @@ const Settings: React.FC = () => {
   //TODO: Save these states to database, and fetch with useEffect()
   // const [device, setDevice] = useState<Device>({deviceId: 'CULLTIVE-000'});
 
-  //TODO: getDevice from context || getUser with its devices names...
+  //TODO: getDevice from context || getAuthenticatedUser with its devices names...
   // setDevice with the fetched data
+  //FIXME: Change name to device.deviceId
   const {device} = useDeviceState();
+  const {name} = useDeviceState();
+  console.log('device name: ' + name);
+
+  // const {userData} = useUserState();
+  // console.log('userData: ' + JSON.stringify(userData));
 
   const [isLEDEnabled, setIsLEDEnabled] = useState(true);
   const toggleLEDSwitch = () =>
@@ -334,7 +341,7 @@ const Settings: React.FC = () => {
             );
             Alert.alert(
               'Deseja mesmo desvincular o seu dispositivo?',
-              `Ao remover seu dispositivo ${device.deviceId}, seus dados e suas informações referentes a conectividade serão apagadas.`,
+              `Ao remover seu dispositivo ${name}, seus dados e suas informações referentes a conectividade serão apagadas.`,
               [
                 {
                   text: 'Cancelar',
@@ -346,7 +353,8 @@ const Settings: React.FC = () => {
                   text: 'Sim',
                   onPress: () => {
                     //TODO: Handle Error (404) ===  Device not found
-                    deleteDevice(deviceDispatch, device.deviceId);
+                    // deleteDevice(deviceDispatch, device.deviceId);
+                    deleteDevice(deviceDispatch, name);
                   },
                 },
               ],
@@ -371,7 +379,7 @@ const Settings: React.FC = () => {
                   justifyContent: 'center',
                 },
               ]}>
-              Remover dispositivo {device.deviceId}?
+              Remover dispositivo {name}?
             </Text>
           </View>
         </TouchableOpacity>

@@ -18,12 +18,14 @@ const {
   signup,
   signin,
   getUsers,
+  getAuthenticatedUser,
   getUser,
 } = require("./handlers/users");
 
 app.post("/signup", signup);
 app.post("/signin", signin);
 app.get("/users", FBAuth, getUsers);
+app.get("/user", FBAuth, getAuthenticatedUser);
 app.get("/user/:userId", FBAuth, getUser);
 
 
@@ -38,8 +40,10 @@ const {
 app.get("/devices", getDevices);
 app.get("/device/:deviceId", getDevice);
 app.post("/device", postDevice);  
-app.delete("/device/:deviceId", FBAuth, deleteDevice);
+app.delete("/device/:deviceId", FBAuth, deleteDevice);  
+//TODO: When device deleted, trigger function to clean user.device and reset esp8266
 
+//TODO: CREATE device flags on firestore for data stream. Delete device, WaterPump, LedTape, WifiConnection etc...
 
 // Reading sensor routes
 const { getReadings, getLastReading, postReading } = require("./handlers/readings");

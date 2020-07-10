@@ -4,14 +4,15 @@ import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
 import axios from 'axios';
+import api from '../../util/api';
 import {useQuery} from 'react-query';
 
 // Components
-import MyCarousel from '../component/MyCarousel';
+import MyCarousel from '../../component/MyCarousel';
 // import {Calendar} from 'react-native-calendars';
 
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../Styles';
 const {height, width} = Dimensions.get('window');
 
 // Moment
@@ -196,10 +197,8 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(
-        `https://us-central1-culltive.cloudfunctions.net/api/reading/${deviceId}`,
-      )
+    api
+      .get(`/reading/${deviceId}`)
       .then((res) => {
         console.log('res.data: ' + JSON.stringify(res.data));
         setReading(res.data[0]);
