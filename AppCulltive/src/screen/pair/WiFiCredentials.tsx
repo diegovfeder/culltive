@@ -18,9 +18,8 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 
 // Hooks
-import {useDataDispatch} from '../../context/DataContext';
-import {useUserState} from '../../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
+import {useUserState} from '../../context/UserContext';
 
 // Components
 import InputTextField from '../../component/InputTextField';
@@ -34,12 +33,11 @@ const WiFiCredentials: React.FC = () => {
 
   let _ssidInput;
   let _passwordInput;
-  let dataDispatch = useDataDispatch();
-  const navigation = useNavigation();
-  const [loading, setLoading] = useState(false);
 
+  const navigation = useNavigation();
   let {user} = useUserState();
-  console.log('user = ' + user);
+
+  const [loading, setLoading] = useState(false);
 
   return (
     <SafeAreaView
@@ -82,7 +80,7 @@ const WiFiCredentials: React.FC = () => {
               <Text style={someStyles.h1}>Conecte ao Wi-Fi</Text>
               <Text style={someStyles.h3}>
                 {' '}
-                Digite as informações da sua rede Wi-Fi.
+                Digite as informações da sua rede local:
               </Text>
 
               <View style={{marginVertical: 16}}>
@@ -90,7 +88,7 @@ const WiFiCredentials: React.FC = () => {
                   ref={(component) => (_ssidInput = component)}
                   autoFocus
                   autoCapitalize="none"
-                  placeholder="SSID"
+                  placeholder="Nome da sua rede Wi-Fi"
                   value={values.ssid}
                   onChangeText={handleChange('ssid')}
                   onBlur={handleBlur('ssid')}
@@ -103,7 +101,7 @@ const WiFiCredentials: React.FC = () => {
                 />
                 <Input
                   ref={(component) => (_passwordInput = component)}
-                  placeholder="Senha"
+                  placeholder="Senha da sua rede Wi-Fi"
                   value={values.password}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}

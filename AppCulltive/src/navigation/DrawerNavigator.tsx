@@ -7,7 +7,7 @@ import {
   useUserDispatch,
   useUserState,
   signOut,
-  getUser,
+  getAuthenticatedUser,
 } from '../context/UserContext';
 import {
   useNavigation,
@@ -17,7 +17,8 @@ import {
 
 // Navigator / Screens
 import HomeNavigator from './HomeNavigator';
-import SettingsNavigator from './SettingsNavigator';
+import SettingsNavigator from '../screen/drawer/settings/SettingsNavigator';
+import PlantNavigator from '../screen/drawer/plantprofile/PlantNavigator';
 
 //... Devices, Help,
 
@@ -57,35 +58,19 @@ export const DrawerButton = (props) => {
 };
 
 export const DrawerNavigator: React.FC = ({nav, route}) => {
-  console.log('*** DrawerNavigator.tsx ***');
-  let userDispatch = useUserDispatch();
+  console.log('... DrawerNavigator.tsx ...');
+
+  const userDispatch = useUserDispatch();
+  const {user} = useUserState();
 
   const {paired} = useDeviceState();
 
-  let {token, user} = useUserState();
-  console.log('user: ' + user + ' // user.split(): ' + user.split());
-
-  //TODO: IF CONNECTED TO ESP8266 VIA SOFT AP DONT CALL THE GET FUNCTION... OR ANY CALL TO API BECAUSE,
-  // YOU KNOW... IT WONT WORK
-  // Idea: Maybe develop a handler for these type of connection stuff...
-
-  useEffect(() => {
-    console.log('user useEffect()');
-    if (user === '') {
-      console.log('getUser');
-      getUser(userDispatch, token);
-    }
-  }, [user]);
-
-  // const navigation = useNavigation();
-
   const Drawer = createDrawerNavigator();
 
-  const _getRouteStateFromIndex = (route) => {
+  const _getRouteStateFromIndex = (route: any) => {
     if (typeof route.state === 'undefined') {
       return true;
     } else {
-      // console.log('route.state' + JSON.stringify(route.state));
       return route.state.index > 0 ? false : true;
     }
   };
@@ -96,7 +81,13 @@ export const DrawerNavigator: React.FC = ({nav, route}) => {
         {/* TODO: Create a header for the Drawer */}
         <View style={someStyles.container}>
           <Text style={someStyles.h2}>Bem vindo!</Text>
-          <Text style={someStyles.h3}>{user}</Text>
+          {user.email !== undefined ? (
+            <Text style={[someStyles.h3, {marginVertical: 4}]}>
+              {user.email}
+            </Text>
+          ) : (
+            <></>
+          )}
         </View>
         <DrawerItemList {...props} />
         <DrawerItem
@@ -125,7 +116,9 @@ export const DrawerNavigator: React.FC = ({nav, route}) => {
       />
       {paired ? (
         <Drawer.Screen name="Configurações" component={SettingsNavigator} />
-      ) : null}
+      ) : // <Drawer.Screen name="Sua planta" component={PlantNavigator} />
+
+      null}
       {/* TODO: Create a buy this product Drawer.Screen */}
     </Drawer.Navigator>
   );

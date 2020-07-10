@@ -1,64 +1,36 @@
 import React, {createContext, useContext, useReducer} from 'react';
 import {AsyncStorage} from 'react-native';
-import api from 'axios';
+import api from '../util/api';
 
 //TODO: useReducer with typescript but passing Types for initial values
 var DeviceStateContext = createContext(undefined);
 
 var DeviceDispatchContext = createContext(undefined);
 
-function deviceReducer(state, action) {
-  switch (action.type) {
-    case 'LOADING_DEVICES':
-      return {...state, loadingDevices: true};
-    case 'GET_DEVICES':
-      return {...state, devices: action.payload, loadingDevices: false};
-    case 'GET_DEVICE':
-      return {
-        ...state,
-        deviceData: action.payload,
-      };
-    case 'DELETE_DEVICE':
-      return {
-        ...state,
-        paired: false,
-        //TODO: remove pairedToken
-      };
-    case 'SET_DEVICE':
-      return {
-        ...state,
-        name: action.payload.name,
-      };
-    case 'VALIDATE_TOKEN':
-      return {
-        ...state,
-        paired: !!action.token,
-      };
-    case 'WATER_PUMP':
-      return {
-        ...state,
-        waterpumpss: false,
-      };
-    default: {
-      throw new Error(`Unhandled action type: ${action.type}`);
-    }
-  }
-}
+console.log('*** DeviceContext.tsx ***');
 
-function DeviceProvider({children}) {
+export {
+  DeviceProvider,
+  useDeviceState,
+  useDeviceDispatch,
+  getDevices,
+  getDevice,
+  // postDevice,
+  // postDeviceActions,
+  deleteDevice,
+  setLoadingDevice,
+  storeDeviceToken,
+  waterPump,
+  setDeviceName,
+};
+
+function DeviceProvider({children}: any) {
   const [state, dispatch] = useReducer(deviceReducer, {
+    loading: true,
     paired: false,
-    name: '',
-    device: {
-      deviceId: 'CULLTIVE-CWB',
-      geolocation: 'Curitiba',
-      productType: 'BASIC',
-      firmwareVersion: 'alpha',
-      wifiPassword: 'TECHNO',
-      wifiSSID: 'MELODICO',
-      wifiStatus: 'connected',
-    },
-    waterPump: null,
+    pairToken: '',
+    device: {},
+    error: null,
   });
 
   return (
@@ -68,6 +40,58 @@ function DeviceProvider({children}) {
       </DeviceDispatchContext.Provider>
     </DeviceStateContext.Provider>
   );
+}
+
+function deviceReducer(state: any, action: any) {
+  switch (action.type) {
+    case 'GET_DEVICES':
+      console.log('deviceReducer: GET_DEVICES');
+      return {...state, devices: action.payload, loading: false};
+    case 'GET_DEVICE':
+      console.log('deviceReducer: GET_DEVICES');
+      return {
+        ...state,
+        deviceData: action.payload,
+        loading: false,
+      };
+    case 'DELETE_DEVICE':
+      console.log('deviceReducer: DELETE_DEVICE');
+      return {
+        ...state,
+        paired: false,
+        pairToken: '',
+        loading: false,
+      };
+    case 'SET_LOADING':
+      console.log('deviceReducer: SET_LOADING');
+      return {
+        ...state,
+        loading: action.loading,
+      };
+    case 'SET_ERROR':
+      console.log('deviceReducer: SET_ERROR');
+      return {
+        ...state,
+        error: action.error,
+        loading: false,
+      };
+    case 'STORE_TOKEN':
+      console.log('deviceReducer: STORE_TOKEN');
+      return {
+        ...state,
+        paired: !!action.token,
+        pairToken: action.token,
+      };
+    case 'WATER_PUMP':
+      console.log('deviceReducer: WATER_PUMP');
+      return {
+        ...state,
+        waterpumpss: false,
+      };
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`);
+    }
+  }
 }
 
 function useDeviceState() {
@@ -86,21 +110,13 @@ function useDeviceDispatch() {
   return context;
 }
 
-export {
-  DeviceProvider,
-  useDeviceState,
-  useDeviceDispatch,
-  getDevices,
-  getDevice,
-  // postDevice,
-  deleteDevice,
-  validateDeviceToken,
-  waterPump,
-};
+// ###########################################################
+// ###############   EXPORTABLE FUNCTIONS    #################
 // ###########################################################
 
+// GET ALL DEVICES
 function getDevices(dispatch) {
-  dispatch({type: 'LOADING_DEVICES'});
+  dispatch({type: 'SET_LOADING', loading: true});
   api
     .get('/devices')
     .then((res) => {
@@ -112,10 +128,9 @@ function getDevices(dispatch) {
     });
 }
 
-// TODO: Finish this function -- get device by id
+// GET DEVICE
 function getDevice(dispatch, deviceId) {
-  // dispatch({ type: LOADING_Device });
-  // .get(`/Device/${diegovfeder@gmail.com}`)
+  dispatch({type: 'SET_LOADING', loading: true});
   api
     .get(`/device/${deviceId}`)
     .then((res) => {
@@ -125,12 +140,25 @@ function getDevice(dispatch, deviceId) {
         payload: res.data,
       });
     })
-    .catch((err) => console.log('DeviceContext: getDevice: ERROR: ' + err));
+    .catch((err) => {
+      console.log('DeviceContext: getDevice: ERROR: ' + err);
+      //TODO: retry get_device?
+      dispatch({
+        type: 'SET_ERROR',
+        error: err,
+      });
+    });
 }
 
-// TODO: Finish this function -- delete device by id
+// POST DEVICE
+// function postDevice()
+
+// POST DEVICE ACTIONS (LED_TAPE && WATER_PUMP)
+// function postDeviceAction();
+
+// DELETE DEVICE
 function deleteDevice(dispatch, deviceId) {
-  // dispatch({ type: LOADING_Device });
+  dispatch({type: 'SET_LOADING', loading: true});
   console.log(`deviceId = ${deviceId}`);
 
   api
@@ -145,10 +173,37 @@ function deleteDevice(dispatch, deviceId) {
     .catch((err) => console.log('DeviceContext: deleteDevice: ERROR: ' + err));
 }
 
+//FIXME:
 function setDeviceName(dispatch, deviceId) {
-  // dispatch({ type: LOADING_Device });
+  dispatch({type: 'SET_LOADING', loading: true});
+  console.log('DeviceContext: setDeviceName()');
   console.log(`deviceId = ${deviceId}`);
   dispatch({type: 'SET_DEVICE', name: deviceId});
+}
+
+// SET LOADING
+function setLoadingDevice(dispatch: any, loading: boolean) {
+  dispatch({type: 'SET_LOADING', loading});
+}
+
+function storeDeviceToken(dispatch, token) {
+  dispatch({type: 'STORE_TOKEN', token: token});
+}
+
+// const storeDeviceToken = async (value) => {
+//   try {
+//     console.log('storeDeviceToken: ' + value);
+//     AsyncStorage.setItem('@pairToken', value);
+//   } catch (e) {
+//     console.log(e.error);
+//   }
+// };
+
+function waterPump(dispatch, setLoading) {
+  setLoading(true);
+  setTimeout(() => {
+    dispatch({type: 'WATER_PUMP'});
+  }, 2000);
 }
 
 // const storeDeviceToken = async (value) => {
@@ -159,17 +214,6 @@ function setDeviceName(dispatch, deviceId) {
 //     console.log(e.error);
 //   }
 // };
-
-function validateDeviceToken(dispatch, deviceToken) {
-  dispatch({type: 'VALIDATE_TOKEN', token: deviceToken});
-}
-
-function waterPump(dispatch, setLoading) {
-  setLoading(true);
-  setTimeout(() => {
-    dispatch({type: 'WATER_PUMP'});
-  }, 2000);
-}
 
 // TODO: Set device token when all the validation from esp8266 and firebase and user are ready!
 // Reducer for Device Token

@@ -30,18 +30,7 @@ exports.getDevice = (req, res) => {
         });
       }
       deviceData = doc.data();
-      deviceData.deviceId = doc.id;
-      return db
-        .collection("comments")
-        .orderBy("createdAt", "desc")
-        .where("deviceId", "==", req.params.deviceId)
-        .get();
-    })
-    .then(data => {
-      deviceData.comments = [];
-      data.forEach(doc => {
-        deviceData.comments.push(doc.data());
-      });
+      console.log('deviceData: ' + JSON.stringify(deviceData));
       return res.json(deviceData);
     })
     .catch(err => {
@@ -106,7 +95,7 @@ exports.deleteDevice = (req, res) => {
       if (!doc.exists) {
         return res.status(404).json({error: 'Device not found'})
       }
-      if (doc.data().user !== req.user.userId) {
+      if (doc.data().user !== req.user.email) {
         return res.status(403).json({error: 'Unauthorized'})
       } else {
         return document.delete()

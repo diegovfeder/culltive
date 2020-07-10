@@ -1,27 +1,25 @@
 import 'react-native-gesture-handler';
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import React from 'react';
 
 // Context
-import {DataProvider} from './context/DataContext';
+import {ReadingProvider} from './context/ReadingContext';
 import {DeviceProvider} from './context/DeviceContext';
 import {UserProvider} from './context/UserContext';
 import {FirebaseProvider} from './context/FirebaseContext';
 
+//TODO:
+// import {LogsProvider} from './context/LogContext';
+
 // Navigation
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 import AppNavigator from './navigation/AppNavigator';
 
-// API
-import api from './util/api';
-
 const App: React.FC = () => {
-  console.log('-- App.tsx');
+  console.log('|| App.tsx ||');
 
   return (
     <FirebaseProvider>
-      <DataProvider>
+      <ReadingProvider>
         <DeviceProvider>
           <UserProvider>
             <NavigationContainer>
@@ -29,7 +27,7 @@ const App: React.FC = () => {
             </NavigationContainer>
           </UserProvider>
         </DeviceProvider>
-      </DataProvider>
+      </ReadingProvider>
     </FirebaseProvider>
   );
 };

@@ -13,7 +13,8 @@ import {StackActions, useNavigation} from '@react-navigation/native';
 // Context
 import {
   useDeviceDispatch,
-  validateDeviceToken,
+  storeDeviceToken,
+  setDeviceName,
 } from '../../context/DeviceContext';
 import {useDeviceState} from '../../context/DeviceContext';
 
@@ -24,30 +25,30 @@ import {someStyles} from '../../Styles';
 import * as Svg from 'react-native-svg';
 import ConfirmationUndraw from '../../../assets/undraw/confirmation.svg';
 
-const Confirmation: React.FC = () => {
+const Confirmation: React.FC = ({nav, route}) => {
   console.log('-- Confirmation.tsx');
+
+  const {device} = route.params;
+  console.log('deviceId: ' + device);
 
   const navigation = useNavigation();
   const deviceDispatch = useDeviceDispatch();
   let {paired} = useDeviceState();
   console.log('paired = ' + paired);
 
-  const storeDeviceToken = async (value) => {
-    try {
-      console.log('storeDeviceToken: ' + value);
-      AsyncStorage.setItem('@deviceToken', value);
-    } catch (e) {
-      console.log(e.error);
+  useEffect(() => {
+    if (device !== '') {
+      if (device.includes('CULLTIVE')) {
+        setDeviceName(deviceDispatch, device);
+      }
+    } else {
+      console.log('device is empty');
     }
-  };
-
-  // TODO: join user and device with respective id's at firestore
-  //FIXME: token is 'true' -> set this to culltive product id??
+  }, [device]);
 
   useEffect(() => {
     console.log('setDeviceToken: true');
-    storeDeviceToken('true');
-    validateDeviceToken(deviceDispatch, 'true');
+    storeDeviceToken(deviceDispatch, device.deviceId);
   }, []);
 
   return (

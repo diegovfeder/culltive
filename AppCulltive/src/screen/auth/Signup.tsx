@@ -19,15 +19,15 @@ import {
   useUserDispatch,
   useUserState,
   signupUser,
-  clearErrors,
-} from '../context/UserContext';
+  clearError,
+} from '../../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
 // Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Styles
-import {someStyles} from '../Styles';
+import {someStyles} from '../../Styles';
 
 const Signup: React.FC = () => {
   console.log('-- Signup.tsx');
@@ -61,7 +61,7 @@ const Signup: React.FC = () => {
               onPress: () => {
                 console.log('OK Pressed');
                 // errors = null;
-                clearErrors(userDispatch);
+                clearError(userDispatch);
               },
             },
           ],

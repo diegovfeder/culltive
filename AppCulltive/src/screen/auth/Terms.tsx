@@ -6,9 +6,9 @@ import * as Svg from 'react-native-svg';
 
 import {useNavigation} from '@react-navigation/native';
 
-import {Strings} from '../Strings';
+import {Strings} from '../../Strings';
 
-import {someStyles} from '../Styles';
+import {someStyles} from '../../Styles';
 
 import WelcomeUndraw from '../../assets/undraw/welcome.svg';
 

@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   AppState,
-  Button,
   Linking,
   SafeAreaView,
   Text,
@@ -14,9 +13,8 @@ import {
 import * as Svg from 'react-native-svg';
 
 import axios from 'axios';
-// import api from 'axios';
+// import api from '../../util/api';
 
-// TODO: Try below lib after system is manually working / pairing
 import WifiManager from 'react-native-wifi-reborn';
 
 import {
@@ -34,6 +32,8 @@ import DeviceVerificationUndraw from '../../../assets/undraw/deviceVerification.
 import WifiUndraw from '../../../assets/undraw/interfaceWifi.svg';
 
 import {useUserState} from '../../context/UserContext';
+
+interface IUser {}
 
 //TODO: setTimeout for connectionStates
 //TODO: Finish logic
@@ -74,19 +74,24 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
   const [statusSubtitle, setStatusSubtitle] = useState(
     'Enviando credenciais...',
   );
+
+  // State machine connection flags
   const [connecting, setConnecting] = useState(false);
+  const [connected, setConnected] = useState(false);
   const [validating, setValidating] = useState(false);
   const [validated, setValidated] = useState(false);
-  const [connected, setConnected] = useState(false);
   const [pairing, setPairing] = useState(false);
   const [done, setDone] = useState(false);
 
-  const {ssid, password} = route.params;
-  const [deviceId, setDeviceId] = useState('');
-
-  //TODO: set and get user in AsyncStorage or getUser from firebase...
+  // userContext
+  //TODO: Ask on how to infer Types <IUser> in context hooks
   const {user} = useUserState();
-  console.log('user: ' + user);
+
+  // Receive values from WifiCredentials route.
+  const {ssid, password} = route.params;
+
+  //Receive deviceId from Esp8266
+  const [deviceId, setDeviceId] = useState('');
 
   // Manages appState (onFocus / onBackground)
   const [appState, setAppState] = useState(AppState.currentState);
@@ -96,7 +101,6 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
     }
     setAppState(nextAppState);
   };
-
   useEffect(() => {
     AppState.addEventListener('change', _handleAppStateChange);
 
@@ -105,45 +109,57 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
     };
   }, []);
 
+  // Checks if connected to proper esp8266 SOFT AP Wi-Fi
   useEffect(() => {
     WifiManager.getCurrentWifiSSID().then(
       (connectedSsid) => {
         console.log(
-          'ConnectDevice: Your current connected wifi SSID is ' + connectedSsid,
+          'ConnectionHandshake: Your current connected wifi SSID is ' +
+            connectedSsid,
         );
         //FIXME: includes 'culltive' in ssid is not the best validator but works for now...
         if (connectedSsid.includes('culltive')) {
+          // Enable connecting flag to start connectionHandshake state machine
           setConnecting(true);
         } else {
           setConnecting(false);
         }
       },
       () => {
-        console.log('ConnectDevice: Cannot get current SSID!');
+        console.log('ConnectionHandshake: Cannot get current SSID!');
       },
     );
   }, [appState]);
 
+  // Post credentials to esp8266 Web Server
   useEffect(() => {
+    console.log('useEffect() connecting: ' + connecting.toString());
+    //TODO: Only post values to /credentials if ssid / password / user !== ""
     if (connecting) {
+      console.log('axios.post(http://192.168.11.4/credentials): ');
       axios
         .post('http://192.168.11.4/credentials', {
           ssid: ssid,
           password: password,
-          user: user,
+          user: user?.email,
         })
         .then(
           (res) => {
             console.log(res);
             if (res.status === 200) {
+              // Esp8266 received the proper data and returned 200.
+              // connection STATE is validatingCredentials
               console.log('Credentials succesfully sent to esp8266');
               setStatusSubtitle('Validando credenciais enviadas...');
               setValidating(true);
             } else if (res.status === 400) {
               console.log('400 Bad Request');
+            } else if (res.status === 401) {
+              console.log('401 Missing Credentials');
             } else {
               console.log('Unfamiliar response: ' + res);
             }
+            //TODO: If res.status !== 200 navigate to Fail
           },
           (err) => {
             console.log('ERROR: ' + JSON.stringify(err));
@@ -156,15 +172,18 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
           },
         );
     } else {
-      console.log('Connecting: ' + connecting);
+      console.log(
+        'TODO: User should be guided to connect to esp8266 soft ap...',
+      );
     }
   }, [connecting]);
 
+  // Get validation response from esp8266
   useEffect(() => {
     console.log(
-      'Connecting: ' +
+      'useEffect() connecting: ' +
         connecting.toString() +
-        ' | Validating: ' +
+        ' | validating: ' +
         validating.toString(),
     );
     if (connecting && validating) {
@@ -188,10 +207,8 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
                   routes: [{name: 'Fail', params: {error: 'Credentials'}}],
                 }),
               );
-              //...
             } else {
               // credentials is ""
-              //...
               navigation.dispatch(
                 CommonActions.reset({
                   index: 0,
@@ -204,6 +221,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
           } else {
             console.log('Unfamiliar response: ' + res);
           }
+          //TODO: If res.status !== 200 navigate to Fail
         },
         (err) => {
           console.log('ERROR: ' + JSON.stringify(err));
@@ -216,12 +234,13 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
         },
       );
     } else {
-      console.log('Validating: ' + validating);
+      console.log('TODO: else? handle connecting && validating...');
     }
   }, [validating]);
 
+  // Credentials validated! Next state is verify connection to the internet...
   useEffect(() => {
-    console.log('Validated: ' + validated.toString());
+    console.log('useEffect() validated: ' + validated.toString());
     if (validated) {
       axios.get('http://192.168.11.4/connection').then(
         (res) => {
@@ -236,12 +255,10 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
             console.log('res.data.deviceId: ' + res.data.deviceId);
             setDeviceId(res.data.deviceId);
             console.log('deviceId: ' + deviceId);
-            //TODO: getUser / device name and compare to this one?...
-            // receive trigger function and devices names are equal means success
 
             if (connection === 'SUCCESS') {
               setStatusSubtitle(
-                'Conexão verificada.\nRealizando ajustes finais...',
+                'Conexão verificada.\nEfetivando pareamento...',
               );
 
               setPairing(true);
@@ -278,8 +295,9 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
     }
   }, [validated]);
 
-  // LAST VERIFICATION POSTDEVICE FIREBASE
+  // This state verifies if device was posted to firestore
   useEffect(() => {
+    console.log('useEffect() pairing: ' + pairing.toString());
     if (pairing) {
       axios.get('http://192.168.11.4/paired').then(
         (res) => {
@@ -292,7 +310,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
 
             // I was thinking to compared user/device with esp8266deviceId to verify postDevice
             // but that would be very difficult as it would need to disconnect from esp8266
-            // reconnect to Wi-Fi and then get data... So I will leave the pairing like this atm
+            // reconnect to Wi-Fi and then get data... So I will leave the pairing like this as it is...
 
             if (paired === true) {
               setStatusSubtitle('Dispositivo pareado!');
@@ -326,6 +344,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
     }
   }, [pairing]);
 
+  // This is the last state, pairing confirmed!
   useEffect(() => {
     console.log('Connected: ' + connected.toString());
     if (connected) {
@@ -333,7 +352,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{name: 'Confirmation'}],
+          routes: [{name: 'Confirmation', params: {device: {deviceId}}}],
         }),
       );
     } else {
@@ -436,56 +455,6 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
 
 export default ConnectionHandshake;
 
-//TODO: Send credentials, catch error (do something)
-//      If alright (esp acks server)
-//      If alright (app receive ack)
-//      Then goes to next screen
-// useEffect(() => {
-//   if (connecting) {
-//     axios
-//       .post('http://192.168.11.4/credentials', {
-//         ssid: ssid,
-//         password: password,
-//         user: userName,
-//       })
-//       .then(
-//         (res) => {
-//           console.log(res);
-//           if (res.status === 200) {
-//             navigation.dispatch(
-//               CommonActions.reset({
-//                 index: 0,
-//                 routes: [{name: 'Confirmation'}],
-//               }),
-//             );
-//           } else if (res.status === 400) {
-//             navigation.dispatch(
-//               CommonActions.reset({
-//                 index: 0,
-//                 routes: [{name: 'Fail', params: {error: 'Credentials'}}],
-//               }),
-//             );
-//           } else {
-//             console.log('RESPONSE: ' + res);
-//           }
-//         },
-//         (err) => {
-//           console.log('ERROR: ' + JSON.stringify(err));
-//           navigation.dispatch(
-//             CommonActions.reset({
-//               index: 0,
-//               routes: [{name: 'Fail', params: {error: err}}],
-//             }),
-//           );
-//         },
-//       );
-//   } else {
-//     console.log('Connecting: ' + connecting);
-//   }
-// }, [connecting]);
-
-// console.log(userName)
-
 // TODO: Connect to 'PRODUCT_ID' programatically:
 // useEffect(() => {
 //   WifiManager.connectToProtectedSSID('cultive000', 'culltive.me', true).then(
@@ -497,55 +466,3 @@ export default ConnectionHandshake;
 //     },
 //   );
 // }, []);
-
-// {/* <TouchableOpacity
-//   onPress={() => {
-//     navigation.dispatch(StackActions.replace('WiFiCredentials'));
-//   }}
-//   style={someStyles.button}>
-//   <Text style={[someStyles.textButton, {paddingHorizontal: 16}]}>
-//     Continuar
-//   </Text>
-// </TouchableOpacity> */}
-
-// useEffect(() => {
-//   const unsubscribe = navigation.addListener('focus', () => {
-//     WifiManager.getCurrentWifiSSID().then(
-//       (connectedSsid) => {
-//         console.log(
-//           'ConnectDevice: Your current connected wifi SSID is ' +
-//             connectedSsid,
-//         );
-//         if (connectedSsid.includes('culltive')) {
-//           setConnecting(true);
-//         } else {
-//           setConnecting(false);
-//         }
-//       },
-//       () => {
-//         console.log('ConnectDevice: Cannot get current SSID!');
-//       },
-//     );
-//   });
-//   return unsubscribe;
-// }, [navigation]);
-
-// useEffect(() => {
-//   api
-//     .get(`/user/${user}`)
-//     .then((res) => {
-//       console.log('POSTDEVICE?? res.data: ' + JSON.stringify(res.data));
-//       if (pairing && res.data.device === 'CULLTIVE-000') {
-//         console.log(res.data.device);
-//         console.log(deviceId);
-//         console.log('NICE!');
-//         setConnected(true);
-//       } else {
-//         console.log('not nice...');
-//       }
-//     })
-//     .catch((err) => {
-//       //TODO: Set another state to try to load data again // handle Error routine...
-//       console.log('api/reading: ERROR: ' + err);
-//     });
-// }, [user, done]);

@@ -2,18 +2,17 @@ import React from 'react';
 
 import Firebase from '../util/firebase';
 
-var FirebaseStateContext = React.createContext();
-var FirebaseDispatchContext = React.createContext();
+var FirebaseStateContext = React.createContext(undefined);
+var FirebaseDispatchContext = React.createContext(undefined);
 
-function firebaseReducer(state, action) {
+function firebaseReducer(state: any, action: any) {
   switch (action.type) {
     case 'EMAIL_RESET_SUCCESS':
       console.log('EMAIL_RESET_SUCCESS');
       return {...state, isReset: true};
     case 'EMAIL_RESET_FAILURE': {
-      // TODO: create a message to the user explaining email reset failed
       console.log('EMAIL_RESET_FAILURE');
-      return {...state, isReset: false};
+      return {...state, isReset: false, error: action.error};
     }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -21,9 +20,10 @@ function firebaseReducer(state, action) {
   }
 }
 
-function FirebaseProvider({children}) {
+function FirebaseProvider({children}: any) {
   var [state, dispatch] = React.useReducer(firebaseReducer, {
     isReset: false,
+    error: null,
   });
 
   return (
