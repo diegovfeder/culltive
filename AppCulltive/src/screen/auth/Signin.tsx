@@ -29,9 +29,8 @@ import {
   resetPassword,
 } from '../../context/FirebaseContext';
 
-// Components
-import ForgotPasswordModal from '../../component/ForgotPasswordModal';
 // TODO: Finish emailSent / forgotPassword state process
+import ForgotPasswordModal from '../../component/ForgotPasswordModal';
 // import EmailSentModal from '../component/EmailSentModal';
 
 // Icons
@@ -44,8 +43,8 @@ import {someStyles} from '../../Styles';
 const Signin: React.FC = () => {
   console.log('-- Signin.tsx');
 
-  let _emailInput;
-  let _passwordInput;
+  let _emailInput: any;
+  let _passwordInput: any;
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
@@ -56,37 +55,36 @@ const Signin: React.FC = () => {
   //FIXME: handle modal state using context
   const [modalState, setModalState] = useState(false);
 
-  let {errors} = useUserState();
+  let {error} = useUserState();
 
+  //TODO: Transform error responses into text
+  // Network Error -> Verifique sua conexao com a internet
+  // Request failed with status code 401 -> Verifique se suas credenciais foram digitadas corretamente
+  // ...
   useEffect(() => {
     const _handleContextErrors = () => {
-      if (typeof errors === 'undefined' || errors === null) {
+      if (typeof error === 'undefined' || error === null) {
         //...
       } else {
+        console.log('signin() : ' + error);
         Alert.alert(
           'Ops...',
-          'Encontramos um problema durante a autenticação.',
-          // \nVerifique se digitou as credenciais corretamente e se possui conexão com a internet.
+          'Encontramos um problema durante a autenticação.' + '\n\n' + error,
           [
             {
               text: 'OK',
               onPress: () => {
                 console.log('OK Pressed');
-                // errors = null;
                 clearError(userDispatch);
               },
             },
           ],
           {cancelable: false},
         );
-        // return <Text style={someStyles.textError}>{errors.message}</Text>;
       }
     };
     return _handleContextErrors();
-  }, [errors]);
-
-  //TODO: handle authentication errors from userContext
-  // const [errors, setErrors] = useState(null);
+  }, [error]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -120,7 +118,6 @@ const Signin: React.FC = () => {
           })}
           onSubmit={(values) => {
             // console.log(JSON.stringify(values));
-            //TODO: Keyboard ref lower / close when submitting, onPress()
             signinUser(userDispatch, values.email, values.password, setLoading);
           }}>
           {({
@@ -175,13 +172,6 @@ const Signin: React.FC = () => {
                 </TouchableOpacity>
               </View>
 
-              {/* TODO: handleErrors from Context -> auth response */}
-              {/* <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}> */}
-              {/* {_handleContextErrors()} */}
               <TouchableOpacity
                 style={{justifyContent: 'flex-end', alignSelf: 'flex-end'}}
                 onPress={() => {
@@ -189,7 +179,6 @@ const Signin: React.FC = () => {
                 }}>
                 <Text style={someStyles.textLink}>Esqueceu sua senha?</Text>
               </TouchableOpacity>
-              {/* </View> */}
 
               <ForgotPasswordModal modalState={modalState} />
               {/* TODO: Finish firebaseForgotPassword mehtod and modal activity progress*/}

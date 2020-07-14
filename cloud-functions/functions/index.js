@@ -33,13 +33,17 @@ app.get("/user/:userId", FBAuth, getUser);
 const {
   getDevices,
   getDevice,
+  getDeviceAction,
   postDevice,
+  postDeviceAction,
   deleteDevice,
 } = require("./handlers/devices");
 
 app.get("/devices", getDevices);
 app.get("/device/:deviceId", getDevice);
+app.get("/device/:deviceId/action", getDeviceAction);
 app.post("/device", postDevice);  
+app.post("/device/:deviceId/action", postDeviceAction); 
 app.delete("/device/:deviceId", FBAuth, deleteDevice);  
 //TODO: When device deleted, trigger function to clean user.device and reset esp8266
 
@@ -62,6 +66,16 @@ exports.api = functions.https.onRequest(app);
 // TRIGGERS // SCHEDULERS // NOT API RELATED CLOUD FUNCTIONS //
 //--------------------------------------------------------------
 
+// Util Trigger routes
+// const {
+//   tieDeviceToUser,
+//   sendWelcomeEmail,
+//   sendGoodByeEmail,
+//   ...
+  
+// } = require("./utils/triggers");
+
+
 // Listen for new document created in the 'devices' collection
 exports.tieDeviceToUser = functions.firestore
     .document('devices/{deviceId}')
@@ -75,10 +89,10 @@ exports.tieDeviceToUser = functions.firestore
       return userRef.update({
           device: `${newDevice.deviceId}`
       })
-      .then(function() {
+      .then(() => {
           console.log("Document successfully updated!");
       })
-      .catch(function(error) {
+      .catch((error) => {
           // The document probably doesn't exist.
           console.error("Error updating document: ", error);
       });

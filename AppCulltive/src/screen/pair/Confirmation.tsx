@@ -29,7 +29,7 @@ const Confirmation: React.FC = ({nav, route}) => {
   console.log('-- Confirmation.tsx');
 
   const {device} = route.params;
-  console.log('deviceId: ' + device);
+  console.log('deviceId: ' + device.deviceId);
 
   const navigation = useNavigation();
   const deviceDispatch = useDeviceDispatch();
@@ -37,19 +37,17 @@ const Confirmation: React.FC = ({nav, route}) => {
   console.log('paired = ' + paired);
 
   useEffect(() => {
-    if (device !== '') {
-      if (device.includes('CULLTIVE')) {
-        setDeviceName(deviceDispatch, device);
+    if (device.deviceId !== '') {
+      if (device.deviceId.includes('CULLTIVE')) {
+        //FIXME:
+        // setDeviceName(deviceDispatch, device.deviceId);
+        console.log('storeDeviceToken: ' + device.deviceId);
+        storeDeviceToken(deviceDispatch, device.deviceId);
       }
     } else {
-      console.log('device is empty');
+      console.log('ERROR: Device is empty?..');
     }
   }, [device]);
-
-  useEffect(() => {
-    console.log('setDeviceToken: true');
-    storeDeviceToken(deviceDispatch, device.deviceId);
-  }, []);
 
   return (
     <SafeAreaView

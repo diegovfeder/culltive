@@ -24,10 +24,15 @@ import {ScrollView} from 'react-native-gesture-handler';
 // Hooks & Context
 import {useNavigation} from '@react-navigation/native';
 
-import {useUserDispatch, useUserState} from '../../context/UserContext';
+import {
+  useUserDispatch,
+  useUserState,
+  getAuthenticatedUser,
+} from '../../context/UserContext';
 import {
   useDeviceDispatch,
   useDeviceState,
+  getDevice,
   setDeviceToken,
 } from '../../context/DeviceContext';
 
@@ -45,10 +50,75 @@ const Home: React.FC = () => {
   console.log('-- Home.tsx');
   const navigation = useNavigation();
 
+  const [loading, isLoading] = useState(true);
+
+  let userDispatch = useUserDispatch();
+  let {loading: loadingUser, user} = useUserState();
+
   let deviceDispatch = useDeviceDispatch();
-  let {paired} = useDeviceState();
+  let {loading: loadingDevice, paired} = useDeviceState();
+
   //TODO: handlePair, user, etc... load stuff also
+  // getDevice by user/device -> if empty paired = false
+  // -> if contains 'CULLTIVE' paired = true / getDevice
+  // handle no internet connection
   useEffect(() => {}, [paired]);
+
+  useEffect(() => {
+    isLoading(loadingUser || loadingDevice);
+  }, [loadingUser, loadingDevice]);
+
+  //TODO: Handle Network error, loading -> error -> paired etc.
+
+  //TODO; isLoading in Home ?
+  useEffect(() => {
+    console.log('xxxxxx AppNavigator: user: ' + JSON.stringify(user));
+
+    // if user only contains e-mail
+    //   getUser -- this getUser should not update loading...
+    //   should GetUser in background??
+    //   handleResponse / Error
+    // else if user does not contains device
+    //   validate paired = false
+    // else if user.device exists
+    //   getDevice?
+    //   handleResponse / Error
+    // setDevice?
+    // else
+    //   ...
+
+    const keys = Object.keys(user);
+    console.log('keys : ' + keys);
+
+    if (keys && keys.length) {
+      if (keys.includes('device')) {
+        if (user.device.includes('CULLTIVE')) {
+          if (paired) {
+            console.log('device is paired, doesnt need to getDevice?..');
+            isLoading(false);
+          } else {
+            console.log(
+              'device exists on user but state is not paired somehow... figure out device flow',
+            );
+            getDevice(deviceDispatch, user.device);
+          }
+        }
+      } else if (keys.includes('userId')) {
+        if (user.userId === '') {
+          console.log('userId == ~ ~ ');
+        } else {
+          console.log('appnavigator - useffect - else');
+        }
+      } else if (keys.includes('email') && !keys.includes('userId')) {
+        console.log('sign in or signup... getUser');
+        getAuthenticatedUser(userDispatch);
+        //async await and try catch, handle errors
+        isLoading(false);
+      }
+    } else {
+      console.log('keys is empty');
+    }
+  }, [user]);
 
   const [modalState, setModalState] = useState(false);
   // FIXME: Open FirstSigninModal if !paired
@@ -96,11 +166,9 @@ const Home: React.FC = () => {
     <View
       style={{
         alignSelf: 'center',
-        marginTop: 48,
-        borderRadius: 128,
-        width: 128,
-        height: 128,
-        backgroundColor: '#DDD',
+        alignContent: 'center',
+        justifyContent: 'center',
+        flex: 1,
       }}>
       <ActivityIndicator
         color={'#3cbc40'}
@@ -187,7 +255,9 @@ const Home: React.FC = () => {
 
   return (
     <>
-      {!paired ? (
+      {loading ? (
+        loadingContainer
+      ) : !paired ? (
         <SafeAreaView
           style={{
             flex: 1,

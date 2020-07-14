@@ -3,6 +3,14 @@ import {AsyncStorage} from 'react-native';
 
 import api from '../util/api';
 
+interface IUser {
+  createdAt: string;
+  device: string;
+  email: string;
+  name: string;
+  userId: string;
+}
+
 var UserStateContext = createContext(undefined);
 var UserDispatchContext = createContext(undefined);
 
@@ -82,6 +90,8 @@ function userReducer(state: any, action: any) {
       return {
         ...state,
         user: action.payload,
+        authenticated: !!action.payload,
+        // authToken ??
       };
     case 'SET_LOADING':
       console.log('userReducer: SET_LOADING');
@@ -152,8 +162,7 @@ function signupUser(
     .post('/signup', user)
     .then((response) => {
       console.log(response.data); //Auth token
-      storeUserToken(dispatch, response.data.token);
-      setLoading(false);
+      storeUserToken(dispatch, response.data.token, setLoading);
       dispatch({
         type: 'SIGNUP_SUCCESS',
         user: {email: user.email},
@@ -161,14 +170,14 @@ function signupUser(
         error: null,
       });
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch({
         type: 'SET_ERRORS',
-        payload: error.response.data,
+        payload: err.response.data,
       });
-      console.log('signUpUser: ' + error);
+      console.log('signUpUser: ' + err);
       setLoading(false);
-      dispatch({type: 'SIGNUP_FAILURE', error: error.response.data});
+      dispatch({type: 'SIGNUP_FAILURE', error: err.response.data});
     });
 }
 
@@ -184,19 +193,20 @@ function signinUser(dispatch: any, email: any, password: any, setLoading: any) {
   api
     .post('/signin', user)
     .then((response) => {
-      storeUserToken(dispatch, response.data.token);
-      setLoading(false);
+      storeUserToken(dispatch, response.data.token, setLoading);
       dispatch({
         type: 'SIGNIN_SUCCESS',
         user: {email: user.email},
         token: response.data.token,
         error: null,
       });
+      //TODO: ?
+      // getAuthenticatedUser(dispatch);
     })
-    .catch((error) => {
-      console.log('signIn (): ERROR: ' + error);
+    .catch((err) => {
+      console.log('signIn (): ' + err);
       setLoading(false);
-      dispatch({type: 'SIGNIN_FAILURE', errors: error});
+      dispatch({type: 'SIGNIN_FAILURE', error: err});
     });
 }
 
@@ -234,12 +244,18 @@ function setError(dispatch: any, error: any) {
   dispatch({type: 'SET_ERROR', error});
 }
 
-// STORE TOKEN
-async function storeUserToken(dispatch: any, token: string) {
-  const authToken = `Bearer ${token}`;
-  api.defaults.headers.common['Authorization'] = authToken;
-  await AsyncStorage.setItem('@authToken', token);
-  dispatch({type: 'STORE_TOKEN', token: token});
+// STORE USER / AUTH TOKEN
+async function storeUserToken(dispatch: any, token: string, isLoading: any) {
+  try {
+    console.log('storeUserToken: ' + token);
+    const authToken = `Bearer ${token}`;
+    api.defaults.headers.common['Authorization'] = authToken;
+    await AsyncStorage.setItem('@authToken', token);
+    dispatch({type: 'STORE_TOKEN', token: token});
+    isLoading(false);
+  } catch (e) {
+    console.log('ERROR: DeviceContext: ' + e.error);
+  }
 }
 
 // CLEAR ERROR

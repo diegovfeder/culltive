@@ -19,15 +19,15 @@ const App: React.FC = () => {
 
   return (
     <FirebaseProvider>
-      <ReadingProvider>
+      <UserProvider>
         <DeviceProvider>
-          <UserProvider>
+          <ReadingProvider>
             <NavigationContainer>
               <AppNavigator />
             </NavigationContainer>
-          </UserProvider>
+          </ReadingProvider>
         </DeviceProvider>
-      </ReadingProvider>
+      </UserProvider>
     </FirebaseProvider>
   );
 };

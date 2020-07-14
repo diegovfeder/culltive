@@ -86,6 +86,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
   // userContext
   //TODO: Ask on how to infer Types <IUser> in context hooks
   const {user} = useUserState();
+  //TODO: validateUser, certify if user.email is not empty
 
   // Receive values from WifiCredentials route.
   const {ssid, password} = route.params;

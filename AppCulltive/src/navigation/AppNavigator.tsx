@@ -34,51 +34,43 @@ const AppNavigator: React.FC = () => {
   // let appDispatch = useAppDispatch(); // ?
 
   let userDispatch = useUserDispatch();
-  let {loading: loadingUser, authenticated, authToken, user} = useUserState();
+  let {authenticated, authToken, user} = useUserState();
   let userToken: string | null;
 
   let deviceDispatch = useDeviceDispatch();
-  let {loading: loadingDevice, paired, pairToken, device} = useDeviceState();
+  let {paired, pairToken, device} = useDeviceState();
   let deviceToken: string | null;
 
   // Initial Loading State ==>  SplashScreen
   const [loading, isLoading] = useState(true);
+  const [loadingUser, isLoadingUser] = useState(true);
+  const [loadingDevice, isLoadingDevice] = useState(true);
   useEffect(() => {
     isLoading(loadingUser || loadingDevice);
   }, [loadingUser, loadingDevice]);
 
-  //printAll()
-  useEffect(() => {
-    console.log('* AppNavigator:');
-    console.log('authenticated: ' + authenticated);
-    console.log('authToken: ' + authToken);
-    console.log('paired: ' + paired);
-    console.log('pairToken: ' + paired);
-    console.log('loadingUser: ' + loadingUser);
-    console.log('user: ' + JSON.stringify(user));
-    console.log('loadingDevice: ' + loadingDevice);
-    console.log('device: ' + JSON.stringify(device));
-  }, [authenticated, authToken, paired, pairToken, user, device]);
-
   // ** USER AUTH TOKEN
   // Recover asyncStorage token, decode it and verify if it's valid.
   useEffect(() => {
+    isLoadingUser(true);
     const validateToken = async () => {
       try {
         userToken = await AsyncStorage.getItem('@authToken');
         if (userToken === null) {
-          setLoadingUser(userDispatch, false);
+          isLoadingUser(false);
         } else {
           const decodedToken = jwtDecode(userToken);
           if (decodedToken.exp * 1000 < Date.now()) {
             signOut(userDispatch);
+            isLoadingUser(false);
           } else {
-            storeUserToken(userDispatch, userToken);
+            storeUserToken(userDispatch, userToken, isLoadingUser);
             getAuthenticatedUser(userDispatch);
           }
         }
-      } catch (e) {
-        console.log('AppNavigator: Restoring @authToken failed: ' + e);
+      } catch (err) {
+        console.log('AppNavigator: Restoring @authToken failed: ' + err);
+        isLoadingUser(false);
       }
     };
     validateToken();
@@ -87,28 +79,45 @@ const AppNavigator: React.FC = () => {
   // ** DEVICE PAIR TOKEN
   // Recover asyncStorage token, decode it and verify if it's valid.
   useEffect(() => {
+    isLoadingDevice(true);
     const validateToken = async () => {
       try {
         deviceToken = await AsyncStorage.getItem('@pairToken');
+        console.log('@pairToken: ' + deviceToken);
         if (deviceToken === null) {
-          console.log('|| deviceToken == null');
-          setLoadingDevice(deviceDispatch, false);
+          // setLoadingDevice(deviceDispatch, false);
+          isLoadingDevice(false);
         } else {
           getDevice(deviceDispatch, deviceToken);
+          //TODO: Validation
           if (device.deviceId !== deviceToken) {
-            console.log('deviceToken failed to pass decode => not paired...');
-            //Do something??
+            console.log('pairToken failed to pass decode => not paired...');
+            isLoadingDevice(false);
           } else {
-            console.log('deviceToken is valid => paired...');
-            storeDeviceToken(deviceDispatch, deviceToken);
+            console.log('pairToken is valid => paired...');
+            storeDeviceToken(deviceDispatch, deviceToken, isLoadingDevice);
           }
         }
       } catch (e) {
-        console.log('AppNavigator: Restoring @deviceToken failed: ' + e);
+        console.log('AppNavigator: Restoring @pairToken failed: ' + e);
+        isLoadingDevice(false);
       }
     };
     validateToken();
   }, []);
+
+  //printAll()
+  useEffect(() => {
+    console.log('* AppNavigator:');
+    console.log('authenticated: ' + authenticated);
+    console.log('authToken: ' + authToken);
+    console.log('paired: ' + paired);
+    console.log('pairToken: ' + pairToken);
+    console.log('loadingUser: ' + loadingUser);
+    console.log('user: ' + JSON.stringify(user));
+    console.log('loadingDevice: ' + loadingDevice);
+    console.log('device: ' + JSON.stringify(device));
+  }, [authenticated, authToken, paired, pairToken, user, device]);
 
   return (
     <>
