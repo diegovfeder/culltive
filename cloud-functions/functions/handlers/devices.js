@@ -1,5 +1,6 @@
 const { db } = require("../util/admin");
 
+// GET ALL DEVICES
 exports.getDevices = (req, res) => {
   db.collection("devices")
     .orderBy("createdAt", "desc")
@@ -18,7 +19,7 @@ exports.getDevices = (req, res) => {
     .catch(err => console.error(err));
 };
 
-
+// GET DEVICE
 exports.getDevice = (req, res) => {
   let deviceData = {};
   db.doc(`/devices/${req.params.deviceId}`)
@@ -41,14 +42,42 @@ exports.getDevice = (req, res) => {
     });
 };
 
+// GET DEVICE ACTION
+exports.getDeviceAction = (req, res) => {
+  let actionData = {};
+  db.doc(`/devices/${req.params.deviceId}`)
+    .get()
+    .then(doc => {
+      if (!doc.exists) {
+        return res.status(404).json({
+          error: "Device not found"
+        });
+      }
+      actionData = doc.data().action;
+      console.log('actionData: ' + JSON.stringify(actionData));
+      return res.json(actionData);
+    })
+    .catch(err => {
+      console.error(err);
+      return res.status(500).json({
+        error: err.code
+      });
+    });
+};
+
+// POST DEVICE
 exports.postDevice = (req, res) => {
-  if (req.body.user.trim() === "") {
+  if (req.body.deviceId.trim() === "") {
     return res.status(400).json({
-      body: "You need to send an user to instantiate the object on firebase..."
+      body: "You need to send a deviceId to instantiate the object on firebase..."
     });
   }
 
   const newDevice = {
+    action: {
+      ledTape: true, 
+      waterPump: false,
+    },
     deviceId: req.body.deviceId, 
     user: req.body.user,
     geolocation: req.body.geolocation,
@@ -87,6 +116,56 @@ exports.postDevice = (req, res) => {
     });
 };
 
+
+// POST DEVICE ACTION
+exports.postDeviceAction = (req, res) => {
+  var deviceRef = db.collection("devices").doc(`${req.params.deviceId}`);
+  var deviceData = {};
+
+  deviceRef.get().then((doc) => {
+    if (doc.exists) {
+        console.log("Document data:", JSON.stringify(doc.data()));
+        deviceData = doc.data(); 
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+        return res.status(404).json({
+          body: "Doc does not exits"
+         })
+    }
+  }).catch((err) => {
+    console.log("Error getting document:", error);
+    return res.status(500).json({
+      body: err.error 
+    })
+  });
+  
+  // Device exists
+  const newAction = {
+    ledTape: req.body.ledTape, 
+    waterPump: req.body.waterPump,
+    // updatedAt: new Date().toISOString(),
+  };
+  deviceRef.update({
+    "action": newAction
+  })
+  .then(() => {
+    console.log("device.action successfully updated!");
+    return res.status(200).json({
+     body: "Action posted to deviceId: " + req.params.deviceId,
+     data: {...deviceData, action: newAction}
+    })
+  })
+  .catch((err) => {
+    console.log("Error updating document: ", err);
+    return res.status(401).json({
+      body: err.error 
+     })
+  });  
+};
+
+
+// DELETE DEVICE
 exports.deleteDevice = (req, res) => {
   const document = db.doc(`/devices/${req.params.deviceId}`)
   document

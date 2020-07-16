@@ -1,26 +1,7 @@
 import React, {useEffect} from 'react';
 import {Dimensions, TouchableOpacity, Text, View} from 'react-native';
 
-// Hooks
-import {useDeviceState} from '../context/DeviceContext';
-import {
-  useUserDispatch,
-  useUserState,
-  signOut,
-  getAuthenticatedUser,
-} from '../context/UserContext';
-import {
-  useNavigation,
-  NavigationAction,
-  DrawerActions,
-} from '@react-navigation/native';
-
-// Navigator / Screens
-import HomeNavigator from './HomeNavigator';
-import SettingsNavigator from '../screen/drawer/settings/SettingsNavigator';
-import PlantNavigator from '../screen/drawer/plantprofile/PlantNavigator';
-
-//... Devices, Help,
+import {useNavigation, DrawerActions} from '@react-navigation/native';
 
 import {
   createDrawerNavigator,
@@ -29,33 +10,20 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 
-//https://stackoverflow.com/questions/54222472/react-native-undefined-is-not-a-function-evaluating-navigation-opendrawer
-// import { DrawerActions } from 'react-navigation'
+// Navigator / Screens
+import HomeNavigator from './HomeNavigator';
+import SettingsNavigator from '../screen/drawer/settings/SettingsNavigator';
+// import PlantNavigator from '../screen/drawer/plantprofile/PlantNavigator';
+
+// Hooks
+import {useUserDispatch, useUserState, signOut} from '../context/UserContext';
+import {useDeviceState} from '../context/DeviceContext';
 
 // Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Styles
 import {someStyles} from '../Styles';
-
-export const DrawerButton = (props) => {
-  const navigation = useNavigation();
-  return (
-    <View style={{flexDirection: 'row'}}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.dispatch(DrawerActions.openDrawer());
-        }}>
-        <Ionicons
-          name="md-menu"
-          style={someStyles.headerButton}
-          size={24}
-          color="#fff"
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
 
 export const DrawerNavigator: React.FC = ({nav, route}) => {
   console.log('... DrawerNavigator.tsx ...');
@@ -116,10 +84,30 @@ export const DrawerNavigator: React.FC = ({nav, route}) => {
       />
       {paired ? (
         <Drawer.Screen name="Configurações" component={SettingsNavigator} />
-      ) : // <Drawer.Screen name="Sua planta" component={PlantNavigator} />
-
+      ) : //TODO: Develop and subsequently add new screens here
+      // Example: Buy/Get Your Product
+      // <Drawer.Screen name="Sua planta" component={PlantNavigator} />
       null}
-      {/* TODO: Create a buy this product Drawer.Screen */}
     </Drawer.Navigator>
+  );
+};
+
+// DrawerButton used globally in Navigation Header to openDrawer
+export const DrawerButton = (props) => {
+  const navigation = useNavigation();
+  return (
+    <View style={{flexDirection: 'row'}}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.dispatch(DrawerActions.openDrawer());
+        }}>
+        <Ionicons
+          name="md-menu"
+          style={someStyles.headerButton}
+          size={24}
+          color="#fff"
+        />
+      </TouchableOpacity>
+    </View>
   );
 };

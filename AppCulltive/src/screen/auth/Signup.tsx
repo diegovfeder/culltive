@@ -23,37 +23,39 @@ import {
 } from '../../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
-// Icons
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-// Styles
+// Assets
 import {someStyles} from '../../Styles';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Signup: React.FC = () => {
   console.log('-- Signup.tsx');
 
-  let _namelInput;
-  let _emailInput;
-  let _passwordInput;
+  let _namelInput: any;
+  let _emailInput: any;
+  let _passwordInput: any;
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  const [secureTextState, setSecureTextState] = React.useState(true);
-  const [eyeState, setEyeState] = React.useState(true);
+  const [secureTextState, setSecureTextState] = useState(true);
+  const [eyeState, setEyeState] = useState(true);
 
   // TODO: handleError useUserCntext
-  let {errors} = useUserState();
+  let {error} = useUserState();
 
+  //TODO: Transform error responses into text
+  // Network Error -> Verifique sua conexao com a internet
+  // Request failed with status code 401 -> Verifique se suas credenciais foram digitadas corretamente
+  // ...
   useEffect(() => {
     const _handleContextErrors = () => {
-      if (typeof errors === 'undefined' || errors === null) {
+      if (typeof error === 'undefined' || error === null) {
         // return <></>;
       } else {
-        console.log('ERROR: ' + errors);
+        console.log('signup() : ' + error);
         Alert.alert(
           'Ops...',
-          'Encontramos um problema durante a autenticação.',
+          'Encontramos um problema durante a autenticação.' + '\n\n' + error,
           // \nVerifique se digitou as credenciais corretamente e se possui conexão com a internet.
           [
             {
@@ -71,7 +73,7 @@ const Signup: React.FC = () => {
       }
     };
     return _handleContextErrors();
-  }, [errors]);
+  }, [error]);
 
   useEffect(() => {
     navigation.setOptions({

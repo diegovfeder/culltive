@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -13,14 +12,16 @@ import {
   View,
 } from 'react-native';
 
-import {Divider, Slider} from 'react-native-elements';
+// import {Divider, Slider} from 'react-native-elements';
 
 // Hooks
 import {
   useDeviceDispatch,
   useDeviceState,
+  getDevice,
+  getDeviceAction,
+  postDeviceAction,
   deleteDevice,
-  waterPump,
 } from '../../../context/DeviceContext';
 import {useUserDispatch, useUserState} from '../../../context/UserContext';
 
@@ -28,61 +29,87 @@ import {useUserDispatch, useUserState} from '../../../context/UserContext';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 
 // Assets
+import {someStyles} from '../../../Styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-// Styles
-import {someStyles} from '../../../Styles';
-
-interface Device {
-  deviceId: string;
-  geolocation: string;
-  productType: string;
-  firmwareVersion: string;
-  wifiPassword: string;
-  wifiSSID: string;
-  wifiStatus: string;
-}
+// interface IDevice {
+//   deviceId: string;
+//   geolocation: string;
+//   productType: string;
+//   firmwareVersion: string;
+// }
+//TODO: Save these states to database, and fetch with useEffect()
+// const [device, setDevice] = useState<IDevice>({deviceId: 'CULLTIVE-000'});
 
 const Settings: React.FC = () => {
   console.log('-- Settings.tsx');
   const navigation = useNavigation();
-  const deviceDispatch = useDeviceDispatch();
 
-  //TODO: Save these states to database, and fetch with useEffect()
-  // const [device, setDevice] = useState<Device>({deviceId: 'CULLTIVE-000'});
+  const deviceDispatch = useDeviceDispatch();
+  const {device} = useDeviceState();
+
+  const [isLEDEnabled, setIsLEDEnabled] = useState(true);
+
+  const [loading, setLoading] = useState(true);
+  // Refers to waterPump button activity indicator
+  const [loadingWaterPump, setLoadingWaterPump] = useState(false);
+
+  // const [automaticWatering, setAutomaticWatering] = useState(true);
+  // const [sliderValue, setSliderValue] = useState(360);
 
   //TODO: getDevice from context || getAuthenticatedUser with its devices names...
   // setDevice with the fetched data
-  //FIXME: Change name to device.deviceId
-  const {device} = useDeviceState();
-  const {name} = useDeviceState();
-  console.log('device name: ' + name);
 
   // const {userData} = useUserState();
   // console.log('userData: ' + JSON.stringify(userData));
 
-  const [isLEDEnabled, setIsLEDEnabled] = useState(true);
-  const toggleLEDSwitch = () =>
-    setIsLEDEnabled((previousState) => !previousState);
+  useEffect(() => {
+    console.log('Settings-> device: ' + JSON.stringify(device));
 
-  const [automaticWatering, setAutomaticWatering] = useState(true);
-  const toggleAWSwitch = () =>
-    setAutomaticWatering((previousState) => !previousState);
+    if (device.deviceId !== null || device.deviceId !== undefined) {
+      setLoading(false);
+    } else {
+      //...
+    }
+  }, [device]);
 
-  const [sliderValue, setSliderValue] = useState(360);
+  //printDevice
+  useEffect(() => {
+    // console.log('action: ' + JSON.stringify(device.action));
+    // console.log('deviceId: ' + device.deviceId);
+  }, [device]);
 
-  // Button Action Waiting
-  const [loading, setLoading] = useState(false);
+  // Set settings from device
+  useEffect(() => {
+    console.log('useEffect(): device: ' + JSON.stringify(device));
 
-  // const waterPumpButton = (
-  //   <TouchableOpacity
-  //     style={[someStyles.touchableOpacityButton2]}
-  //     onPress={() => alert('PUMPING WATTA')}
-  //     // TODO: Develop a endpoint for waterPump
-  //   >
-  //     <Text style={[someStyles.headerTitle]}>Water Pump</Text>
-  //   </TouchableOpacity>
-  // );
+    if (device !== {}) {
+      setIsLEDEnabled(device.action.ledTape);
+    } else {
+    }
+  }, [device]);
+
+  //TODO: GET DEVICE, STAY IN THE loadingWaterPump,
+  //WHEN LOADED UPDATE VALUES
+  // useEffect(() => {
+  //   getDeviceAction(deviceDispatch, device.deviceId);
+
+  //   setIsLEDEnabled(device.action.ledTape);
+  // }, [device]);
+
+  // Style React Navigation Header
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Configurações',
+      headerShown: true,
+      headerTitle: () => (
+        <View style={someStyles.headerView}>
+          <Text style={someStyles.headerTitle}>Configurações</Text>
+        </View>
+      ),
+      headerLeft: () => <DrawerButton />,
+    });
+  });
 
   const DrawerButton = (props: any) => {
     return (
@@ -102,18 +129,40 @@ const Settings: React.FC = () => {
     );
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      title: 'Configurações',
-      headerShown: true,
-      headerTitle: () => (
-        <View style={someStyles.headerView}>
-          <Text style={someStyles.headerTitle}>Configurações</Text>
-        </View>
-      ),
-      headerLeft: () => <DrawerButton />,
-    });
-  });
+  const toggleLEDSwitch = (currentState: boolean) => {
+    console.log('toggleLEDSwitch: currentState: ' + currentState);
+    console.log('toggleLEDSwitch: device: ' + JSON.stringify(device));
+
+    // if (device ), keys, etc...
+
+    const action = {
+      ledTape: currentState,
+      waterPump: device.action.waterPump,
+    };
+    postDeviceAction(deviceDispatch, device.deviceId, action);
+
+    setIsLEDEnabled((previousState) => !previousState);
+  };
+
+  // TODO: feature
+  // const toggleAWSwitch = () =>
+  //   setAutomaticWatering((previousState) => !previousState);
+
+  const loadingContainer = (
+    <View
+      style={{
+        alignSelf: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+        flex: 1,
+      }}>
+      <ActivityIndicator
+        color={'#3cbc40'}
+        size={'large'}
+        style={{alignItems: 'center', justifyContent: 'center', flex: 1}}
+      />
+    </View>
+  );
 
   const accountContainer = (
     <View style={styles.accountContainer}>
@@ -189,60 +238,67 @@ const Settings: React.FC = () => {
 
   return (
     <>
-      <SafeAreaView style={someStyles.container}>
-        <ScrollView>
-          {/*ACCOUNT*/}
-          {/* {accountContainer} */}
-          {/* <Divider style={{margin: 8}} /> */}
+      {loading ? (
+        loadingContainer
+      ) : (
+        <SafeAreaView style={someStyles.container}>
+          <ScrollView>
+            {/*ACCOUNT*/}
+            {/* {accountContainer} */}
+            {/* <Divider style={{margin: 8}} /> */}
 
-          {/*DEVICE*/}
-          <View style={styles.deviceContainer}>
-            <View style={{flexDirection: 'row'}}>
-              <Ionicons
-                name="ios-settings"
-                size={40}
-                color="#353535"
-                style={{marginRight: 12, alignSelf: 'center'}}
-              />
-              <Text
-                style={[
-                  someStyles.h3,
-                  {
-                    paddingBottom: 4,
-                    color: '#4d4d5d',
-                    fontWeight: '200',
-                    fontSize: 32,
-                    alignSelf: 'center',
-                  },
-                ]}>
-                Dispositivo
-              </Text>
-            </View>
-
-            <View style={{flexDirection: 'column', marginHorizontal: 12}}>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            {/*DEVICE*/}
+            <View style={styles.deviceContainer}>
+              <View style={{flexDirection: 'row'}}>
+                <Ionicons
+                  name="ios-settings"
+                  size={40}
+                  color="#353535"
+                  style={{marginRight: 12, alignSelf: 'center'}}
+                />
                 <Text
                   style={[
                     someStyles.h3,
-                    {color: '#AEB5BC', fontSize: 20, alignSelf: 'center'},
+                    {
+                      paddingBottom: 4,
+                      color: '#4d4d5d',
+                      fontWeight: '200',
+                      fontSize: 32,
+                      alignSelf: 'center',
+                    },
                   ]}>
-                  Luz Artificial
+                  Dispositivo
                 </Text>
-                <Switch
-                  style={{margin: 12}}
-                  trackColor={{
-                    true: '#3cbc40',
-                    false: '#d3d3d3',
-                  }}
-                  thumbColor={'#fff'}
-                  ios_backgroundColor="#d3d3d3"
-                  onValueChange={toggleLEDSwitch}
-                  value={isLEDEnabled}
-                />
               </View>
 
-              <View
+              <View style={{flexDirection: 'column', marginHorizontal: 12}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={[
+                      someStyles.h3,
+                      {color: '#AEB5BC', fontSize: 20, alignSelf: 'center'},
+                    ]}>
+                    Luz Artificial
+                  </Text>
+                  <Switch
+                    style={{margin: 12}}
+                    trackColor={{
+                      true: '#3cbc40',
+                      false: '#d3d3d3',
+                    }}
+                    thumbColor={'#fff'}
+                    ios_backgroundColor="#d3d3d3"
+                    onValueChange={(value) => toggleLEDSwitch(value)}
+                    value={isLEDEnabled}
+                  />
+                </View>
+
+                {/* TODO: Finish actions in automatic watering */}
+                {/* <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text
                   style={[
@@ -262,11 +318,12 @@ const Settings: React.FC = () => {
                   onValueChange={toggleAWSwitch}
                   value={automaticWatering}
                 />
-              </View>
+              </View> */}
 
-              <Text
+                {/* TODO: Finish actions for manual watering */}
+                {/* <Text
                 style={[
-                  someStyles.h3,
+                  someStyles.h3,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
                   {
                     color: '#AEB5BC',
                     fontSize: 20,
@@ -302,88 +359,90 @@ const Settings: React.FC = () => {
                   {sliderValue / 60}
                   {sliderValue == 60 ? ' Hora' : ' Horas'}
                 </Text>
-              )}
+              )} */}
+              </View>
             </View>
-          </View>
-          {/* <Divider style={{marginVertical: 16}} /> */}
-          {/*MORE...*/}
-          {/* {moreContainer} */}
-          {/*<Divider style={someStyles.divider} />*/}
-        </ScrollView>
+            {/* <Divider style={{marginVertical: 16}} /> */}
+            {/*MORE...*/}
+            {/* {moreContainer} */}
+            {/*<Divider style={someStyles.divider} />*/}
+          </ScrollView>
 
-        {/* TODO: deviceDispatch context state to handle waterPump post and wait for response... 5s activation trigger. setLoading */}
-        <TouchableHighlight
-          underlayColor="#3ea341"
-          activeOpacity={1}
-          style={someStyles.button}
-          onPress={() => {
-            console.log('TODO: Water Pump Action');
-            // TODO: FINISH THIS !!!
-            // waterPump(deviceDispatch, setLoading);
-            setLoading(true);
-            setTimeout(() => {
-              setLoading(false);
-            }, 5000);
-          }}>
-          {loading ? (
-            <ActivityIndicator color={'white'} />
-          ) : (
-            <Text style={[someStyles.textButton]}>Ativar Bomba de Água</Text>
-          )}
-        </TouchableHighlight>
+          {/* TODO: deviceDispatch context state to handle waterPump post and wait for response... 5s activation trigger. setloadingWaterPump */}
+          <TouchableHighlight
+            underlayColor="#3ea341"
+            activeOpacity={1}
+            style={someStyles.button}
+            onPress={() => {
+              const action = {
+                ledTape: isLEDEnabled,
+                waterPump: true,
+              };
+              postDeviceAction(deviceDispatch, device.deviceId, action);
 
-        {/* TODO: Get DEVICE-ID and set its name dynamically */}
-        {/* TODO: Feature: textInput for deviceId verification -> make the user type deviceId to delete device */}
-        <TouchableOpacity
-          onPress={() => {
-            console.log(
-              'TODO: handleDeleteDevice(deviceDispatch, ...) -> should remove from db and go back to HomeScreen making SettingsScreen inaccessible again',
-            );
-            Alert.alert(
-              'Deseja mesmo desvincular o seu dispositivo?',
-              `Ao remover seu dispositivo ${name}, seus dados e suas informações referentes a conectividade serão apagadas.`,
-              [
-                {
-                  text: 'Cancelar',
-                  onPress: () => {
-                    // ...
-                  },
-                },
-                {
-                  text: 'Sim',
-                  onPress: () => {
-                    //TODO: Handle Error (404) ===  Device not found
-                    // deleteDevice(deviceDispatch, device.deviceId);
-                    deleteDevice(deviceDispatch, name);
-                  },
-                },
-              ],
-              {cancelable: false},
-            );
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
+              setLoadingWaterPump(true);
+              setTimeout(() => {
+                setLoadingWaterPump(false);
+              }, 5000);
             }}>
-            <Text
-              style={[
-                someStyles.h3,
-                {
-                  marginHorizontal: 12,
-                  marginTop: 8,
-                  marginBottom: 2,
-                  color: '#AEB5BC',
-                  fontSize: 14,
-                  alignSelf: 'center',
-                  justifyContent: 'center',
-                },
-              ]}>
-              Remover dispositivo {name}?
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </SafeAreaView>
+            {loadingWaterPump ? (
+              <ActivityIndicator color={'white'} />
+            ) : (
+              <Text style={[someStyles.textButton]}>Ativar Bomba de Água</Text>
+            )}
+          </TouchableHighlight>
+
+          {/* TODO: Feature: textInput for deviceId verification -> make the user type deviceId to delete device */}
+          <TouchableOpacity
+            onPress={() => {
+              console.log(
+                'TODO: handleDeleteDevice(deviceDispatch, ...) -> should remove from db and go back to HomeScreen making SettingsScreen inaccessible again',
+              );
+              Alert.alert(
+                'Deseja mesmo desvincular o seu dispositivo?',
+                `Ao remover seu dispositivo ${device.deviceId}, seus dados e suas informações referentes a conectividade serão apagadas.`,
+                [
+                  {
+                    text: 'Cancelar',
+                    onPress: () => {
+                      // ...
+                    },
+                  },
+                  {
+                    text: 'Sim',
+                    onPress: () => {
+                      //TODO: Handle errors
+                      deleteDevice(deviceDispatch, device.deviceId);
+                    },
+                  },
+                ],
+                {cancelable: false},
+              );
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={[
+                  someStyles.h3,
+                  {
+                    marginHorizontal: 12,
+                    marginTop: 8,
+                    marginBottom: 2,
+                    color: '#AEB5BC',
+                    fontSize: 14,
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}>
+                Remover dispositivo {device.deviceId}?
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </SafeAreaView>
+      )}
     </>
   );
 };
@@ -401,9 +460,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
 });
-
-// FIXME:
-// trackColor={{false: '#767577', true: '#3ea341'}}
-//   trackColor={{ true: '#7ab8e1', false: Platform.OS=='android'?'#d3d3d3':'#fbfbfb'  }}
-// thumbColor={[Platform.OS=='ios'?'#FFFFFF':(item.status ?'#7ab8e1':'#ffffff')]}
-// ios_backgroundColor="#fbfbfb"

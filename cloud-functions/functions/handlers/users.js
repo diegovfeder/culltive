@@ -30,7 +30,7 @@ exports.signup = (req, res) => {
     .then(doc => {
       if (doc.exists) {
         return res.status(400).json({
-          error: "This handle is already taken" // FIXME: This message is breaking the code at line 45: Cannot read property 'uid' of undefined
+          error: "This handle is already taken" 
         });
       } else {
         return firebase
@@ -48,7 +48,7 @@ exports.signup = (req, res) => {
         name: newUser.name,
         email: newUser.email,
         createdAt: new Date().toISOString(),
-        userId //can do this because it is the same name of the declared variable
+        userId,
       };
       return db.doc(`/users/${newUser.email}`).set(userCredentials);
     })
@@ -111,7 +111,8 @@ exports.signin = (req, res) => {
     });
 };
 
-// Get all users // or query? paginated?
+// Get all users 
+// TODO: add query and pagination
 exports.getUsers = (req, res) => {
   db.collection("users")
     .get()
@@ -150,9 +151,8 @@ exports.getAuthenticatedUser = (req, res) => {
     });
   }
 
-// Fetch one user
+// Fetch an user by id (e-mail)
 exports.getUser = (req, res) => {
-  let userData = {};
   db.doc(`/users/${req.params.userId}`)
     .get()
     .then(doc => {
