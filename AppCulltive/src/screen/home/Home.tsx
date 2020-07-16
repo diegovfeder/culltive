@@ -1,21 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
-  AsyncStorage,
   SafeAreaView,
   Text,
   TouchableHighlight,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
-import {
-  check,
-  openSettings,
-  request,
-  PERMISSIONS,
-  RESULTS,
-} from 'react-native-permissions';
+import {check, PERMISSIONS} from 'react-native-permissions';
 
 import {Divider} from 'react-native-elements';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -33,15 +25,12 @@ import {
   useDeviceDispatch,
   useDeviceState,
   getDevice,
-  setDeviceToken,
 } from '../../context/DeviceContext';
 
 // import FirstSigninModal from '../component/FirstSigninModal';
 
-// Styles
-import {someStyles} from '../../Styles';
-
 // Assets
+import {someStyles} from '../../Styles';
 import * as Svg from 'react-native-svg';
 import PlantHomeUndraw from '../../../assets/undraw/plantHome.svg';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -58,34 +47,32 @@ const Home: React.FC = () => {
   let deviceDispatch = useDeviceDispatch();
   let {loading: loadingDevice, paired} = useDeviceState();
 
+  useEffect(() => {
+    isLoading(loadingUser || loadingDevice);
+  }, [loadingUser, loadingDevice]);
+
   //TODO: handlePair, user, etc... load stuff also
   // getDevice by user/device -> if empty paired = false
   // -> if contains 'CULLTIVE' paired = true / getDevice
   // handle no internet connection
   useEffect(() => {}, [paired]);
 
-  useEffect(() => {
-    isLoading(loadingUser || loadingDevice);
-  }, [loadingUser, loadingDevice]);
-
   //TODO: Handle Network error, loading -> error -> paired etc.
-
   //TODO; isLoading in Home ?
+  // if user only contains e-mail
+  //   getUser -- this getUser should not update loading...
+  //   should GetUser in background??
+  //   handleResponse / Error
+  // else if user does not contains device
+  //   validate paired = false
+  // else if user.device exists
+  //   getDevice?
+  //   handleResponse / Error
+  // setDevice?
+  // else
+  //   ...
   useEffect(() => {
-    console.log('xxxxxx AppNavigator: user: ' + JSON.stringify(user));
-
-    // if user only contains e-mail
-    //   getUser -- this getUser should not update loading...
-    //   should GetUser in background??
-    //   handleResponse / Error
-    // else if user does not contains device
-    //   validate paired = false
-    // else if user.device exists
-    //   getDevice?
-    //   handleResponse / Error
-    // setDevice?
-    // else
-    //   ...
+    console.log('Home: user: ' + JSON.stringify(user));
 
     const keys = Object.keys(user);
     console.log('keys : ' + keys);

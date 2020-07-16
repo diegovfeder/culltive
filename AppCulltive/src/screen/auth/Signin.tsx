@@ -33,11 +33,9 @@ import {
 import ForgotPasswordModal from '../../component/ForgotPasswordModal';
 // import EmailSentModal from '../component/EmailSentModal';
 
-// Icons
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-// Styles
+// Assets
 import {someStyles} from '../../Styles';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 //TODO: Timeout and retry signIn()
 const Signin: React.FC = () => {

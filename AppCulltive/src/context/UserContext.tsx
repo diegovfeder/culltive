@@ -32,7 +32,7 @@ export {
 
 function UserProvider({children}: any) {
   const [state, dispatch] = useReducer(userReducer, {
-    loading: true,
+    loading: false,
     authenticated: false,
     authToken: '',
     user: {},

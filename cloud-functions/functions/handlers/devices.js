@@ -74,6 +74,10 @@ exports.postDevice = (req, res) => {
   }
 
   const newDevice = {
+    action: {
+      ledTape: true, 
+      waterPump: false,
+    },
     deviceId: req.body.deviceId, 
     user: req.body.user,
     geolocation: req.body.geolocation,
@@ -116,39 +120,48 @@ exports.postDevice = (req, res) => {
 // POST DEVICE ACTION
 exports.postDeviceAction = (req, res) => {
   var deviceRef = db.collection("devices").doc(`${req.params.deviceId}`);
+  var deviceData = {};
 
-  // if (!deviceRef.exists) {
-  //   console.log("deviceRef does not exists...");
-  //   return res.status(404).json({
-  //     body: "Not found: deviceRef does not exists."
-  //    })
-  // } else {
-
-
-  //getDevice print device and then pass to res.data?
-
-    const newAction = {
-      ledTape: req.body.ledTape, 
-      waterPump: req.body.waterPump,
-      // updatedAt: new Date().toISOString(),
-    };
-    deviceRef.update({
-      "action": newAction
+  deviceRef.get().then((doc) => {
+    if (doc.exists) {
+        console.log("Document data:", JSON.stringify(doc.data()));
+        deviceData = doc.data(); 
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+        return res.status(404).json({
+          body: "Doc does not exits"
+         })
+    }
+  }).catch((err) => {
+    console.log("Error getting document:", error);
+    return res.status(500).json({
+      body: err.error 
     })
-    .then(() => {
-      console.log("device.action successfully updated!");
-      return res.status(200).json({
-       body: "Action posted to deviceId: " + req.params.deviceId,
-       data: 
-      })
+  });
+  
+  // Device exists
+  const newAction = {
+    ledTape: req.body.ledTape, 
+    waterPump: req.body.waterPump,
+    // updatedAt: new Date().toISOString(),
+  };
+  deviceRef.update({
+    "action": newAction
+  })
+  .then(() => {
+    console.log("device.action successfully updated!");
+    return res.status(200).json({
+     body: "Action posted to deviceId: " + req.params.deviceId,
+     data: {...deviceData, action: newAction}
     })
-    .catch((err) => {
-      console.log("Error updating document: ", err);
-      return res.status(401).json({
-        body: err.error 
-       })
-    });    
-  // }
+  })
+  .catch((err) => {
+    console.log("Error updating document: ", err);
+    return res.status(401).json({
+      body: err.error 
+     })
+  });  
 };
 
 

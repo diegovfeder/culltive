@@ -23,11 +23,9 @@ import {
 } from '../../context/UserContext';
 import {useNavigation} from '@react-navigation/native';
 
-// Icons
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-// Styles
+// Assets
 import {someStyles} from '../../Styles';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Signup: React.FC = () => {
   console.log('-- Signup.tsx');

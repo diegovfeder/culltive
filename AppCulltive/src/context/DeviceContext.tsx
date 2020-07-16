@@ -1,10 +1,20 @@
 import React, {createContext, useContext, useReducer} from 'react';
 import {AsyncStorage} from 'react-native';
+
 import api from '../util/api';
 
-//TODO: useReducer with typescript but passing Types for initial values
-var DeviceStateContext = createContext(undefined);
+interface IDevice {
+  deviceId: string;
+  geolocation: string;
+  productType: string;
+  firmwareVersion: string;
+  action: {
+    ledTape: boolean;
+    waterPump: boolean;
+  };
+}
 
+var DeviceStateContext = createContext(undefined);
 var DeviceDispatchContext = createContext(undefined);
 
 console.log('*** DeviceContext.tsx ***');
@@ -25,7 +35,7 @@ export {
 
 function DeviceProvider({children}: any) {
   const [state, dispatch] = useReducer(deviceReducer, {
-    loading: true,
+    loading: false,
     paired: false,
     pairToken: '',
     device: {},
@@ -160,7 +170,7 @@ function useDeviceDispatch() {
 // }
 
 // GET DEVICE
-function getDevice(dispatch, deviceId) {
+function getDevice(dispatch: any, deviceId: string) {
   dispatch({type: 'SET_LOADING', loading: true});
   api
     .get(`/device/${deviceId}`)
@@ -182,7 +192,7 @@ function getDevice(dispatch, deviceId) {
 }
 
 // GET DEVICE ACTION
-function getDeviceAction(dispatch, deviceId) {
+function getDeviceAction(dispatch: any, deviceId: string) {
   // dispatch({type: 'SET_LOADING', loading: true});
   api
     .get(`/device/${deviceId}/action`)
@@ -205,7 +215,7 @@ function getDeviceAction(dispatch, deviceId) {
 
 // POST DEVICE
 //TODO: FINISH
-function postDevice(dispatch, deviceId) {
+function postDevice(dispatch: any, deviceId: string) {
   // dispatch({type: 'SET_LOADING', loading: true});
   const newDevice = {
     deviceId,
@@ -221,44 +231,33 @@ function postDevice(dispatch, deviceId) {
       });
     })
     .catch((err) => {
-      console.log('ERROR: ' + err.error);
+      console.log('DeviceContext -> postDevice: ' + err.error);
     });
 }
 
-// POST DEVICE ACTIONS (LED_TAPE && WATER_PUMP)
-// function postDeviceAction();
-
 // POST DEVICE_ACTION
-
 //TODO: Infer types / Interface IDevice
 function postDeviceAction(dispatch: any, deviceId: string, action: object) {
-  // dispatch({type: 'SET_LOADING', loading: true});
-  // setLoading(true);
   console.log(`deviceId = ${deviceId}`);
   console.log('postDeviceAction: ' + JSON.stringify(action));
 
-  //FINISH
-  const newAction = action;
-
-  console.log(`newAction = ${JSON.stringify(newAction)}`);
-
-  //TODO: FINISH THIS
   api
-    .post(`/device/${deviceId}/action`, newAction)
+    .post(`/device/${deviceId}/action`, action)
     .then((res) => {
-      // console.log('res - postDeviceAction: ' + JSON.stringify(res));
+      console.log('res - postDeviceAction: ' + JSON.stringify(res.data));
       dispatch({
         type: 'POST_DEVICE_ACTION',
-        payload: res.data.device,
+        payload: res.data.data,
       });
       // setLoading(false);
     })
     .catch((err) => {
-      console.log('DeviceContext: ' + err);
+      console.log('DeviceContext -> postDeviceAction: ' + err);
     });
 }
 
 // DELETE DEVICE
+//TODO: Retry or at least show error (Network / Not found, etc...) to user
 function deleteDevice(dispatch: any, deviceId: string) {
   // dispatch({type: 'SET_LOADING', loading: true});
   console.log(`deviceId = ${deviceId}`);
@@ -272,7 +271,7 @@ function deleteDevice(dispatch: any, deviceId: string) {
         payload: deviceId,
       });
     })
-    .catch((err) => console.log('DeviceContext: deleteDevice: ERROR: ' + err));
+    .catch((err) => console.log('DeviceContext: deleteDevice: ' + err));
 }
 
 // SET LOADING
