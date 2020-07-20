@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useContext} from 'react';
 import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
 
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -11,7 +11,15 @@ import {useQuery} from 'react-query';
 import MyCarousel from '../../component/MyCarousel';
 // import {Calendar} from 'react-native-calendars';
 
-// Styles
+// Hooks
+import {
+  useDeviceDispatch,
+  useDeviceState,
+  getDevice,
+} from '../../context/DeviceContext';
+
+// Assets
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {someStyles} from '../../Styles';
 const {height, width} = Dimensions.get('window');
 
@@ -41,7 +49,7 @@ const Report: React.FC = () => {
   const route = useRoute();
 
   //TODO: get deviceId from device context...
-  const [deviceId, setDeviceId] = useState('CULLTIVE-000');
+  const {device} = useDeviceState();
 
   //TODO: get lat / lon from device context...
   const [latitude, setLatitude] = useState('-25.43');
@@ -166,24 +174,28 @@ const Report: React.FC = () => {
       title: 'Umidade do ar',
       text: 'Fator relevante no processo de evapotranspiração',
       value: '[air]',
+      unit: '%',
     },
     {
       id: 'lumi',
       title: 'Taxa de luz',
       text: 'Determinante no crescimento do seu cultivo',
       value: '[lumi1], [lumi2]',
+      unit: 'PPFD',
     },
     {
       id: 'soil',
       title: 'Umidade do solo',
       text: 'Define os ciclos de irrigação',
       value: '[soil1], [soil2]',
+      unit: '%',
     },
     {
       id: 'temp',
       title: 'Temperatura',
       text: 'Influencia as atividades fisiológicas da planta',
       value: '[temp]',
+      unit: '°C',
     },
   ];
 
@@ -198,7 +210,7 @@ const Report: React.FC = () => {
 
   useEffect(() => {
     api
-      .get(`/reading/${deviceId}`)
+      .get(`/reading/${device.deviceId}`)
       .then((res) => {
         console.log('res.data: ' + JSON.stringify(res.data));
         setReading(res.data[0]);
@@ -260,15 +272,45 @@ const Report: React.FC = () => {
       ) : (
         <View>
           {/* Weather Report Container*/}
-          <Text
-            style={[someStyles.h1, {alignSelf: 'flex-start', marginBottom: 2}]}>
-            Clima
-          </Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+            }}>
+            {/* <Icon
+              name="weather-cloudy"
+              size={24}
+              style={{
+                alignSelf: 'center',
+                marginTop: 12,
+                // color: '#EC6B4F',
+              }}
+            /> */}
+            <Text
+              style={[
+                someStyles.h1,
+                {
+                  color: '#3cbc40',
+                  alignSelf: 'flex-start',
+                  marginBottom: 2,
+                },
+              ]}>
+              Clima
+            </Text>
+          </View>
+
           {weatherContainer}
 
           {/* Sensor Report Container*/}
           <Text
-            style={[someStyles.h1, {alignSelf: 'flex-start', marginBottom: 2}]}>
+            style={[
+              someStyles.h1,
+              {
+                color: '#54C958',
+                alignSelf: 'flex-start',
+                marginBottom: 2,
+              },
+            ]}>
             Sensores
           </Text>
           {sensorContainer}

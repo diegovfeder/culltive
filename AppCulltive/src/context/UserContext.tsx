@@ -27,6 +27,7 @@ export {
   setLoadingUser,
   setError,
   storeUserToken,
+  clearUserDevice,
   clearError,
 };
 
@@ -109,6 +110,12 @@ function userReducer(state: any, action: any) {
         loading: false,
         authenticated: !!action.token,
         authToken: action.token,
+      };
+    case 'CLEAR_USER_DEVICE':
+      console.log('userReducer: CLEAR_ERROR');
+      return {
+        ...state,
+        user: {...state.user, device: ''},
       };
     case 'CLEAR_ERROR':
       console.log('userReducer: CLEAR_ERROR');
@@ -257,6 +264,10 @@ async function storeUserToken(dispatch: any, token: string, isLoading: any) {
     console.log('ERROR: DeviceContext: ' + e.error);
   }
 }
+// CLEAR ERROR
+const clearUserDevice = (dispatch: any) => {
+  dispatch({type: 'CLEAR_USER_DEVICE'});
+};
 
 // CLEAR ERROR
 const clearError = (dispatch: any) => {

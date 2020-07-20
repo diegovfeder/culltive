@@ -29,8 +29,11 @@ export {
   postDevice,
   postDeviceAction,
   deleteDevice,
+  setDeviceAction,
   setLoadingDevice,
+  setError,
   storeDeviceToken,
+  clearError,
 };
 
 function DeviceProvider({children}: any) {
@@ -89,7 +92,7 @@ function deviceReducer(state: any, action: any) {
       console.log('deviceReducer: POST_DEVICE_ACTION');
       return {
         ...state,
-        device: action.payload,
+        device: {...state.device, action: action.payload},
         loading: false,
       };
     case 'DELETE_DEVICE':
@@ -100,6 +103,12 @@ function deviceReducer(state: any, action: any) {
         pairToken: '',
         device: {},
         loading: false,
+      };
+    case 'SET_DEVICE_ACTION':
+      console.log('deviceReducer: SET_DEVICE_ACTION');
+      return {
+        ...state,
+        device: {...state.device, action: action.action},
       };
     case 'SET_LOADING':
       console.log('deviceReducer: SET_LOADING');
@@ -123,11 +132,11 @@ function deviceReducer(state: any, action: any) {
         device: {deviceId: action.token},
       };
     //TODO: POST ACTIONS...
-    case 'WATER_PUMP':
-      console.log('deviceReducer: WATER_PUMP');
+    case 'CLEAR_ERROR':
+      console.log('userReducer: CLEAR_ERROR');
       return {
         ...state,
-        device: {waterPump: true},
+        error: null,
       };
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -186,7 +195,7 @@ function getDevice(dispatch: any, deviceId: string) {
       //TODO: retry get_device?
       dispatch({
         type: 'SET_ERROR',
-        error: err,
+        error: {err, from: 'getDevice'},
       });
     });
 }
@@ -208,7 +217,7 @@ function getDeviceAction(dispatch: any, deviceId: string) {
       //TODO: retry get_device?
       dispatch({
         type: 'SET_ERROR',
-        error: err,
+        error: {err, from: 'getDevice'},
       });
     });
 }
@@ -245,14 +254,20 @@ function postDeviceAction(dispatch: any, deviceId: string, action: object) {
     .post(`/device/${deviceId}/action`, action)
     .then((res) => {
       console.log('res - postDeviceAction: ' + JSON.stringify(res.data));
+      console.log('dataAciton posted = ' + JSON.stringify(res.data.action));
       dispatch({
         type: 'POST_DEVICE_ACTION',
-        payload: res.data.data,
+        payload: res.data.action,
       });
       // setLoading(false);
     })
     .catch((err) => {
       console.log('DeviceContext -> postDeviceAction: ' + err);
+      dispatch({
+        type: 'SET_ERROR',
+        // error: err,
+        error: {err, from: 'postDeviceAction'},
+      });
     });
 }
 
@@ -271,12 +286,26 @@ function deleteDevice(dispatch: any, deviceId: string) {
         payload: deviceId,
       });
     })
-    .catch((err) => console.log('DeviceContext: deleteDevice: ' + err));
+    .catch((err) => {
+      console.log('DeviceContext: deleteDevice: ' + err);
+      dispatch({type: 'SET_ERROR', error: {err, from: 'deleteDevice'}});
+    });
+}
+
+// means to update state back to false after waterPump button timeout
+function setDeviceAction(dispatch: any, action: object) {
+  //TODO: update action - waterPump, action - ledTape
+  dispatch({type: 'SET_DEVICE_ACTION', action});
 }
 
 // SET LOADING
 function setLoadingDevice(dispatch: any, loading: boolean) {
   dispatch({type: 'SET_LOADING', loading});
+}
+
+// Is this useful?
+function setError(dispatch: any, error: any, from: string) {
+  dispatch({type: 'SET_ERROR', error});
 }
 
 // STORE DEVICE / PAIR TOKEN
@@ -290,6 +319,11 @@ async function storeDeviceToken(dispatch: any, token: string, isLoading: any) {
     console.log('ERROR: DeviceContext: ' + e.error);
   }
 }
+
+// CLEAR ERROR
+const clearError = (dispatch: any) => {
+  dispatch({type: 'CLEAR_ERROR'});
+};
 
 // --   The following code was found social-ape study project // context // dispatch
 // -- and meantdelete the state from a selected array of devices...

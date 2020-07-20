@@ -22,8 +22,15 @@ import {
   getDeviceAction,
   postDeviceAction,
   deleteDevice,
+  setDeviceAction,
+  clearError,
 } from '../../../context/DeviceContext';
-import {useUserDispatch, useUserState} from '../../../context/UserContext';
+
+import {
+  useUserDispatch,
+  useUserState,
+  clearUserDevice,
+} from '../../../context/UserContext';
 
 // Navigation
 import {DrawerActions, useNavigation} from '@react-navigation/native';
@@ -45,10 +52,14 @@ const Settings: React.FC = () => {
   console.log('-- Settings.tsx');
   const navigation = useNavigation();
 
+  const userDispatch = useUserDispatch();
+  const {user} = useUserState();
+
   const deviceDispatch = useDeviceDispatch();
-  const {device} = useDeviceState();
+  const {device, error, loading: loadingDevice} = useDeviceState();
 
   const [isLEDEnabled, setIsLEDEnabled] = useState(true);
+  const [isLEDSwitchDisable, setLEDSwitchDisable] = useState(false);
 
   const [loading, setLoading] = useState(true);
   // Refers to waterPump button activity indicator
@@ -64,11 +75,89 @@ const Settings: React.FC = () => {
   // console.log('userData: ' + JSON.stringify(userData));
 
   useEffect(() => {
+    console.log('Settings-> error: ' + JSON.stringify(error));
+
+    //Error is coming from?
+    if (error !== null) {
+      if (typeof error.from !== 'undefined' || typeof error.from !== 'null') {
+        console.log('is not undefined or null');
+        if (error.from === 'postDeviceAction') {
+          console.log('error from postDevice');
+          //TODO: get response?
+
+          // means action did not come from waterPump Button
+          if (!loadingWaterPump) setIsLEDEnabled(!isLEDEnabled);
+
+          setLoadingWaterPump(false);
+          // toggleLEDSwitch(device.action.ledTape);
+        }
+      }
+    }
+
+    if (error !== null) {
+      if (error.code === 500) {
+        console.log('500 Network Error: ' + JSON.stringify(error));
+        Alert.alert(
+          'Ops...',
+          'Erro de conexão, tente novamente.' + '\n\n' + error.err.message,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                console.log('OK Pressed');
+                clearError(deviceDispatch);
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+      } else {
+        console.log('Error.code == 500: ' + JSON.stringify(error));
+        Alert.alert(
+          'Ops...',
+          'Erro de conexão, tente novamente.' +
+            '\n\n' +
+            error.err.message +
+            ' from ' +
+            error.from,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                console.log('OK Pressed');
+                // returnToOldState();
+                clearError(deviceDispatch);
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+        //...
+      }
+    } else {
+      console.log('error === null');
+    }
+  }, [error]);
+
+  // loadingDevice
+
+  useEffect(() => {
     console.log('Settings-> device: ' + JSON.stringify(device));
 
     if (device.deviceId !== null || device.deviceId !== undefined) {
       setLoading(false);
     } else {
+      // getDevice();
+      //...
+    }
+  }, [device]);
+  useEffect(() => {
+    console.log('Settings-> device: ' + JSON.stringify(device));
+
+    if (device.deviceId !== null || device.deviceId !== undefined) {
+      setLoading(false);
+    } else {
+      // getDevice();
       //...
     }
   }, [device]);
@@ -76,16 +165,25 @@ const Settings: React.FC = () => {
   //printDevice
   useEffect(() => {
     // console.log('action: ' + JSON.stringify(device.action));
-    // console.log('deviceId: ' + device.deviceId);
+    console.log('deviceId: ' + device.deviceId);
+
+    if (typeof device.deviceId === 'undefined') {
+      console.log('haha');
+    } else {
+      console.log('hehe');
+    }
   }, [device]);
 
+  //FIXME:
   // Set settings from device
   useEffect(() => {
     console.log('useEffect(): device: ' + JSON.stringify(device));
 
-    if (device !== {}) {
+    if (device !== {} && typeof device.action.ledTape !== 'undefined') {
+      console.log('device.action.ledTape !== undefined');
       setIsLEDEnabled(device.action.ledTape);
     } else {
+      console.log('device.action.ledTape == undefined');
     }
   }, [device]);
 
@@ -133,15 +231,30 @@ const Settings: React.FC = () => {
     console.log('toggleLEDSwitch: currentState: ' + currentState);
     console.log('toggleLEDSwitch: device: ' + JSON.stringify(device));
 
+    //TODO: VALIDATE device.ation
     // if (device ), keys, etc...
 
+    //TODO: get Errors from response, show notifications for network error (alert message at first)
+    //      and re-toggle ledSwitch with setTimeout(200), updating value for the user
+
+    // if (!error) {
     const action = {
       ledTape: currentState,
       waterPump: device.action.waterPump,
     };
-    postDeviceAction(deviceDispatch, device.deviceId, action);
+
+    if (device.deviceId.includes('CULLTIVE')) {
+      console.log('toggleLEDSwitch: ' + JSON.stringify(device));
+      postDeviceAction(deviceDispatch, device.deviceId, action);
+    } else {
+      console.log('toggleLEDSwitch: (no device Id) ');
+    }
 
     setIsLEDEnabled((previousState) => !previousState);
+    // } else {
+    //   console.log(JSON.stringify(error))
+    //   setIsLEDEnabled(oldState)
+    // }
   };
 
   // TODO: feature
@@ -294,6 +407,7 @@ const Settings: React.FC = () => {
                     ios_backgroundColor="#d3d3d3"
                     onValueChange={(value) => toggleLEDSwitch(value)}
                     value={isLEDEnabled}
+                    disabled={isLEDSwitchDisable}
                   />
                 </View>
 
@@ -374,6 +488,8 @@ const Settings: React.FC = () => {
             activeOpacity={1}
             style={someStyles.button}
             onPress={() => {
+              setLEDSwitchDisable(true);
+
               const action = {
                 ledTape: isLEDEnabled,
                 waterPump: true,
@@ -382,7 +498,12 @@ const Settings: React.FC = () => {
 
               setLoadingWaterPump(true);
               setTimeout(() => {
+                setLEDSwitchDisable(false);
                 setLoadingWaterPump(false);
+                setDeviceAction(deviceDispatch, {
+                  ledTape: device.action.ledTape,
+                  waterPump: false,
+                });
               }, 5000);
             }}>
             {loadingWaterPump ? (
@@ -413,6 +534,8 @@ const Settings: React.FC = () => {
                     onPress: () => {
                       //TODO: Handle errors
                       deleteDevice(deviceDispatch, device.deviceId);
+                      //TODO: If deleteDevice returned OK / true / 200
+                      clearUserDevice(userDispatch, device.deviceId);
                     },
                   },
                 ],

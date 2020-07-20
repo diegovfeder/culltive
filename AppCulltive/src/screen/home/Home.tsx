@@ -240,6 +240,8 @@ const Home: React.FC = () => {
     </ScrollView>
   );
 
+  //TODO: HANDLE ERRORS - NETWORK ERROR FOR HOME, AND SHOW MESSAGE TO THE USER -> LIKE REPORT.tsx
+
   return (
     <>
       {loading ? (

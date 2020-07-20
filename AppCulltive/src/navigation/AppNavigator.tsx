@@ -47,6 +47,8 @@ const AppNavigator: React.FC = () => {
   const [loadingDevice, isLoadingDevice] = useState(true);
   useEffect(() => {
     isLoading(loadingUser || loadingDevice);
+    // TODO:
+    // setTimeout isLoading(true)
   }, [loadingUser, loadingDevice]);
 
   // ** USER AUTH TOKEN

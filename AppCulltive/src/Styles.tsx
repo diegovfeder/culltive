@@ -59,9 +59,17 @@ export const someStyles = StyleSheet.create({
     alignSelf: 'center',
     margin: 8,
   },
+
   h1_regular: {
     fontSize: 24,
     fontFamily: 'Montserrat-Regular',
+    color: '#959595',
+    alignSelf: 'center',
+    margin: 8,
+  },
+  h1_number: {
+    fontSize: 48,
+    fontFamily: 'Montserrat-Bold',
     color: '#959595',
     alignSelf: 'center',
     margin: 8,
@@ -74,6 +82,11 @@ export const someStyles = StyleSheet.create({
   h3: {
     fontSize: 16,
     fontFamily: 'Montserrat-Regular',
+    color: '#959595',
+  },
+  h3_bold: {
+    fontSize: 20,
+    fontFamily: 'Montserrat-Bold',
     color: '#959595',
   },
   h4: {

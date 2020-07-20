@@ -5,4 +5,10 @@ export const Colors = StyleSheet.create({
   primary: {
     color: '#3ea341',
   },
+  secondary: {
+    color: '#fff',
+  },
+  white: {
+    color: '#fff',
+  },
 });
