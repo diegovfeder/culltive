@@ -1,3 +1,6 @@
+# Culltive react-dashboard project
+
+The objective of this website hosted in culltive.me is to have an easy way to display and monitor data but also provide some organization and enhancing features we could develop later on...
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
