@@ -16,6 +16,12 @@ import {
 
 // Hooks
 import {
+  useUserDispatch,
+  useUserState,
+  clearUserDevice,
+} from '../../../context/UserContext';
+
+import {
   useDeviceDispatch,
   useDeviceState,
   getDevice,
@@ -26,17 +32,12 @@ import {
   clearError,
 } from '../../../context/DeviceContext';
 
-import {
-  useUserDispatch,
-  useUserState,
-  clearUserDevice,
-} from '../../../context/UserContext';
-
 // Navigation
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 
 // Assets
 import {someStyles} from '../../../Styles';
+import {someColors} from '../../../Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // interface IDevice {
@@ -257,6 +258,26 @@ const Settings: React.FC = () => {
     // }
   };
 
+  const toggleWaterPump = () => {
+    setLEDSwitchDisable(true);
+
+    const action = {
+      ledTape: isLEDEnabled,
+      waterPump: true,
+    };
+    postDeviceAction(deviceDispatch, device.deviceId, action);
+
+    setLoadingWaterPump(true);
+    setTimeout(() => {
+      setLEDSwitchDisable(false);
+      setLoadingWaterPump(false);
+      setDeviceAction(deviceDispatch, {
+        ledTape: device.action.ledTape,
+        waterPump: false,
+      });
+    }, 5000);
+  };
+
   // TODO: feature
   // const toggleAWSwitch = () =>
   //   setAutomaticWatering((previousState) => !previousState);
@@ -354,7 +375,7 @@ const Settings: React.FC = () => {
       {loading ? (
         loadingContainer
       ) : (
-        <SafeAreaView style={someStyles.container}>
+        <SafeAreaView style={[someStyles.container_header]}>
           <ScrollView>
             {/*ACCOUNT*/}
             {/* {accountContainer} */}
@@ -487,25 +508,8 @@ const Settings: React.FC = () => {
             underlayColor="#3ea341"
             activeOpacity={1}
             style={someStyles.button}
-            onPress={() => {
-              setLEDSwitchDisable(true);
-
-              const action = {
-                ledTape: isLEDEnabled,
-                waterPump: true,
-              };
-              postDeviceAction(deviceDispatch, device.deviceId, action);
-
-              setLoadingWaterPump(true);
-              setTimeout(() => {
-                setLEDSwitchDisable(false);
-                setLoadingWaterPump(false);
-                setDeviceAction(deviceDispatch, {
-                  ledTape: device.action.ledTape,
-                  waterPump: false,
-                });
-              }, 5000);
-            }}>
+            disabled={loadingWaterPump}
+            onPress={toggleWaterPump}>
             {loadingWaterPump ? (
               <ActivityIndicator color={'white'} />
             ) : (

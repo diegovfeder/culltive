@@ -21,6 +21,7 @@ import {
 // Assets
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 const {height, width} = Dimensions.get('window');
 
 // Moment
@@ -152,17 +153,25 @@ const Report: React.FC = () => {
 
   const weatherContainer = (
     <View style={someStyles.weatherContainer}>
-      <Text style={[someStyles.h3, {paddingVertical: 2, fontSize: 18}]}>
+      <Text
+        style={[
+          someStyles.h3,
+          someColors.dark_blue,
+          {paddingVertical: 2, fontSize: 18},
+        ]}>
         {city}
       </Text>
       <Text
         style={[
           someStyles.h3,
+          someColors.light_blue,
           {fontSize: 14, paddingVertical: 4, textAlign: 'center'},
         ]}>
         {moment().format('LLL')}
       </Text>
-      <Text style={[someStyles.h1, {fontSize: 32}]}>{temperature}˚C</Text>
+      <Text style={[someStyles.h1, someColors.blue, {fontSize: 32}]}>
+        {temperature}˚C
+      </Text>
       {/* TODO: WeatherIcons */}
       {/* <Text style={[someStyles.h2, {alignSelf: 'center'}]}>{weather}</Text> */}
     </View>
@@ -240,7 +249,7 @@ const Report: React.FC = () => {
   );
 
   return (
-    <View style={someStyles.container}>
+    <View style={[someStyles.container_spaced]}>
       {loading ? (
         <View
           style={{
@@ -271,55 +280,45 @@ const Report: React.FC = () => {
         </View>
       ) : (
         <View>
-          {/* Weather Report Container*/}
-
-          <View
-            style={{
-              flexDirection: 'row',
-            }}>
-            {/* <Icon
-              name="weather-cloudy"
-              size={24}
-              style={{
-                alignSelf: 'center',
-                marginTop: 12,
-                // color: '#EC6B4F',
-              }}
-            /> */}
+          {/* Sensor Report Container*/}
+          <View>
             <Text
-              style={[
-                someStyles.h1,
-                {
-                  color: '#3cbc40',
-                  alignSelf: 'flex-start',
-                  marginBottom: 2,
-                },
-              ]}>
-              Clima
+              style={[someStyles.h2, someColors.tertiary, {paddingBottom: 4}]}>
+              SENSORES
             </Text>
+            {sensorContainer}
           </View>
 
-          {weatherContainer}
-
-          {/* Sensor Report Container*/}
-          <Text
-            style={[
-              someStyles.h1,
-              {
-                color: '#54C958',
-                alignSelf: 'flex-start',
-                marginBottom: 2,
-              },
-            ]}>
-            Sensores
-          </Text>
-          {sensorContainer}
+          {/* Weather Report Container*/}
+          {/* Removed for the moment, pasted at the bottom of the code or notion. */}
         </View>
       )}
     </View>
   );
 };
 export default Report;
+
+// weather CONTAINER STUFF...
+/* <View>
+<View
+  style={{
+    flexDirection: 'row',
+  }}>
+  <Text
+    style={[
+      someStyles.h2,
+      someColors.tertiary,
+      {paddingBottom: 4},
+    ]}>
+    CLIMA
+  </Text>
+</View>
+{weatherContainer}
+</View> */
+
+//------------------------------------------------------------//
+//            TRASHED CODE
+//------------------------------------------------------------//
 
 // useQuery fetch data from firestore/readings/{deviceId}
 // const fetchLastReading = async (deviceId) => {

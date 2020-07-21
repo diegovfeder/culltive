@@ -44,7 +44,7 @@ const Welcome: React.FC = () => {
       style={{
         flex: 1,
         flexDirection: 'column',
-        marginHorizontal: 16,
+        marginHorizontal: 12,
         marginVertical: 12,
         justifyContent: 'space-between',
         alignItems: 'stretch',

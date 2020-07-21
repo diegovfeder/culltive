@@ -4,6 +4,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableHighlight,
   TouchableOpacity,
@@ -25,6 +26,7 @@ import {useNavigation} from '@react-navigation/native';
 
 // Assets
 import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Signup: React.FC = () => {
@@ -87,47 +89,44 @@ const Signup: React.FC = () => {
   });
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        marginHorizontal: 16,
-        marginVertical: 12,
-        justifyContent: 'space-between',
-      }}>
-      <KeyboardAvoidingView
-        style={someStyles.keyboardContainer}
-        behavior="padding">
-        <Formik
-          initialValues={{name: '', email: '', password: ''}}
-          validationSchema={Yup.object().shape({
-            name: Yup.string()
-              .min(2, 'Nome curto demais')
-              .max(50, 'Nome longo demais')
-              .required('*Obrigatório'),
-            email: Yup.string()
-              .email('Email inválido')
-              .required('*Obrigatório'),
-            password: Yup.string().required('*Obrigatório'),
-          })}
-          onSubmit={(values) => {
-            console.log(JSON.stringify(values));
-            signupUser(
-              userDispatch,
-              values.name,
-              values.email,
-              values.password,
-              setLoading,
-            );
-          }}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-          }) => (
-            <View>
+    <SafeAreaView style={someStyles.container_spaced}>
+      <Formik
+        initialValues={{name: '', email: '', password: ''}}
+        validationSchema={Yup.object().shape({
+          name: Yup.string()
+            .min(2, 'Nome curto demais')
+            .max(50, 'Nome longo demais')
+            .required('*Obrigatório'),
+          email: Yup.string().email('Email inválido').required('*Obrigatório'),
+          password: Yup.string().required('*Obrigatório'),
+        })}
+        onSubmit={(values) => {
+          //TODO: One input at a time form validation.
+          // - for each onSubmit(validate value and position onto the next input until all are valid)
+          console.log(JSON.stringify(values));
+          signupUser(
+            userDispatch,
+            values.name,
+            values.email,
+            values.password,
+            setLoading,
+          );
+        }}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
+          <KeyboardAvoidingView
+            behavior={'padding'}
+            style={someStyles.keyboardContainer}>
+            <View
+              style={{
+                flex: 1,
+              }}>
               <Input
                 ref={(component) => (_namelInput = component)}
                 autoFocus
@@ -156,6 +155,7 @@ const Signup: React.FC = () => {
                 }}
                 blurOnSubmit={false}
               />
+              {/* Input with secureTextState eye icon */}
               <View>
                 <Input
                   ref={(component) => (_passwordInput = component)}
@@ -179,25 +179,30 @@ const Signup: React.FC = () => {
                   <Ionicons
                     name={eyeState ? 'ios-eye' : 'ios-eye-off'}
                     size={24}
-                    color="#3ea341"
+                    color={someColors.tertiary.color}
                   />
                 </TouchableOpacity>
               </View>
-              <TouchableHighlight
-                onPress={handleSubmit}
-                style={someStyles.button}
-                underlayColor="#3ea341"
-                activeOpacity={1}>
-                {loading ? (
-                  <ActivityIndicator color={'white'} />
-                ) : (
-                  <Text style={[someStyles.textButton]}>Continuar</Text>
-                )}
-              </TouchableHighlight>
             </View>
-          )}
-        </Formik>
-      </KeyboardAvoidingView>
+
+            {/* BUTTON IS JUST OUTSIDE THE TEXT-INPUTS VIEW CONTAINER */}
+            <TouchableHighlight
+              underlayColor="#3ea341"
+              activeOpacity={1}
+              style={[
+                someStyles.button,
+                {position: 'absolute', bottom: 0, width: '100%'},
+              ]}
+              onPress={handleSubmit}>
+              {loading ? (
+                <ActivityIndicator color={'white'} />
+              ) : (
+                <Text style={[someStyles.textButton]}>Continuar</Text>
+              )}
+            </TouchableHighlight>
+          </KeyboardAvoidingView>
+        )}
+      </Formik>
     </SafeAreaView>
   );
 };

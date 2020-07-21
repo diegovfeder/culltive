@@ -8,11 +8,19 @@ import {
   View,
 } from 'react-native';
 
+// Components
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 
+// Assets
 import {someStyles} from '../Styles';
-
+import {someColors} from '../Colors';
 const {height, width} = Dimensions.get('window');
+
+//TODO: Validate data, if value === std (sensorData.list) do ...
+// - show activity indicator instead (loading value state)
+// - print old value
+// - print error message
+// - show loading (general)
 
 const MyCarousel: React.FC = (props) => {
   // const carouselRef = useRef('');
@@ -87,7 +95,7 @@ const MyCarousel: React.FC = (props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.carousel_container}>
       <Carousel
         data={props.data}
         renderItem={renderItem}
@@ -96,34 +104,6 @@ const MyCarousel: React.FC = (props) => {
         loop={true}
         onSnapToItem={(index) => setIndex(index)}
       />
-      {/* <Carousel
-        layout={'default'}
-        data={props.data}
-        inactiveSlideOpacity={0.2}
-        inactiveSlideScale={0.5}
-        sliderWidth={width}
-        itemWidth={width}
-        itemHeight={height}
-        renderItem={renderItem}
-        containerCustomStyle={{overflow: 'visible'}}
-        contentContainerCustomStyle={{overflow: 'visible'}}
-        loopClonesPerSide={3}
-        activeAnimationType={'timing'}
-        loop={true}
-        swipeThreshold={5}
-        lockScrollTimeoutDuration={10}
-        onSnapToItem={(index) => setIndex(index)}
-      /> */}
-      {/* <Pagination
-        dotsLength={props.data.length}
-        activeDotIndex={index}
-        containerStyle={styles.paginationContainer}
-        dotColor={'#3cbc40'}
-        dotStyle={styles.paginationDot}
-        inactiveDotColor={'lightgrey'}
-        inactiveDotOpacity={2}
-        inactiveDotScale={1}
-      /> */}
     </View>
   );
 };
@@ -151,3 +131,33 @@ const styles = StyleSheet.create({
 });
 
 export default MyCarousel;
+
+/* <Carousel
+layout={'default'}
+data={props.data}
+inactiveSlideOpacity={0.2}
+inactiveSlideScale={0.5}
+sliderWidth={width}
+itemWidth={width}
+itemHeight={height}
+renderItem={renderItem}
+containerCustomStyle={{overflow: 'visible'}}
+contentContainerCustomStyle={{overflow: 'visible'}}
+loopClonesPerSide={3}
+activeAnimationType={'timing'}
+loop={true}
+swipeThreshold={5}
+lockScrollTimeoutDuration={10}
+onSnapToItem={(index) => setIndex(index)}
+/>
+
+<Pagination
+dotsLength={props.data.length}
+activeDotIndex={index}
+containerStyle={styles.paginationContainer}
+dotColor={'#3cbc40'}
+dotStyle={styles.paginationDot}
+inactiveDotColor={'lightgrey'}
+inactiveDotOpacity={2}
+inactiveDotScale={1}
+/> */
