@@ -24,6 +24,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Styles
 import {someStyles} from '../Styles';
+import {someColors} from '../Colors';
 
 export const DrawerNavigator: React.FC = ({nav, route}) => {
   console.log('... DrawerNavigator.tsx ...');
@@ -48,7 +49,7 @@ export const DrawerNavigator: React.FC = ({nav, route}) => {
       <DrawerContentScrollView {...props}>
         {/* TODO: Create a header for the Drawer */}
         <View style={someStyles.container}>
-          <Text style={someStyles.h2}>Bem vindo!</Text>
+          <Text style={[someStyles.h2, someColors.tertiary]}>Bem vindo!</Text>
           {user.email !== undefined ? (
             <Text style={[someStyles.h3, {marginVertical: 4}]}>
               {user.email}

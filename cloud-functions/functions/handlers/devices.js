@@ -134,18 +134,35 @@ exports.postDeviceAction = (req, res) => {
          })
     }
   }).catch((err) => {
-    console.log("Error getting document:", error);
+    console.log("Error getting document:", err);
     return res.status(500).json({
       body: err.error 
     })
   });
   
-  // Device exists
   const newAction = {
     ledTape: req.body.ledTape, 
     waterPump: req.body.waterPump,
     // updatedAt: new Date().toISOString(),
   };
+
+  // Validate request waterPump !== null || undefined etc...
+  if (typeof newAction.ledTape === 'undefined') {
+    // Need to resolve, it's undefined
+    newAction.ledTape = true; // true is the default value
+    if (typeof deviceData.action.ledTape !== 'undefined') {
+      newAction.ledTape = deviceData.action.ledTape;
+    }
+     
+  } else if (typeof newAction.waterPump === 'undefined') {
+    // Need to resolve, it's undefined
+    newAction.waterPump = false; // false is the default value
+    if (typeof deviceData.action.waterPump !== 'undefined') {
+      newAction.waterPump = deviceData.action.waterPump;
+    }
+  }
+
+
   deviceRef.update({
     "action": newAction
   })
@@ -153,7 +170,8 @@ exports.postDeviceAction = (req, res) => {
     console.log("device.action successfully updated!");
     return res.status(200).json({
      body: "Action posted to deviceId: " + req.params.deviceId,
-     data: {...deviceData, action: newAction}
+    //  data: {...deviceData, action: newAction}
+     action: newAction,
     })
   })
   .catch((err) => {

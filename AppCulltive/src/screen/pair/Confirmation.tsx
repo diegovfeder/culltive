@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 
+// Navigation
 import {StackActions, useNavigation} from '@react-navigation/native';
 
 // Context
@@ -18,12 +19,11 @@ import {
 } from '../../context/DeviceContext';
 import {useDeviceState} from '../../context/DeviceContext';
 
-// Styles
-import {someStyles} from '../../Styles';
-
 // Assets
-import * as Svg from 'react-native-svg';
+import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 import ConfirmationUndraw from '../../../assets/undraw/confirmation.svg';
+import * as Svg from 'react-native-svg';
 
 const Confirmation: React.FC = ({nav, route}) => {
   console.log('-- Confirmation.tsx');
@@ -50,15 +50,9 @@ const Confirmation: React.FC = ({nav, route}) => {
   }, [device]);
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        marginHorizontal: 16,
-        marginVertical: 12,
-        justifyContent: 'space-between',
-      }}>
+    <SafeAreaView style={[someStyles.container_spaced]}>
       <View>
-        <Text style={[someStyles.h1, {color: '#3cbc40'}]}>Parabéns</Text>
+        <Text style={[someStyles.h1, someColors.secondary]}>Parabéns</Text>
         <Text style={[someStyles.h3, {textAlign: 'center'}]}>
           A conexão do seu dispositivo foi estabelecida com sucesso!
         </Text>

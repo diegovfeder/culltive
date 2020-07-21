@@ -10,13 +10,7 @@ import {
   View,
 } from 'react-native';
 
-import * as Svg from 'react-native-svg';
-
-import axios from 'axios';
-// import api from '../../util/api';
-
-import WifiManager from 'react-native-wifi-reborn';
-
+// navigation
 import {
   CommonActions,
   StackActions,
@@ -24,14 +18,19 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 
-// Styles
-import {someStyles} from '../../Styles';
+import axios from 'axios';
+// import api from '../../util/api';
+import WifiManager from 'react-native-wifi-reborn';
+
+// Hooks
+import {useUserState} from '../../context/UserContext';
 
 // Assets
-import DeviceVerificationUndraw from '../../../assets/undraw/deviceVerification.svg';
+import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 import WifiUndraw from '../../../assets/undraw/interfaceWifi.svg';
-
-import {useUserState} from '../../context/UserContext';
+import DeviceVerificationUndraw from '../../../assets/undraw/deviceVerification.svg';
+import * as Svg from 'react-native-svg';
 
 interface IUser {}
 
@@ -364,17 +363,12 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
   return (
     <>
       {connecting ? (
-        <SafeAreaView
-          style={{
-            flex: 1,
-            marginHorizontal: 16,
-            marginVertical: 12,
-            justifyContent: 'space-between',
-          }}>
+        <SafeAreaView style={[someStyles.container_spaced]}>
           <View>
             <Text
               style={[
                 someStyles.h1,
+                someColors.tertiary,
                 {
                   justifyContent: 'center',
                   alignSelf: 'center',
@@ -424,11 +418,13 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
             justifyContent: 'space-between',
           }}>
           <View>
-            <Text style={someStyles.h1}>Enviar credenciais</Text>
+            <Text style={[someStyles.h1, someColors.tertiary]}>
+              Enviar credenciais
+            </Text>
             <Text style={[someStyles.h3]}>
               1- Abra o menu de configurações Wi-Fi{'\n'}
-              2- Conecte a rede 'culltive.me'{'\n'}
-              3- Volte para a esta tela...
+              2- Conecte-se a rede 'culltive.me'{'\n'}
+              3- Volte para esta tela
             </Text>
           </View>
           <WifiUndraw width={320} height={320} style={{alignSelf: 'center'}} />

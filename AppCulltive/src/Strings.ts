@@ -1,4 +1,4 @@
-import React from 'react';
+//TODO: Validate strings and make it international
 
 export const Strings = {
   app: 'culltive',

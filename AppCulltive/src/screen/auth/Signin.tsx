@@ -35,6 +35,7 @@ import ForgotPasswordModal from '../../component/ForgotPasswordModal';
 
 // Assets
 import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 //TODO: Timeout and retry signIn()
@@ -96,107 +97,111 @@ const Signin: React.FC = () => {
   });
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        marginHorizontal: 16,
-        marginVertical: 12,
-        justifyContent: 'space-between',
-      }}>
-      <KeyboardAvoidingView
-        style={someStyles.keyboardContainer}
-        behavior="padding">
-        <Formik
-          initialValues={{email: '', password: ''}}
-          validationSchema={Yup.object().shape({
-            email: Yup.string()
-              .email('Email inválido')
-              .required('*Obrigatório'),
-            password: Yup.string().required('*Obrigatório'),
-          })}
-          onSubmit={(values) => {
-            // console.log(JSON.stringify(values));
-            signinUser(userDispatch, values.email, values.password, setLoading);
-          }}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-          }) => (
-            <View>
-              <Input
-                ref={(component) => (_emailInput = component)}
-                autoFocus
-                autoCapitalize="none"
-                placeholder="Email"
-                value={values.email}
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                errorStyle={{color: 'red'}}
-                errorMessage={errors.email ? errors.email : ''}
-                onSubmitEditing={() => {
-                  _passwordInput.focus();
-                }}
-                blurOnSubmit={false}
-              />
-              <View>
-                <Input
-                  ref={(component) => (_passwordInput = component)}
-                  placeholder="Senha"
-                  value={values.password}
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  errorStyle={{color: 'red'}}
-                  errorMessage={
-                    errors.password && touched.password ? errors.password : ''
-                  }
-                  secureTextEntry={secureTextState}
-                  onSubmitEditing={handleSubmit}
-                />
-                <TouchableOpacity
-                  style={{left: '90%', top: '20%', position: 'absolute'}}
-                  onPress={() => {
-                    setSecureTextState(!secureTextState);
-                    setEyeState(!eyeState);
-                  }}>
-                  <Ionicons
-                    name={eyeState ? 'ios-eye' : 'ios-eye-off'}
-                    size={24}
-                    color="#3ea341"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity
-                style={{justifyContent: 'flex-end', alignSelf: 'flex-end'}}
-                onPress={() => {
-                  setModalState(!modalState);
+    <SafeAreaView style={someStyles.container_spaced}>
+      <Formik
+        initialValues={{email: '', password: ''}}
+        validationSchema={Yup.object().shape({
+          email: Yup.string().email('Email inválido').required('*Obrigatório'),
+          password: Yup.string().required('*Obrigatório'),
+        })}
+        onSubmit={(values) => {
+          // console.log(JSON.stringify(values));
+          signinUser(userDispatch, values.email, values.password, setLoading);
+        }}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
+          <KeyboardAvoidingView
+            behavior={'padding'}
+            style={someStyles.keyboardContainer}>
+            <View
+              style={{
+                flex: 1,
+              }}>
+              <View
+                style={{
+                  flex: 1,
                 }}>
-                <Text style={someStyles.textLink}>Esqueceu sua senha?</Text>
-              </TouchableOpacity>
+                <Input
+                  ref={(component) => (_emailInput = component)}
+                  autoFocus
+                  autoCapitalize="none"
+                  placeholder="Email"
+                  value={values.email}
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={errors.email ? errors.email : ''}
+                  onSubmitEditing={() => {
+                    _passwordInput.focus();
+                  }}
+                  blurOnSubmit={false}
+                />
+                <View>
+                  <Input
+                    ref={(component) => (_passwordInput = component)}
+                    placeholder="Senha"
+                    value={values.password}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    errorStyle={{color: 'red'}}
+                    errorMessage={
+                      errors.password && touched.password ? errors.password : ''
+                    }
+                    secureTextEntry={secureTextState}
+                    onSubmitEditing={handleSubmit}
+                  />
+                  <TouchableOpacity
+                    style={{left: '90%', top: '20%', position: 'absolute'}}
+                    onPress={() => {
+                      setSecureTextState(!secureTextState);
+                      setEyeState(!eyeState);
+                    }}>
+                    <Ionicons
+                      name={eyeState ? 'ios-eye' : 'ios-eye-off'}
+                      size={24}
+                      color={someColors.tertiary.color}
+                    />
+                  </TouchableOpacity>
+                </View>
 
-              <ForgotPasswordModal modalState={modalState} />
-              {/* TODO: Finish firebaseForgotPassword mehtod and modal activity progress*/}
-              {/*<EmailSentModal modalState={!modalState} />*/}
+                <TouchableOpacity
+                  style={{justifyContent: 'flex-end', alignSelf: 'flex-end'}}
+                  onPress={() => {
+                    setModalState(!modalState);
+                  }}>
+                  <Text style={someStyles.textLink}>Esqueceu sua senha?</Text>
+                </TouchableOpacity>
 
-              <TouchableHighlight
-                onPress={handleSubmit}
-                style={someStyles.button}
-                underlayColor="#3ea341"
-                activeOpacity={1}>
-                {loading ? (
-                  <ActivityIndicator color={'white'} />
-                ) : (
-                  <Text style={[someStyles.textButton]}>Continuar</Text>
-                )}
-              </TouchableHighlight>
+                <ForgotPasswordModal modalState={modalState} />
+                {/* TODO: Finish firebaseForgotPassword mehtod and modal activity progress*/}
+                {/*<EmailSentModal modalState={!modalState} />*/}
+              </View>
             </View>
-          )}
-        </Formik>
-      </KeyboardAvoidingView>
+
+            {/* JUST OUTSIDE THE FIRST VIEW AFTER THE 'KeyboardAvoidingView' CONTAINER */}
+            <TouchableHighlight
+              underlayColor="#3ea341"
+              activeOpacity={1}
+              style={[
+                someStyles.button,
+                {position: 'absolute', bottom: 0, width: '100%'},
+              ]}
+              onPress={handleSubmit}>
+              {loading ? (
+                <ActivityIndicator color={'white'} />
+              ) : (
+                <Text style={[someStyles.textButton]}>Continuar</Text>
+              )}
+            </TouchableHighlight>
+          </KeyboardAvoidingView>
+        )}
+      </Formik>
     </SafeAreaView>
   );
 };

@@ -8,17 +8,16 @@ import {
   View,
 } from 'react-native';
 
-import * as Svg from 'react-native-svg';
-
+// Navigation
 import {StackActions, useNavigation} from '@react-navigation/native';
 
 // TODO: Import Device Context // setDeviceToken
 
-// Styles
-import {someStyles} from '../../Styles';
-
 // Assets
+import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 import FailUndraw from '../../../assets/undraw/failPairing.svg';
+import * as Svg from 'react-native-svg';
 
 const Fail: React.FC = ({nav, route}) => {
   console.log('-- Fail.tsx');
@@ -86,17 +85,12 @@ const Fail: React.FC = ({nav, route}) => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        marginHorizontal: 16,
-        marginVertical: 12,
-        justifyContent: 'space-between',
-      }}>
+    <SafeAreaView style={[someStyles.container_spaced]}>
       <View>
         <Text
           style={[
             someStyles.h2,
+            someColors.tertiary,
             {
               justifyContent: 'center',
               alignSelf: 'center',

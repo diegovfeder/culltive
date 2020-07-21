@@ -1,5 +1,6 @@
-import React from 'react';
+// import React from 'react';
 import {StyleSheet, Dimensions} from 'react-native';
+import {someColors} from './Colors';
 
 // import {
 //   material,
@@ -20,7 +21,8 @@ export const someStyles = StyleSheet.create({
     backgroundColor: '#f6f7f8',
   },
   button: {
-    marginVertical: 6,
+    // marginVertical: 6,
+    marginTop: 6,
     display: 'flex',
     height: 48,
     borderRadius: 48 / 2,
@@ -47,10 +49,48 @@ export const someStyles = StyleSheet.create({
     borderColor: '#707070',
     borderWidth: 0.5,
   },
+  buttonSquared: {
+    marginTop: 6,
+    display: 'flex',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: someColors.secondary.color,
+    shadowOpacity: 4,
+    shadowRadius: 20,
+    elevation: 4,
+    borderColor: '#707070',
+    borderWidth: 0.5,
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+  },
+  carousel_container: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    marginHorizontal: 16,
-    marginVertical: 12,
+    marginHorizontal: 12, //16
+    marginVertical: 10, //12
+  },
+  container_header: {
+    flex: 1,
+    marginHorizontal: 12,
+    marginVertical: 8,
+  },
+  container_spaced: {
+    flex: 1,
+    marginHorizontal: 12,
+    marginVertical: 10,
+    justifyContent: 'space-between',
+  },
+
+  h0: {
+    fontSize: 28,
+    fontFamily: 'Montserrat-Bold',
+    color: '#959595',
+    alignSelf: 'center',
+    margin: 16,
   },
   h1: {
     fontSize: 24,
@@ -66,6 +106,13 @@ export const someStyles = StyleSheet.create({
     alignSelf: 'center',
     margin: 8,
   },
+  h1_number: {
+    fontSize: 48,
+    fontFamily: 'Montserrat-Bold',
+    color: '#959595',
+    alignSelf: 'center',
+    margin: 8,
+  },
   h2: {
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
@@ -74,6 +121,11 @@ export const someStyles = StyleSheet.create({
   h3: {
     fontSize: 16,
     fontFamily: 'Montserrat-Regular',
+    color: '#959595',
+  },
+  h3_bold: {
+    fontSize: 20,
+    fontFamily: 'Montserrat-Bold',
     color: '#959595',
   },
   h4: {
@@ -105,7 +157,6 @@ export const someStyles = StyleSheet.create({
     fontFamily: 'Montserrat-Bold',
     color: '#FFFFFF',
   },
-
   textButton: {
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
@@ -123,10 +174,16 @@ export const someStyles = StyleSheet.create({
     color: '#3cbc40',
   },
   textLink: {
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Montserrat-Regular',
     color: '#3cbc40',
     textDecorationLine: 'underline',
+  },
+  textShadow: {
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 4,
+    shadowOpacity: 1,
+    textShadowColor: someColors.light_gray.color,
   },
   headerView: {
     paddingVertical: 4,
@@ -147,6 +204,12 @@ export const someStyles = StyleSheet.create({
   headerButton: {
     margin: 16,
   },
+  safeAreaContainer: {
+    flex: 1,
+    marginHorizontal: 16,
+    marginVertical: 12,
+    justifyContent: 'space-between',
+  },
   sensorContainer: {
     flex: 1,
     alignItems: 'center',
@@ -155,8 +218,8 @@ export const someStyles = StyleSheet.create({
   weatherContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 4,
-    marginHorizontal: 16,
+    // marginVertical: 4,
+    // marginHorizontal: 16,
     padding: 8,
     backgroundColor: '#fff',
     shadowColor: '#000',
@@ -167,3 +230,17 @@ export const someStyles = StyleSheet.create({
     elevation: 5,
   },
 });
+
+// Deleted / Removed / Trashed Styles
+
+// reports.tsx / clima, sensores /
+// style={[
+//   someStyles.h1,
+//   someStyles.textShadow,
+//   someColors.tertiary,
+//   {
+//     alignSelf: 'flex-start',
+//     margin: 0,
+//     marginTop: 8,
+//   },
+// ]}

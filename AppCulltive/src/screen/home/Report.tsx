@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useContext} from 'react';
 import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
 
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -11,8 +11,17 @@ import {useQuery} from 'react-query';
 import MyCarousel from '../../component/MyCarousel';
 // import {Calendar} from 'react-native-calendars';
 
-// Styles
+// Hooks
+import {
+  useDeviceDispatch,
+  useDeviceState,
+  getDevice,
+} from '../../context/DeviceContext';
+
+// Assets
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 const {height, width} = Dimensions.get('window');
 
 // Moment
@@ -41,7 +50,7 @@ const Report: React.FC = () => {
   const route = useRoute();
 
   //TODO: get deviceId from device context...
-  const [deviceId, setDeviceId] = useState('CULLTIVE-000');
+  const {device} = useDeviceState();
 
   //TODO: get lat / lon from device context...
   const [latitude, setLatitude] = useState('-25.43');
@@ -144,17 +153,25 @@ const Report: React.FC = () => {
 
   const weatherContainer = (
     <View style={someStyles.weatherContainer}>
-      <Text style={[someStyles.h3, {paddingVertical: 2, fontSize: 18}]}>
+      <Text
+        style={[
+          someStyles.h3,
+          someColors.dark_blue,
+          {paddingVertical: 2, fontSize: 18},
+        ]}>
         {city}
       </Text>
       <Text
         style={[
           someStyles.h3,
+          someColors.light_blue,
           {fontSize: 14, paddingVertical: 4, textAlign: 'center'},
         ]}>
         {moment().format('LLL')}
       </Text>
-      <Text style={[someStyles.h1, {fontSize: 32}]}>{temperature}˚C</Text>
+      <Text style={[someStyles.h1, someColors.blue, {fontSize: 32}]}>
+        {temperature}˚C
+      </Text>
       {/* TODO: WeatherIcons */}
       {/* <Text style={[someStyles.h2, {alignSelf: 'center'}]}>{weather}</Text> */}
     </View>
@@ -166,24 +183,28 @@ const Report: React.FC = () => {
       title: 'Umidade do ar',
       text: 'Fator relevante no processo de evapotranspiração',
       value: '[air]',
+      unit: '%',
     },
     {
       id: 'lumi',
       title: 'Taxa de luz',
       text: 'Determinante no crescimento do seu cultivo',
       value: '[lumi1], [lumi2]',
+      unit: 'PPFD',
     },
     {
       id: 'soil',
       title: 'Umidade do solo',
       text: 'Define os ciclos de irrigação',
       value: '[soil1], [soil2]',
+      unit: '%',
     },
     {
       id: 'temp',
       title: 'Temperatura',
       text: 'Influencia as atividades fisiológicas da planta',
       value: '[temp]',
+      unit: '°C',
     },
   ];
 
@@ -198,7 +219,7 @@ const Report: React.FC = () => {
 
   useEffect(() => {
     api
-      .get(`/reading/${deviceId}`)
+      .get(`/reading/${device.deviceId}`)
       .then((res) => {
         console.log('res.data: ' + JSON.stringify(res.data));
         setReading(res.data[0]);
@@ -228,7 +249,7 @@ const Report: React.FC = () => {
   );
 
   return (
-    <View style={someStyles.container}>
+    <View style={[someStyles.container_spaced]}>
       {loading ? (
         <View
           style={{
@@ -259,25 +280,45 @@ const Report: React.FC = () => {
         </View>
       ) : (
         <View>
-          {/* Weather Report Container*/}
-          <Text
-            style={[someStyles.h1, {alignSelf: 'flex-start', marginBottom: 2}]}>
-            Clima
-          </Text>
-          {weatherContainer}
-
           {/* Sensor Report Container*/}
-          <Text
-            style={[someStyles.h1, {alignSelf: 'flex-start', marginBottom: 2}]}>
-            Sensores
-          </Text>
-          {sensorContainer}
+          <View>
+            <Text
+              style={[someStyles.h2, someColors.tertiary, {paddingBottom: 4}]}>
+              SENSORES
+            </Text>
+            {sensorContainer}
+          </View>
+
+          {/* Weather Report Container*/}
+          {/* Removed for the moment, pasted at the bottom of the code or notion. */}
         </View>
       )}
     </View>
   );
 };
 export default Report;
+
+// weather CONTAINER STUFF...
+/* <View>
+<View
+  style={{
+    flexDirection: 'row',
+  }}>
+  <Text
+    style={[
+      someStyles.h2,
+      someColors.tertiary,
+      {paddingBottom: 4},
+    ]}>
+    CLIMA
+  </Text>
+</View>
+{weatherContainer}
+</View> */
+
+//------------------------------------------------------------//
+//            TRASHED CODE
+//------------------------------------------------------------//
 
 // useQuery fetch data from firestore/readings/{deviceId}
 // const fetchLastReading = async (deviceId) => {

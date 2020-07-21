@@ -31,9 +31,11 @@ import {
 
 // Assets
 import {someStyles} from '../../Styles';
-import * as Svg from 'react-native-svg';
-import PlantHomeUndraw from '../../../assets/undraw/plantHome.svg';
+import {someColors} from '../../Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import PlantHomeUndraw from '../../../assets/undraw/plantHome.svg';
+import * as Svg from 'react-native-svg';
+import Logo from '../../component/Logo';
 
 const Home: React.FC = () => {
   console.log('-- Home.tsx');
@@ -71,6 +73,8 @@ const Home: React.FC = () => {
   // setDevice?
   // else
   //   ...
+
+  // This is our very messy Home.tsx state validation function,
   useEffect(() => {
     console.log('Home: user: ' + JSON.stringify(user));
 
@@ -200,14 +204,27 @@ const Home: React.FC = () => {
     <View
       style={{
         alignSelf: 'center',
-        marginTop: 16,
-        borderRadius: 256,
-        width: 256,
-        height: 256,
-        backgroundColor: '#DDD',
+        marginVertical: 8,
+        borderRadius: 200,
+        width: 200,
+        height: 200,
+        backgroundColor: someColors.white.color,
+        borderColor: someColors.black.color,
+        borderWidth: 0.7,
+        shadowOffset: 5,
+        shadowOpacity: 5,
+        shadowRadius: 5,
+        shadowColor: someColors.gray.color,
+        elevation: 10,
       }}>
-      <PlantHomeUndraw width={198} height={256} style={{alignSelf: 'center'}} />
+      <PlantHomeUndraw width={150} height={200} style={{alignSelf: 'center'}} />
       {/* <PlantHomeUndraw width={200} height={300} style={{alignSelf: 'center'}} /> */}
+    </View>
+  );
+
+  const logoContainer = (
+    <View>
+      <Logo width={200} height={200} />
     </View>
   );
 
@@ -240,6 +257,8 @@ const Home: React.FC = () => {
     </ScrollView>
   );
 
+  //TODO: HANDLE ERRORS - NETWORK ERROR FOR HOME, AND SHOW MESSAGE TO THE USER -> LIKE REPORT.tsx
+
   return (
     <>
       {loading ? (
@@ -254,7 +273,11 @@ const Home: React.FC = () => {
           }}>
           <View>
             <Text
-              style={[someStyles.h1, {textAlign: 'center', color: '#4d4d5d'}]}>
+              style={[
+                someStyles.h0,
+                someColors.tertiary,
+                {textAlign: 'center'},
+              ]}>
               Adicionar novo dispositivo
             </Text>
           </View>
@@ -265,26 +288,43 @@ const Home: React.FC = () => {
         </SafeAreaView>
       ) : (
         <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            marginHorizontal: 16,
-            // marginVertical: 12,
-            marginBottom: 12,
-            justifyContent: 'space-between',
-            alignItems: 'stretch',
-          }}>
+          style={[
+            someStyles.container_spaced,
+            {
+              alignItems: 'stretch',
+            },
+          ]}>
           {/* TODO: LOADING*/}
           {/* {loadingContainer} */}
 
           {plantContainer}
+          {/* {logoContainer} */}
 
           <Divider style={{marginTop: 8}} />
 
-          <View style={{}}>
-            <Text style={[someStyles.h4, {paddingBottom: 4}]}>
-              ATIVIDADES RECENTES
-            </Text>
+          <View style={{flex: 1}}>
+            <View style={{flexDirection: 'row'}}>
+              <View
+                style={{
+                  alignSelf: 'center',
+                  borderRadius: 8,
+                  width: 8,
+                  height: 8,
+                  marginEnd: 8,
+                  marginTop: 8,
+                  marginBottom: 4,
+                  backgroundColor: someColors.primary.color,
+                }}></View>
+              <Text
+                style={[
+                  someStyles.h4,
+                  someColors.tertiary,
+                  {fontSize: 15, paddingTop: 8, paddingBottom: 4},
+                ]}>
+                ATIVIDADES RECENTES
+              </Text>
+            </View>
+
             {activityContainer}
           </View>
 

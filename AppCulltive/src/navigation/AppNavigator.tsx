@@ -47,6 +47,8 @@ const AppNavigator: React.FC = () => {
   const [loadingDevice, isLoadingDevice] = useState(true);
   useEffect(() => {
     isLoading(loadingUser || loadingDevice);
+    // TODO:
+    // setTimeout isLoading(true)
   }, [loadingUser, loadingDevice]);
 
   // ** USER AUTH TOKEN
@@ -82,13 +84,13 @@ const AppNavigator: React.FC = () => {
     isLoadingDevice(true);
     const validateToken = async () => {
       try {
+        // console.log('@pairToken: ' + deviceToken);
         deviceToken = await AsyncStorage.getItem('@pairToken');
-        console.log('@pairToken: ' + deviceToken);
         if (deviceToken === null) {
           // setLoadingDevice(deviceDispatch, false);
           isLoadingDevice(false);
         } else {
-          getDevice(deviceDispatch, deviceToken);
+          await getDevice(deviceDispatch, deviceToken);
           //TODO: Validation
           if (device.deviceId !== deviceToken) {
             console.log('pairToken failed to pass decode => not paired...');
@@ -117,7 +119,18 @@ const AppNavigator: React.FC = () => {
     console.log('user: ' + JSON.stringify(user));
     console.log('loadingDevice: ' + loadingDevice);
     console.log('device: ' + JSON.stringify(device));
-  }, [authenticated, authToken, paired, pairToken, user, device]);
+    console.log('* loading: ' + loading);
+  }, [
+    authenticated,
+    authToken,
+    paired,
+    pairToken,
+    loadingUser,
+    user,
+    loadingDevice,
+    device,
+    loading,
+  ]);
 
   return (
     <>

@@ -22,17 +22,18 @@ import {useNavigation} from '@react-navigation/native';
 import {useUserState} from '../../context/UserContext';
 
 // Components
-import InputTextField from '../../component/InputTextField';
+// import InputTextField from '../../component/InputTextField';
 import {Input} from 'react-native-elements';
 
-// Styles
+// Assets
 import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 
 const WiFiCredentials: React.FC = () => {
   console.log('-- WiFiCredentials.tsx');
 
-  let _ssidInput;
-  let _passwordInput;
+  let _ssidInput: any;
+  let _passwordInput: any;
 
   const navigation = useNavigation();
   let {user} = useUserState();
@@ -77,7 +78,9 @@ const WiFiCredentials: React.FC = () => {
               style={{
                 flex: 1,
               }}>
-              <Text style={someStyles.h1}>Conecte ao Wi-Fi</Text>
+              <Text style={[someStyles.h1, someColors.tertiary]}>
+                Conecte ao Wi-Fi
+              </Text>
               <Text style={someStyles.h3}>
                 {' '}
                 Digite as informações da sua rede local:
