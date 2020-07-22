@@ -193,6 +193,7 @@ export const someStyles = StyleSheet.create({
   },
   textLink: {
     fontSize: 13,
+    paddingVertical: 2,
     fontFamily: 'Montserrat-Regular',
     color: '#3cbc40',
     textDecorationLine: 'underline',

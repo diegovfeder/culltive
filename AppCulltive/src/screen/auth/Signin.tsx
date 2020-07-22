@@ -10,12 +10,10 @@ import {
   View,
 } from 'react-native';
 
-import {Input} from 'react-native-elements';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
+// Navigation
+import {useNavigation} from '@react-navigation/native';
 
 // Hooks
-import {useNavigation} from '@react-navigation/native';
 import {
   useUserDispatch,
   useUserState,
@@ -23,15 +21,11 @@ import {
   clearError,
 } from '../../context/UserContext';
 
-//TODO: reset Password modal and action.
-import {
-  useFirebaseDispatch,
-  resetPassword,
-} from '../../context/FirebaseContext';
-
-// TODO: Finish emailSent / forgotPassword state process
+// Components
+import * as Yup from 'yup';
+import {Formik} from 'formik';
+import {Input} from 'react-native-elements';
 import ForgotPasswordModal from '../../component/ForgotPasswordModal';
-// import EmailSentModal from '../component/EmailSentModal';
 
 // Assets
 import {someStyles} from '../../Styles';

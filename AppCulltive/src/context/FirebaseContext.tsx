@@ -13,7 +13,13 @@ var FirebaseDispatchContext = createContext(undefined);
 
 console.log('*** FirebaseContext.tsx ***');
 
-export {FirebaseProvider, useFirebaseState, useFirebaseDispatch, resetPassword};
+export {
+  FirebaseProvider,
+  useFirebaseState,
+  useFirebaseDispatch,
+  resetPassword,
+  setIsReset,
+};
 
 function FirebaseProvider({children}: any) {
   var [state, dispatch] = useReducer(firebaseReducer, {
@@ -36,8 +42,12 @@ function firebaseReducer(state: any, action: any) {
       console.log('EMAIL_RESET_SUCCESS');
       return {...state, isReset: true};
     case 'EMAIL_RESET_FAIL': {
-      console.log('EMAIL_RESET_FAILURE');
+      console.log('EMAIL_RESET_FAIL');
       return {...state, isReset: false, error: action.error};
+    }
+    case 'SET_IS_RESET': {
+      console.log('SET_IS_RESET');
+      return {...state, isReset: action.isReset};
     }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -111,5 +121,5 @@ function resetPassword(dispatch: any, email: string, setLoading: any) {
 }
 
 function setIsReset(dispatch: any, isReset: boolean) {
-  dispatch({type: 'SET_RESET', isReset});
+  dispatch({type: 'SET_IS_RESET', isReset});
 }
