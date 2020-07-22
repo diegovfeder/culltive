@@ -1,27 +1,22 @@
-import React from 'react';
+import React, {createContext, useContext, useReducer} from 'react';
+import {Alert} from 'react-native';
 
+// Firebase config and auth
 import Firebase from '../util/firebase';
 
-var FirebaseStateContext = React.createContext(undefined);
-var FirebaseDispatchContext = React.createContext(undefined);
-
-function firebaseReducer(state: any, action: any) {
-  switch (action.type) {
-    case 'EMAIL_RESET_SUCCESS':
-      console.log('EMAIL_RESET_SUCCESS');
-      return {...state, isReset: true};
-    case 'EMAIL_RESET_FAILURE': {
-      console.log('EMAIL_RESET_FAILURE');
-      return {...state, isReset: false, error: action.error};
-    }
-    default: {
-      throw new Error(`Unhandled action type: ${action.type}`);
-    }
-  }
+interface IFirebase {
+  //...
 }
 
+var FirebaseStateContext = createContext(undefined);
+var FirebaseDispatchContext = createContext(undefined);
+
+console.log('*** FirebaseContext.tsx ***');
+
+export {FirebaseProvider, useFirebaseState, useFirebaseDispatch, resetPassword};
+
 function FirebaseProvider({children}: any) {
-  var [state, dispatch] = React.useReducer(firebaseReducer, {
+  var [state, dispatch] = useReducer(firebaseReducer, {
     isReset: false,
     error: null,
   });
@@ -35,8 +30,23 @@ function FirebaseProvider({children}: any) {
   );
 }
 
+function firebaseReducer(state: any, action: any) {
+  switch (action.type) {
+    case 'EMAIL_RESET_SUCCESS':
+      console.log('EMAIL_RESET_SUCCESS');
+      return {...state, isReset: true};
+    case 'EMAIL_RESET_FAIL': {
+      console.log('EMAIL_RESET_FAILURE');
+      return {...state, isReset: false, error: action.error};
+    }
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`);
+    }
+  }
+}
+
 function useFirebaseState() {
-  var context = React.useContext(FirebaseStateContext);
+  var context = useContext(FirebaseStateContext);
   if (context === undefined) {
     throw new Error('useFirebaseState must be used within a FirebaseProvider');
   }
@@ -44,7 +54,7 @@ function useFirebaseState() {
 }
 
 function useFirebaseDispatch() {
-  var context = React.useContext(FirebaseDispatchContext);
+  var context = useContext(FirebaseDispatchContext);
   if (context === undefined) {
     throw new Error(
       'useFirebaseDispatch must be used within a FirebaseProvider',
@@ -53,37 +63,53 @@ function useFirebaseDispatch() {
   return context;
 }
 
-export {FirebaseProvider, useFirebaseState, useFirebaseDispatch, resetPassword};
+// ###########################################################
+// ###############   EXPORTABLE FUNCTIONS    #################
 // ###########################################################
 
-function resetPassword(dispatch, email, setIsLoading) {
+// RESET PASSWORD
+function resetPassword(dispatch: any, email: string, setLoading: any) {
+  console.log('FirebaseContext.tsx => resetPassword: email: ' + email);
+  setLoading(true);
   // setErrors(false);
-  setIsLoading(true);
-
-  console.log('resetPassword - email: ' + email);
 
   // Email validation
   if (email !== '') {
     Firebase.auth
       .sendPasswordResetEmail(email)
       .then(function () {
-        alert('Email has been sent to you. Please check and verify.');
         dispatch({type: 'EMAIL_RESET_SUCCESS'});
-        setIsLoading(false);
+        setLoading(false);
       })
       .catch(function (error) {
         var errorCode = error.code;
         var errorMessage = error.message;
-
         console.log(errorCode);
         console.log(errorMessage);
 
-        alert('Message : ' + errorMessage);
+        Alert.alert(
+          'Ops...',
+          'Encontramos um problema durante o processo.' + '\n\n' + error,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                console.log('OK Pressed');
+                // clearError(dispatch);
+              },
+            },
+          ],
+          {cancelable: false},
+        );
         dispatch({type: 'EMAIL_RESET_FAIL'});
-        setIsLoading(false);
+        setLoading(false);
       });
   } else {
-    alert('Please write your email first');
-    setIsLoading(false);
+    console.log('Email failed validation');
+    setLoading(false);
   }
+}
+
+function setIsReset(dispatch: any, isReset: boolean) {
+  dispatch({type: 'SET_RESET', isReset});
 }
