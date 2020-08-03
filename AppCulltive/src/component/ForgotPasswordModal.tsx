@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Modal,
   Text,
@@ -36,6 +35,8 @@ const ForgotPasswordModal: React.FC = (props) => {
   console.log('-- ForgotPasswordModal.tsx');
 
   let _emailInput: any;
+
+  //TODO: Validate setModalState !== null
   const modalState = props.modalState; // Receiving modalState and setModalState from parent
 
   const [loading, setLoading] = useState(false);
@@ -45,9 +46,7 @@ const ForgotPasswordModal: React.FC = (props) => {
 
   const onCloseButton = () => {
     //TODO: Validate or test if setModalState !== null
-    console.log('close pressed');
     props.setModalState(false);
-
     if (isReset) setIsReset(firebaseDispatch, false);
   };
 
@@ -56,21 +55,6 @@ const ForgotPasswordModal: React.FC = (props) => {
       <Ionicons name="ios-close" size={42} color={someColors.black.color} />
     </TouchableOpacity>
   );
-
-  useEffect(() => {
-    console.log('isReset is: ' + isReset);
-    if (isReset) {
-      // Email successfully sent
-      //TODO: show message to user, close modal and reset flag in context
-      // setTimeout(() => {
-      //   props.setModalState(false);
-      //   setIsReset(firebaseDispatch, false);
-      // }, 3000);
-      // setIsReset(firebaseDispatch, false);
-    } else {
-      //...
-    }
-  }, [isReset]);
 
   return (
     <>

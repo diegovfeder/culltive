@@ -2,31 +2,33 @@ import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableHighlight,
   View,
 } from 'react-native';
 
-import {check, PERMISSIONS} from 'react-native-permissions';
-
-import {Divider} from 'react-native-elements';
-import {ScrollView} from 'react-native-gesture-handler';
-// import {ListItem} from 'react-native-elements';
-
-// Hooks & Context
+// Navigation
 import {useNavigation} from '@react-navigation/native';
 
+// Contexts
 import {
   useUserDispatch,
   useUserState,
   getAuthenticatedUser,
+  setUserError,
 } from '../../context/UserContext';
 import {
   useDeviceDispatch,
   useDeviceState,
   getDevice,
+  setPaired,
 } from '../../context/DeviceContext';
 
+// Components
+import {check, PERMISSIONS} from 'react-native-permissions';
+import {Divider} from 'react-native-elements';
+// import {ListItem} from 'react-native-elements';
 // import FirstSigninModal from '../component/FirstSigninModal';
 
 // Assets
@@ -34,30 +36,31 @@ import {someStyles} from '../../Styles';
 import {someColors} from '../../Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PlantHomeUndraw from '../../../assets/undraw/plantHome.svg';
-import * as Svg from 'react-native-svg';
 import Logo from '../../component/Logo';
+import * as Svg from 'react-native-svg';
 
 const Home: React.FC = () => {
   console.log('-- Home.tsx');
   const navigation = useNavigation();
 
+  const userDispatch = useUserDispatch();
+  const {loading: loadingUser, user, error: errorUser} = useUserState();
+
+  const deviceDispatch = useDeviceDispatch();
+  const {loading: loadingDevice, paired, error: errorDevice} = useDeviceState();
+
+  // Loading state for this screen
   const [loading, isLoading] = useState(true);
-
-  let userDispatch = useUserDispatch();
-  let {loading: loadingUser, user} = useUserState();
-
-  let deviceDispatch = useDeviceDispatch();
-  let {loading: loadingDevice, paired} = useDeviceState();
-
   useEffect(() => {
     isLoading(loadingUser || loadingDevice);
   }, [loadingUser, loadingDevice]);
 
-  //TODO: handlePair, user, etc... load stuff also
-  // getDevice by user/device -> if empty paired = false
-  // -> if contains 'CULLTIVE' paired = true / getDevice
-  // handle no internet connection
-  useEffect(() => {}, [paired]);
+  // Error state for this screen
+  const [error, hasError] = useState(true);
+  useEffect(() => {
+    hasError(errorUser || errorDevice);
+    //TODO: errorLogs ||
+  }, [errorUser, errorDevice]);
 
   //TODO: Handle Network error, loading -> error -> paired etc.
   //TODO; isLoading in Home ?
@@ -74,34 +77,59 @@ const Home: React.FC = () => {
   // else
   //   ...
 
-  // This is our very messy Home.tsx state validation function,
+  // Is device paired?
   useEffect(() => {
-    console.log('Home: user: ' + JSON.stringify(user));
-
+    // Return the object 'keys' nomination as array.
     const keys = Object.keys(user);
-    console.log('keys : ' + keys);
+    console.log('Home: user.keys: ' + keys);
+    // In case user.(keys) exists, isn't null and
 
+    if (paired) {
+      if (user && user.device) {
+        if (user.device.includes('CULLTIVE')) {
+          console.log('Device is paired and user.device is set!');
+          isLoading(false);
+        } else {
+          // Device is paired, user.device does not match app state
+          getAuthenticatedUser(userDispatch);
+        }
+      } else {
+        //... when would user be null?
+        setUserError(userDispatch, 'User is signed but context is null...');
+      }
+    } else {
+      // Device isn't paired
+      //...
+      if (user && user.device) {
+        if (user.device.includes('CULLTIVE')) {
+          console.log('user.device is set but device isnt paired...');
+          setPaired(deviceDispatch, true);
+        } else {
+          //...
+        }
+      }
+    }
+  }, [paired]);
+
+  // State validation for this screen
+  useEffect(() => {
+    if (user) console.log('Home: user: ' + JSON.stringify(user));
+
+    // Return the object 'keys' nomination as array.
+    const keys = Object.keys(user);
+    console.log('Home: user.keys: ' + keys);
+
+    // In case user.(keys) exists, isn't null and
     if (keys && keys.length) {
       if (keys.includes('device')) {
-        if (user.device.includes('CULLTIVE')) {
-          if (paired) {
-            console.log('device is paired, doesnt need to getDevice?..');
-            isLoading(false);
-          } else {
-            console.log(
-              'device exists on user but state is not paired somehow... figure out device flow',
-            );
-            getDevice(deviceDispatch, user.device);
-          }
-        }
-      } else if (keys.includes('userId')) {
-        if (user.userId === '') {
-          console.log('userId == ~ ~ ');
+        if (user.device.includes('CULLTIVE') && paired) {
+          isLoading(false);
         } else {
-          console.log('appnavigator - useffect - else');
+          // Is this really necessary?
+          // setDeviceError(deviceDispatch, 'User logged in but no device was found');
+          getDevice(deviceDispatch, user.device);
         }
       } else if (keys.includes('email') && !keys.includes('userId')) {
-        console.log('sign in or signup... getUser');
         getAuthenticatedUser(userDispatch);
         //async await and try catch, handle errors
         isLoading(false);
@@ -119,39 +147,20 @@ const Home: React.FC = () => {
   //   }, 2000);
   // }, [null]);
 
-  const checkPermissionsOnClick = () => {
-    check(
-      Platform.select({
-        android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-        ios: PERMISSIONS.IOS.LOCATION_ALWAYS,
-      }),
-    ).then((res: string) => {
-      console.log('checkPermissionsOnClick: ' + res);
-      switch (res) {
-        case 'granted':
-          navigation.navigate('PairNavigator', {screen: 'DeviceCertification'});
-          break;
-        case 'denied':
-          navigation.navigate('PairNavigator', {
-            screen: 'GrantPermissions',
-            params: {permissions: res},
-          });
-          break;
-        case 'blocked':
-          navigation.navigate('PairNavigator', {
-            screen: 'GrantPermissions',
-            params: {permissions: res},
-          });
-          break;
-        case 'unavailable':
-          //TODO: Message user explaining / advising unavailability
-          break;
-        default:
-          //...
-          break;
-      }
-    });
-  };
+  const errorContainer = (
+    <View style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
+      <Text style={[someStyles.h3, {fontSize: 20, textAlign: 'center'}]}>
+        Falha ao carregar informações
+      </Text>
+      <Text
+        style={[
+          someStyles.h3,
+          {marginVertical: 8, fontSize: 12, textAlign: 'center'},
+        ]}>
+        Verifique sua conexão com a internet.
+      </Text>
+    </View>
+  );
 
   const loadingContainer = (
     <View
@@ -257,36 +266,50 @@ const Home: React.FC = () => {
     </ScrollView>
   );
 
+  // Check for geolocation permissions before pairNavigation
+  const checkPermissionsOnClick = () => {
+    check(
+      Platform.select({
+        android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        ios: PERMISSIONS.IOS.LOCATION_ALWAYS,
+      }),
+    ).then((res: string) => {
+      console.log('checkPermissionsOnClick: ' + res);
+      switch (res) {
+        case 'granted':
+          navigation.navigate('PairNavigator', {screen: 'DeviceCertification'});
+          break;
+        case 'denied':
+          navigation.navigate('PairNavigator', {
+            screen: 'GrantPermissions',
+            params: {permissions: res},
+          });
+          break;
+        case 'blocked':
+          navigation.navigate('PairNavigator', {
+            screen: 'GrantPermissions',
+            params: {permissions: res},
+          });
+          break;
+        case 'unavailable':
+          //TODO: Message user explaining / advising unavailability
+          break;
+        default:
+          //...
+          break;
+      }
+    });
+  };
+
   //TODO: HANDLE ERRORS - NETWORK ERROR FOR HOME, AND SHOW MESSAGE TO THE USER -> LIKE REPORT.tsx
 
   return (
     <>
       {loading ? (
         loadingContainer
-      ) : !paired ? (
-        <SafeAreaView
-          style={{
-            flex: 1,
-            marginHorizontal: 16,
-            marginVertical: 12,
-            justifyContent: 'center',
-          }}>
-          <View>
-            <Text
-              style={[
-                someStyles.h0,
-                someColors.tertiary,
-                {textAlign: 'center'},
-              ]}>
-              Adicionar novo dispositivo
-            </Text>
-          </View>
-          {/*TODO: Ask if user already set up with device pairing*/}
-          {/* <FirstSigninModal modalState={modalState} /> */}
-
-          {pairContainer}
-        </SafeAreaView>
-      ) : (
+      ) : error ? (
+        errorContainer
+      ) : paired ? (
         <View
           style={[
             someStyles.container_spaced,
@@ -294,9 +317,6 @@ const Home: React.FC = () => {
               alignItems: 'stretch',
             },
           ]}>
-          {/* TODO: LOADING*/}
-          {/* {loadingContainer} */}
-
           {plantContainer}
           {/* {logoContainer} */}
 
@@ -304,6 +324,7 @@ const Home: React.FC = () => {
 
           <View style={{flex: 1}}>
             <View style={{flexDirection: 'row'}}>
+              {/* View Component: Little green circle */}
               <View
                 style={{
                   alignSelf: 'center',
@@ -340,6 +361,30 @@ const Home: React.FC = () => {
             </TouchableHighlight>
           </View>
         </View>
+      ) : (
+        <SafeAreaView
+          style={{
+            flex: 1,
+            marginHorizontal: 16,
+            marginVertical: 12,
+            justifyContent: 'center',
+          }}>
+          <View>
+            <Text
+              style={[
+                someStyles.h0,
+                someColors.tertiary,
+                {textAlign: 'center'},
+              ]}>
+              Adicionar novo dispositivo
+            </Text>
+          </View>
+
+          {/*TODO: Ask if user already have a  device*/}
+          {/* <ClickToBuyModal modalState={modalState} /> */}
+
+          {pairContainer}
+        </SafeAreaView>
       )}
     </>
   );

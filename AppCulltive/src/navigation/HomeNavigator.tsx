@@ -1,31 +1,23 @@
 import React from 'react';
-import {
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-  TouchableNativeFeedback,
-} from 'react-native';
-
-// Hooks
-import {useUserDispatch, signOut} from '../context/UserContext';
+import {Text, TouchableOpacity, View} from 'react-native';
 
 // Navigation
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 
 // Navigators || Screens
-// import {DrawerButton} from './DrawerNavigator';
 import PairNavigator from './PairNavigator';
 import Home from '../screen/home/Home';
 import Report from '../screen/home/Report';
 import Chart from '../screen/home/Chart';
+// import {DrawerButton} from './DrawerNavigator';
+
+// Context
+// import {useUserDispatch, signOut} from '../context/UserContext';
 
 // Assets
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-// Styles
 import {someStyles} from '../Styles';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Stack = createStackNavigator();
 

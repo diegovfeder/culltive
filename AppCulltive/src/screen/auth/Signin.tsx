@@ -13,7 +13,7 @@ import {
 // Navigation
 import {useNavigation} from '@react-navigation/native';
 
-// Hooks
+// Contexts
 import {
   useUserDispatch,
   useUserState,
@@ -40,12 +40,9 @@ const Signin: React.FC = () => {
   let _passwordInput: any;
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
+
   const [loading, setLoading] = useState(false);
-
-  const [secureTextState, setSecureTextState] = React.useState(true);
-  const [eyeState, setEyeState] = React.useState(true);
-
-  //FIXME: handle modal state using context
+  const [secureTextState, setSecureTextState] = useState(true);
   const [modalState, setModalState] = useState(false);
 
   let {error} = useUserState();
@@ -92,13 +89,13 @@ const Signin: React.FC = () => {
 
   return (
     <>
+      {/* When user clicks 'forgot_password' this modal opens :)*/}
       <ForgotPasswordModal
         modalState={modalState}
         setModalState={setModalState}
       />
-      {/* TODO: Finish firebaseForgotPassword mehtod and modal activity progress*/}
-      {/*<EmailSentModal modalState={!modalState} />*/}
 
+      {/* Whole Signin.tsx screen components */}
       <SafeAreaView style={someStyles.container_spaced}>
         <Formik
           initialValues={{email: '', password: ''}}
@@ -109,7 +106,6 @@ const Signin: React.FC = () => {
             password: Yup.string().required('*Obrigatório'),
           })}
           onSubmit={(values) => {
-            // console.log(JSON.stringify(values));
             signinUser(userDispatch, values.email, values.password, setLoading);
           }}>
           {({
@@ -127,63 +123,55 @@ const Signin: React.FC = () => {
                 style={{
                   flex: 1,
                 }}>
-                <View
-                  style={{
-                    flex: 1,
-                  }}>
+                <Input
+                  ref={(component) => (_emailInput = component)}
+                  autoFocus
+                  autoCapitalize="none"
+                  placeholder="Email"
+                  value={values.email}
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  errorStyle={{color: 'red'}}
+                  errorMessage={errors.email ? errors.email : ''}
+                  onSubmitEditing={() => {
+                    _passwordInput.focus();
+                  }}
+                  blurOnSubmit={false}
+                />
+                <View>
                   <Input
-                    ref={(component) => (_emailInput = component)}
-                    autoFocus
-                    autoCapitalize="none"
-                    placeholder="Email"
-                    value={values.email}
-                    onChangeText={handleChange('email')}
-                    onBlur={handleBlur('email')}
+                    ref={(component) => (_passwordInput = component)}
+                    placeholder="Senha"
+                    value={values.password}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
                     errorStyle={{color: 'red'}}
-                    errorMessage={errors.email ? errors.email : ''}
-                    onSubmitEditing={() => {
-                      _passwordInput.focus();
-                    }}
-                    blurOnSubmit={false}
+                    errorMessage={
+                      errors.password && touched.password ? errors.password : ''
+                    }
+                    secureTextEntry={secureTextState}
+                    onSubmitEditing={handleSubmit}
                   />
-                  <View>
-                    <Input
-                      ref={(component) => (_passwordInput = component)}
-                      placeholder="Senha"
-                      value={values.password}
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      errorStyle={{color: 'red'}}
-                      errorMessage={
-                        errors.password && touched.password
-                          ? errors.password
-                          : ''
-                      }
-                      secureTextEntry={secureTextState}
-                      onSubmitEditing={handleSubmit}
-                    />
-                    <TouchableOpacity
-                      style={{left: '90%', top: '20%', position: 'absolute'}}
-                      onPress={() => {
-                        setSecureTextState(!secureTextState);
-                        setEyeState(!eyeState);
-                      }}>
-                      <Ionicons
-                        name={eyeState ? 'ios-eye' : 'ios-eye-off'}
-                        size={24}
-                        color={someColors.tertiary.color}
-                      />
-                    </TouchableOpacity>
-                  </View>
-
                   <TouchableOpacity
-                    style={{justifyContent: 'flex-end', alignSelf: 'flex-end'}}
+                    style={{left: '90%', top: '20%', position: 'absolute'}}
                     onPress={() => {
-                      setModalState(!modalState);
+                      setSecureTextState(!secureTextState);
                     }}>
-                    <Text style={someStyles.textLink}>Esqueceu sua senha?</Text>
+                    <Ionicons
+                      name={secureTextState ? 'ios-eye' : 'ios-eye-off'}
+                      size={24}
+                      color={someColors.tertiary.color}
+                    />
                   </TouchableOpacity>
                 </View>
+
+                <TouchableOpacity
+                  style={{justifyContent: 'flex-end', alignSelf: 'flex-end'}}
+                  onPress={() => {
+                    setModalState(!modalState);
+                  }}>
+                  <Text style={someStyles.textLink}>Esqueceu sua senha?</Text>
+                </TouchableOpacity>
               </View>
 
               {/* JUST OUTSIDE THE FIRST VIEW AFTER THE 'KeyboardAvoidingView' CONTAINER */}

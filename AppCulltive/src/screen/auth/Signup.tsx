@@ -4,25 +4,27 @@ import {
   Alert,
   KeyboardAvoidingView,
   SafeAreaView,
-  ScrollView,
   Text,
   TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
 
-import {Input} from 'react-native-elements';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
+// Navigation
+import {useNavigation} from '@react-navigation/native';
 
-// Hooks
+// Contexts
 import {
   useUserDispatch,
   useUserState,
   signupUser,
   clearError,
 } from '../../context/UserContext';
-import {useNavigation} from '@react-navigation/native';
+
+// Components
+import {Input} from 'react-native-elements';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
 
 // Assets
 import {someStyles} from '../../Styles';
@@ -37,10 +39,9 @@ const Signup: React.FC = () => {
   let _passwordInput: any;
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const [secureTextState, setSecureTextState] = useState(true);
-  const [eyeState, setEyeState] = useState(true);
 
   // TODO: handleError useUserCntext
   let {error} = useUserState();
@@ -174,10 +175,9 @@ const Signup: React.FC = () => {
                   style={{left: '90%', top: '20%', position: 'absolute'}}
                   onPress={() => {
                     setSecureTextState(!secureTextState);
-                    setEyeState(!eyeState);
                   }}>
                   <Ionicons
-                    name={eyeState ? 'ios-eye' : 'ios-eye-off'}
+                    name={secureTextState ? 'ios-eye' : 'ios-eye-off'}
                     size={24}
                     color={someColors.tertiary.color}
                   />

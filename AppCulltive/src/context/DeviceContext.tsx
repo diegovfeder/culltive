@@ -30,8 +30,9 @@ export {
   postDeviceAction,
   deleteDevice,
   setDeviceAction,
+  setPaired,
   setLoadingDevice,
-  setError,
+  setDeviceError,
   storeDeviceToken,
   clearError,
 };
@@ -55,10 +56,8 @@ function DeviceProvider({children}: any) {
 }
 
 function deviceReducer(state: any, action: any) {
+  console.log('deviceReducer: ' + action.type);
   switch (action.type) {
-    // case 'GET_DEVICES':
-    //   console.log('deviceReducer: GET_DEVICES');
-    //   return {...state, devices: action.payload, loading: false};
     case 'GET_ACTIONS':
       console.log('deviceReducer: GET_ACTIONS');
       return {
@@ -66,8 +65,9 @@ function deviceReducer(state: any, action: any) {
         device: {actions: action.payload},
         loading: false,
       };
+    case 'GET_DEVICES':
+      return {...state, devices: action.payload, loading: false};
     case 'GET_DEVICE':
-      console.log('deviceReducer: GET_DEVICE');
       return {
         ...state,
         device: action.payload,
@@ -76,27 +76,23 @@ function deviceReducer(state: any, action: any) {
         loading: false,
       };
     case 'GET_DEVICE_ACTION':
-      console.log('deviceReducer: GET_DEVICE_ACTION');
       return {
         ...state,
         device: {...state.device, action: action.payload},
       };
     case 'POST_DEVICE':
-      console.log('deviceReducer: POST_DEVICE');
       return {
         ...state,
         // device: action.payload,
         loading: false,
       };
     case 'POST_DEVICE_ACTION':
-      console.log('deviceReducer: POST_DEVICE_ACTION');
       return {
         ...state,
         device: {...state.device, action: action.payload},
         loading: false,
       };
     case 'DELETE_DEVICE':
-      console.log('deviceReducer: DELETE_DEVICE');
       return {
         ...state,
         paired: false,
@@ -105,35 +101,30 @@ function deviceReducer(state: any, action: any) {
         loading: false,
       };
     case 'SET_DEVICE_ACTION':
-      console.log('deviceReducer: SET_DEVICE_ACTION');
       return {
         ...state,
         device: {...state.device, action: action.action},
       };
     case 'SET_LOADING':
-      console.log('deviceReducer: SET_LOADING');
       return {
         ...state,
         loading: action.loading,
       };
     case 'SET_ERROR':
-      console.log('deviceReducer: SET_ERROR');
       return {
         ...state,
         error: action.error,
         loading: false,
       };
     case 'STORE_TOKEN':
-      console.log('deviceReducer: STORE_TOKEN');
       return {
         ...state,
         paired: !!action.token,
         pairToken: action.token,
         device: {deviceId: action.token},
+        loading: false,
       };
-    //TODO: POST ACTIONS...
     case 'CLEAR_ERROR':
-      console.log('userReducer: CLEAR_ERROR');
       return {
         ...state,
         error: null,
@@ -165,18 +156,18 @@ function useDeviceDispatch() {
 // ###########################################################
 
 // GET ALL DEVICES
-// function getDevices(dispatch) {
-//   dispatch({type: 'SET_LOADING', loading: true});
-//   api
-//     .get('/devices')
-//     .then((res) => {
-//       // console.log("devices: ", res);
-//       dispatch({type: 'GET_DEVICES', payload: res.data});
-//     })
-//     .catch((err) => {
-//       dispatch({type: 'GET_DEVICES', payload: []});
-//     });
-// }
+function getDevices(dispatch: any) {
+  dispatch({type: 'SET_LOADING', loading: true});
+  api
+    .get('/devices')
+    .then((res) => {
+      // console.log("devices: ", res);
+      dispatch({type: 'GET_DEVICES', payload: res.data});
+    })
+    .catch((err) => {
+      dispatch({type: 'GET_DEVICES', payload: []});
+    });
+}
 
 // GET DEVICE
 function getDevice(dispatch: any, deviceId: string) {
@@ -298,23 +289,27 @@ function setDeviceAction(dispatch: any, action: object) {
   dispatch({type: 'SET_DEVICE_ACTION', action});
 }
 
+// SET PAIRED
+function setPaired(dispatch: any, paired: any) {
+  dispatch({type: 'SET_PAIRED', paired});
+}
+
 // SET LOADING
 function setLoadingDevice(dispatch: any, loading: boolean) {
   dispatch({type: 'SET_LOADING', loading});
 }
 
 // Is this useful?
-function setError(dispatch: any, error: any, from: string) {
+function setDeviceError(dispatch: any, error: any, from: string) {
   dispatch({type: 'SET_ERROR', error});
 }
 
 // STORE DEVICE / PAIR TOKEN
-async function storeDeviceToken(dispatch: any, token: string, isLoading: any) {
+async function storeDeviceToken(dispatch: any, token: string) {
   try {
     console.log('storeDeviceToken: ' + token);
     await AsyncStorage.setItem('@pairToken', token);
-    dispatch({type: 'STORE_TOKEN', token: token});
-    isLoading(false);
+    dispatch({type: 'STORE_TOKEN', token: token, loading: false});
   } catch (e) {
     console.log('ERROR: DeviceContext: ' + e.error);
   }

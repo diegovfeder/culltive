@@ -1,20 +1,18 @@
 import React, {useEffect} from 'react';
 import {ScrollView, Text, TouchableHighlight, View} from 'react-native';
 
-// import {CulltiveButton} from '../component/CulltiveButton';
-import * as Svg from 'react-native-svg';
-
+// Navigation
 import {useNavigation} from '@react-navigation/native';
 
-import {Strings} from '../../Strings';
-
+// Assets
 import {someStyles} from '../../Styles';
-
-import WelcomeUndraw from '../../assets/undraw/welcome.svg';
+import {Strings} from '../../Strings';
+// import * as Svg from 'react-native-svg';
 
 const Welcome: React.FC = () => {
   const navigation = useNavigation();
 
+  // Sets Mavigation Header View
   useEffect(() => {
     navigation.setOptions({
       title: '',
@@ -42,11 +40,10 @@ const Welcome: React.FC = () => {
       style={{
         flex: 1,
         flexDirection: 'column',
-        marginBottom: 12,
         justifyContent: 'space-between',
         alignItems: 'stretch',
       }}>
-      <ScrollView style={{marginBottom: 32}}>
+      <ScrollView fadingEdgeLength={16} style={{marginBottom: 0}}>
         <Text
           style={{
             marginHorizontal: 16,
@@ -58,11 +55,17 @@ const Welcome: React.FC = () => {
         </Text>
       </ScrollView>
 
-      <View style={{bottom: 0, position: 'absolute', width: '100%'}}>
+      <View
+        style={{
+          bottom: 0,
+          marginBottom: 12,
+          position: 'absolute',
+          width: '100%',
+        }}>
         <TouchableHighlight
           underlayColor="#3ea341"
           activeOpacity={1}
-          style={[someStyles.button, {marginHorizontal: 16}]}
+          style={[someStyles.button, {marginHorizontal: 12}]}
           onPress={() => {
             navigation.goBack();
           }}>

@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from 'react';
-
 import {
   Dimensions,
   StyleSheet,
@@ -25,6 +24,7 @@ const {height, width} = Dimensions.get('window');
 const MyCarousel: React.FC = (props) => {
   // const carouselRef = useRef('');
 
+  //TODO: Validate props
   const [data, setData] = useState(props);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const MyCarousel: React.FC = (props) => {
     // here handle carousel press
   };
 
-  const renderItem = ({item}) => {
+  const renderItem = ({item}: any) => {
     return (
       <View
         style={{
@@ -60,15 +60,14 @@ const MyCarousel: React.FC = (props) => {
           justifyContent: 'space-around',
         }}>
         <View>
-          <Text style={[someStyles.h1, {color: '#2a628f'}]}>{item.title}</Text>
+          <Text style={[someStyles.h1, someColors.primary]}>{item.title}</Text>
           <Text
             style={[
               someStyles.h3,
+              someColors.secondary,
               {
                 textAlign: 'center',
                 alignSelf: 'center',
-                color: '#49ACFD',
-                // color: '#b5b6b7',
               },
             ]}>
             {item.text}
@@ -78,14 +77,19 @@ const MyCarousel: React.FC = (props) => {
           <Text
             style={[
               someStyles.h1_number,
-              {color: '#3381FF', alignSelf: 'center'},
+              someColors.secondary,
+              {alignSelf: 'center'},
             ]}>
             {item.value}
           </Text>
           <Text
             style={[
               someStyles.h1,
-              {color: '#3381FF', fontSize: 32, alignSelf: 'center'},
+              someColors.secondary,
+              {
+                alignSelf: 'center',
+                fontSize: 32,
+              },
             ]}>
             {item.unit}
           </Text>
@@ -95,7 +99,7 @@ const MyCarousel: React.FC = (props) => {
   };
 
   return (
-    <View style={styles.carousel_container}>
+    <View style={{}}>
       <Carousel
         data={props.data}
         renderItem={renderItem}
@@ -112,10 +116,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  containerPagination: {
-    width: '100%',
-    height: 20,
   },
   paginationContainer: {
     paddingTop: 7,

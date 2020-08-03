@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "789397156548",
+    "firebase_url": "https://culltive.firebaseio.com",
+    "project_id": "culltive",
+    "storage_bucket": "culltive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789397156548:android:5b0ab6ec8b3d5e50180f91",
+        "android_client_info": {
+          "package_name": "culltive.me"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789397156548-50v53camud3gqne513hgptlra39u4c7k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "culltive.me",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUALznvlH7z-If0h8WojJT0Qw1hj_O6kQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
