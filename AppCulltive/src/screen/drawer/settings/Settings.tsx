@@ -12,15 +12,17 @@ import {
   View,
 } from 'react-native';
 
-// import {Divider, Slider} from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
 
-// Hooks
+// Navigation
+import {DrawerActions, useNavigation} from '@react-navigation/native';
+
+// Contexts
 import {
   useUserDispatch,
   useUserState,
   clearUserDevice,
 } from '../../../context/UserContext';
-
 import {
   useDeviceDispatch,
   useDeviceState,
@@ -32,75 +34,94 @@ import {
   clearError,
 } from '../../../context/DeviceContext';
 
-// Navigation
-import {DrawerActions, useNavigation} from '@react-navigation/native';
+// Components
+// import {Divider, Slider} from 'react-native-elements';
 
 // Assets
 import {someStyles} from '../../../Styles';
 import {someColors} from '../../../Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-// interface IDevice {
-//   deviceId: string;
-//   geolocation: string;
-//   productType: string;
-//   firmwareVersion: string;
-// }
-//TODO: Save these states to database, and fetch with useEffect()
-// const [device, setDevice] = useState<IDevice>({deviceId: 'CULLTIVE-000'});
+interface IDevice {
+  deviceId: string;
+  geolocation: string;
+  productType: string;
+  firmwareVersion: string;
+}
+
+const myDevice = ({deviceId}: any) => {
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('devices')
+      .doc(deviceId)
+      .onSnapshot((documentSnapshot) => {
+        console.log('Device data: ', documentSnapshot.data());
+      });
+
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, [deviceId]);
+};
 
 const Settings: React.FC = () => {
   console.log('-- Settings.tsx');
   const navigation = useNavigation();
 
   const userDispatch = useUserDispatch();
-  const {user} = useUserState();
+  // const {user} = useUserState();
 
   const deviceDispatch = useDeviceDispatch();
-  const {device, error, loading: loadingDevice} = useDeviceState();
+  const {device, error: errorDevice, loading: loadingDevice} = useDeviceState();
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  // Refers to waterPump button activity indicator
+  const [loadingWaterPump, setLoadingWaterPump] = useState(false);
 
   const [isLEDEnabled, setIsLEDEnabled] = useState(true);
   const [isLEDSwitchDisable, setLEDSwitchDisable] = useState(false);
 
-  const [loading, setLoading] = useState(true);
-  // Refers to waterPump button activity indicator
-  const [loadingWaterPump, setLoadingWaterPump] = useState(false);
-
   // const [automaticWatering, setAutomaticWatering] = useState(true);
   // const [sliderValue, setSliderValue] = useState(360);
 
-  //TODO: getDevice from context || getAuthenticatedUser with its devices names...
-  // setDevice with the fetched data
+  //FIXME: Validate data, handle this clutter of weird useEffects
+  //TODO: GET DEVICE, STAY IN THE loadingState
+  //WHEN LOADED UPDATE VALUES
+  // useEffect(() => {
+  //   getDeviceAction(deviceDispatch, device.deviceId);
 
-  // const {userData} = useUserState();
-  // console.log('userData: ' + JSON.stringify(userData));
+  //   setIsLEDEnabled(device.action.ledTape);
+  // }, [device]);
 
+  // The following code means to validate errorDevice
   useEffect(() => {
-    console.log('Settings-> error: ' + JSON.stringify(error));
+    console.log('Settings -> errorDevice: ' + JSON.stringify(errorDevice));
 
-    //Error is coming from?
-    if (error !== null) {
-      if (typeof error.from !== 'undefined' || typeof error.from !== 'null') {
+    if (errorDevice !== null) {
+      if (
+        typeof errorDevice.from !== 'undefined' ||
+        typeof errorDevice.from !== 'null'
+      ) {
         console.log('is not undefined or null');
-        if (error.from === 'postDeviceAction') {
-          console.log('error from postDevice');
+        if (errorDevice.from === 'postDeviceAction') {
+          console.log('errorDevice from postDevice');
           //TODO: get response?
-
           // means action did not come from waterPump Button
           if (!loadingWaterPump) setIsLEDEnabled(!isLEDEnabled);
-
           setLoadingWaterPump(false);
           // toggleLEDSwitch(device.action.ledTape);
         }
       }
     }
-
-    if (error !== null) {
-      if (error.code === 500) {
-        console.log('500 Network Error: ' + JSON.stringify(error));
+    if (errorDevice !== null) {
+      if (errorDevice.code === 500) {
+        console.log('500 Network Error: ' + JSON.stringify(errorDevice));
         Alert.alert(
           'Ops...',
-          'Erro de conexão, tente novamente.' + '\n\n' + error.err.message,
+          'Erro de conexão, tente novamente.' +
+            '\n\n' +
+            errorDevice.err.message,
           [
             {
               text: 'OK',
@@ -113,14 +134,14 @@ const Settings: React.FC = () => {
           {cancelable: false},
         );
       } else {
-        console.log('Error.code == 500: ' + JSON.stringify(error));
+        console.log('Error.code == 500: ' + JSON.stringify(errorDevice));
         Alert.alert(
           'Ops...',
           'Erro de conexão, tente novamente.' +
             '\n\n' +
-            error.err.message +
+            errorDevice.err.message +
             ' from ' +
-            error.from,
+            errorDevice.from,
           [
             {
               text: 'OK',
@@ -136,11 +157,21 @@ const Settings: React.FC = () => {
         //...
       }
     } else {
-      console.log('error === null');
+      console.log('errorDevice === null');
     }
-  }, [error]);
+  }, [errorDevice]);
 
   // loadingDevice
+  useEffect(() => {
+    console.log('Settings -> device: ' + JSON.stringify(device));
+
+    if (device.deviceId !== null || device.deviceId !== undefined) {
+      setLoading(false);
+    } else {
+      // getDevice();
+      //...
+    }
+  }, [device]);
 
   useEffect(() => {
     console.log('Settings-> device: ' + JSON.stringify(device));
@@ -152,22 +183,10 @@ const Settings: React.FC = () => {
       //...
     }
   }, [device]);
-  useEffect(() => {
-    console.log('Settings-> device: ' + JSON.stringify(device));
 
-    if (device.deviceId !== null || device.deviceId !== undefined) {
-      setLoading(false);
-    } else {
-      // getDevice();
-      //...
-    }
-  }, [device]);
-
-  //printDevice
+  // printDevice
   useEffect(() => {
-    // console.log('action: ' + JSON.stringify(device.action));
     console.log('deviceId: ' + device.deviceId);
-
     if (typeof device.deviceId === 'undefined') {
       console.log('haha');
     } else {
@@ -175,8 +194,7 @@ const Settings: React.FC = () => {
     }
   }, [device]);
 
-  //FIXME:
-  // Set settings from device
+  // set settings from device
   useEffect(() => {
     console.log('useEffect(): device: ' + JSON.stringify(device));
 
@@ -187,14 +205,6 @@ const Settings: React.FC = () => {
       console.log('device.action.ledTape == undefined');
     }
   }, [device]);
-
-  //TODO: GET DEVICE, STAY IN THE loadingWaterPump,
-  //WHEN LOADED UPDATE VALUES
-  // useEffect(() => {
-  //   getDeviceAction(deviceDispatch, device.deviceId);
-
-  //   setIsLEDEnabled(device.action.ledTape);
-  // }, [device]);
 
   // Style React Navigation Header
   useEffect(() => {
@@ -235,10 +245,6 @@ const Settings: React.FC = () => {
     //TODO: VALIDATE device.ation
     // if (device ), keys, etc...
 
-    //TODO: get Errors from response, show notifications for network error (alert message at first)
-    //      and re-toggle ledSwitch with setTimeout(200), updating value for the user
-
-    // if (!error) {
     const action = {
       ledTape: currentState,
       waterPump: device.action.waterPump,
@@ -252,10 +258,6 @@ const Settings: React.FC = () => {
     }
 
     setIsLEDEnabled((previousState) => !previousState);
-    // } else {
-    //   console.log(JSON.stringify(error))
-    //   setIsLEDEnabled(oldState)
-    // }
   };
 
   const toggleWaterPump = () => {
@@ -298,8 +300,23 @@ const Settings: React.FC = () => {
     </View>
   );
 
+  const errorContainer = (
+    <View style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
+      <Text style={[someStyles.h3, {fontSize: 20, textAlign: 'center'}]}>
+        Falha ao carregar informações
+      </Text>
+      <Text
+        style={[
+          someStyles.h3,
+          {marginVertical: 8, fontSize: 12, textAlign: 'center'},
+        ]}>
+        Verifique sua conexão com a internet.
+      </Text>
+    </View>
+  );
+
   const accountContainer = (
-    <View style={styles.accountContainer}>
+    <View style={{alignItems: 'stretch', margin: 16}}>
       <View style={{flexDirection: 'row'}}>
         <Ionicons
           name="ios-contact"
@@ -342,7 +359,7 @@ const Settings: React.FC = () => {
   );
 
   const moreContainer = (
-    <View style={styles.accountContainer}>
+    <View style={{alignItems: 'stretch', margin: 16}}>
       <View style={{flexDirection: 'row'}}>
         <Ionicons
           name="ios-apps"
@@ -374,6 +391,8 @@ const Settings: React.FC = () => {
     <>
       {loading ? (
         loadingContainer
+      ) : error ? (
+        errorContainer
       ) : (
         <SafeAreaView style={[someStyles.container_header]}>
           <ScrollView>
@@ -382,7 +401,12 @@ const Settings: React.FC = () => {
             {/* <Divider style={{margin: 8}} /> */}
 
             {/*DEVICE*/}
-            <View style={styles.deviceContainer}>
+            <View
+              style={{
+                alignItems: 'stretch',
+                marginVertical: 12,
+                marginHorizontal: 4,
+              }}>
               <View style={{flexDirection: 'row'}}>
                 <Ionicons
                   name="ios-settings"
@@ -517,12 +541,9 @@ const Settings: React.FC = () => {
             )}
           </TouchableHighlight>
 
-          {/* TODO: Feature: textInput for deviceId verification -> make the user type deviceId to delete device */}
           <TouchableOpacity
+            disabled={loadingWaterPump}
             onPress={() => {
-              console.log(
-                'TODO: handleDeleteDevice(deviceDispatch, ...) -> should remove from db and go back to HomeScreen making SettingsScreen inaccessible again',
-              );
               Alert.alert(
                 'Deseja mesmo desvincular o seu dispositivo?',
                 `Ao remover seu dispositivo ${device.deviceId}, seus dados e suas informações referentes a conectividade serão apagadas.`,
@@ -575,15 +596,3 @@ const Settings: React.FC = () => {
 };
 
 export default Settings;
-
-const styles = StyleSheet.create({
-  accountContainer: {
-    alignItems: 'stretch',
-    margin: 16,
-  },
-  deviceContainer: {
-    alignItems: 'stretch',
-    marginVertical: 12,
-    marginHorizontal: 4,
-  },
-});

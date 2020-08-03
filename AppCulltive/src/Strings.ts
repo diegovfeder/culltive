@@ -17,7 +17,7 @@ export const Strings = {
     '\n\n' +
     '\n' +
     '-- culltive.me   ' +
-    '\n\n',
+    '\n\n\n\n',
 };
 
 // https://developer.android.com/training/basics/supporting-devices/languages

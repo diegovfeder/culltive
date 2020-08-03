@@ -3,6 +3,14 @@ import {AsyncStorage} from 'react-native';
 
 import api from '../util/api';
 
+interface IUserContext {
+  authenticated: boolean;
+  authToken: string;
+  loading: boolean;
+  user: IUser;
+  error: string;
+}
+
 interface IUser {
   createdAt: string;
   device: string;
@@ -25,7 +33,7 @@ export {
   signOut,
   getAuthenticatedUser,
   setLoadingUser,
-  setError,
+  setUserError,
   storeUserToken,
   clearUserDevice,
   clearError,
@@ -33,9 +41,9 @@ export {
 
 function UserProvider({children}: any) {
   const [state, dispatch] = useReducer(userReducer, {
-    loading: false,
     authenticated: false,
     authToken: '',
+    loading: false,
     user: {},
     error: null,
   });
@@ -50,9 +58,9 @@ function UserProvider({children}: any) {
 }
 
 function userReducer(state: any, action: any) {
+  console.log('userReducer: ' + action.type);
   switch (action.type) {
     case 'SIGNUP_SUCCESS': {
-      console.log('userReducer: SIGNUP_SUCCESS');
       return {
         ...state,
         authenticated: true,
@@ -62,11 +70,9 @@ function userReducer(state: any, action: any) {
       };
     }
     case 'SIGNUP_FAILURE': {
-      console.log('userReducer: SIGNUP_FAILURE');
       return {...state, authenticated: false, error: action.error};
     }
     case 'SIGNIN_SUCCESS':
-      console.log('userReducer: SIGNIN_SUCCESS');
       return {
         ...state,
         authenticated: true,
@@ -75,11 +81,9 @@ function userReducer(state: any, action: any) {
         error: action.error,
       };
     case 'SIGNIN_FAILURE': {
-      console.log('userReducer: SIGNIN_FAILURE');
       return {...state, authenticated: false, error: action.error};
     }
     case 'SIGN_OUT_SUCCESS':
-      console.log('userReducer: SIGN_OUT_SUCCESS');
       return {
         ...state,
         authenticated: false,
@@ -87,24 +91,22 @@ function userReducer(state: any, action: any) {
         user: {},
       };
     case 'GET_USER':
-      console.log('userReducer: GET_USER');
       return {
         ...state,
         user: action.payload,
         authenticated: !!action.payload,
         // authToken ??
       };
+    case 'SET_PAIRED':
+      return {...state, paired: action.paired};
     case 'SET_LOADING':
-      console.log('userReducer: SET_LOADING');
       return {...state, loading: action.loading};
     case 'SET_ERROR':
-      console.log('userReducer: SET_ERROR');
       return {
         ...state,
         error: action.error,
       };
     case 'STORE_TOKEN':
-      console.log('userReducer: STORE_TOKEN');
       return {
         ...state,
         loading: false,
@@ -112,13 +114,11 @@ function userReducer(state: any, action: any) {
         authToken: action.token,
       };
     case 'CLEAR_USER_DEVICE':
-      console.log('userReducer: CLEAR_ERROR');
       return {
         ...state,
         user: {...state.user, device: ''},
       };
     case 'CLEAR_ERROR':
-      console.log('userReducer: CLEAR_ERROR');
       return {
         ...state,
         error: null,
@@ -178,10 +178,6 @@ function signupUser(
       });
     })
     .catch((err) => {
-      dispatch({
-        type: 'SET_ERRORS',
-        payload: err.response.data,
-      });
       console.log('signUpUser: ' + err);
       setLoading(false);
       dispatch({type: 'SIGNUP_FAILURE', error: err.response.data});
@@ -199,8 +195,8 @@ function signinUser(dispatch: any, email: any, password: any, setLoading: any) {
 
   api
     .post('/signin', user)
-    .then((response) => {
-      storeUserToken(dispatch, response.data.token, setLoading);
+    .then(async (response) => {
+      await storeUserToken(dispatch, response.data.token, setLoading);
       dispatch({
         type: 'SIGNIN_SUCCESS',
         user: {email: user.email},
@@ -218,9 +214,9 @@ function signinUser(dispatch: any, email: any, password: any, setLoading: any) {
 }
 
 //SIGN OUT
-function signOut(dispatch: any) {
+async function signOut(dispatch: any) {
   console.log('UserContext: signOut');
-  AsyncStorage.removeItem('@authToken');
+  await AsyncStorage.removeItem('@authToken');
   dispatch({type: 'SIGN_OUT_SUCCESS'});
 }
 
@@ -247,7 +243,7 @@ function setLoadingUser(dispatch: any, loading: boolean) {
 }
 
 // SET ERROR
-function setError(dispatch: any, error: any) {
+function setUserError(dispatch: any, error: string) {
   dispatch({type: 'SET_ERROR', error});
 }
 

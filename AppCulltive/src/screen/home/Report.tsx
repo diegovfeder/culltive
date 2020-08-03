@@ -1,33 +1,34 @@
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import {ActivityIndicator, Dimensions, Text, View} from 'react-native';
 
+// Navigation
 import {useNavigation, useRoute} from '@react-navigation/native';
 
+// API
 import axios from 'axios';
 import api from '../../util/api';
 import {useQuery} from 'react-query';
 
-// Components
-import MyCarousel from '../../component/MyCarousel';
-// import {Calendar} from 'react-native-calendars';
-
-// Hooks
+// Context
 import {
   useDeviceDispatch,
   useDeviceState,
   getDevice,
 } from '../../context/DeviceContext';
 
-// Assets
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {someStyles} from '../../Styles';
-import {someColors} from '../../Colors';
-const {height, width} = Dimensions.get('window');
+// Components
+import MyCarousel from '../../component/MyCarousel';
+// import {Calendar} from 'react-native-calendars';
 
 // Moment
 import moment from 'moment';
 import 'moment/locale/pt-br';
 // import tz from 'moment-timezone';
+
+// Assets
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {someStyles} from '../../Styles';
+import {someColors} from '../../Colors';
 
 interface IReading {
   air: number;
@@ -47,9 +48,8 @@ const Report: React.FC = () => {
   console.log('-- Report.tsx');
 
   const navigation = useNavigation();
-  const route = useRoute();
+  // const route = useRoute();
 
-  //TODO: get deviceId from device context...
   const {device} = useDeviceState();
 
   //TODO: get lat / lon from device context...
@@ -83,10 +83,15 @@ const Report: React.FC = () => {
   let [loading, setLoading] = useState(false);
   let [error, setError] = useState(false);
 
+  // const {height, width} = Dimensions.get('window');
+
   useEffect(() => {
     setLoading(loadingWeather || loadingReading);
     setError(fetchWeatherError || fetchReadingError);
   }, [loadingWeather, loadingReading, fetchWeatherError, fetchReadingError]);
+
+  //TODO: Set timezone for user locale -> getDeviceLocation
+  moment.locale('pt-BR');
 
   const today = new Date();
   const date =
@@ -96,10 +101,9 @@ const Report: React.FC = () => {
     '/' +
     today.getFullYear();
 
-  //TODO: Set timezone for user locale -> getDeviceLocation
-  moment.locale('pt-BR');
   const timezone = 'America/Sao_Paulo';
   const format = 'MMMM Do YYYY, h:mm:ss a';
+
   // console.log(tz('America/Los_Angeles').format('ha z'));
   // const dateMoment = moment.tz(date, format, timezone);
 
@@ -109,6 +113,110 @@ const Report: React.FC = () => {
   //TODO: weatherIcons
   // https://github.com/erikflowers/weather-icons
   // https://gist.github.com/tbranyen/62d974681dea8ee0caa1
+
+  // Standard sensorData values passed as props to MyCarosel.tsx
+  let sensorData = [
+    {
+      id: 'air',
+      title: 'Umidade do ar',
+      text: 'Fator relevante no processo de evapotranspiração',
+      value: '[air]',
+      unit: '%',
+    },
+    {
+      id: 'lumi',
+      title: 'Taxa de luz',
+      text: 'Determinante no crescimento do seu cultivo',
+      value: '[lumi1], [lumi2]',
+      unit: 'PPFD',
+    },
+    {
+      id: 'soil',
+      title: 'Umidade do solo',
+      text: 'Define os ciclos de irrigação',
+      value: '[soil1], [soil2]',
+      unit: '%',
+    },
+    {
+      id: 'temp',
+      title: 'Temperatura',
+      text: 'Influencia as atividades fisiológicas da planta',
+      value: '[temp]',
+      unit: '°C',
+    },
+  ];
+
+  const weatherContainer = (
+    <View style={someStyles.weatherContainer}>
+      <Text
+        style={[
+          someStyles.h3,
+          someColors.dark_blue,
+          {paddingVertical: 2, fontSize: 18},
+        ]}>
+        {city}
+      </Text>
+      <Text
+        style={[
+          someStyles.h3,
+          someColors.light_blue,
+          {fontSize: 14, paddingVertical: 4, textAlign: 'center'},
+        ]}>
+        {moment().format('LLL')}
+      </Text>
+      <Text style={[someStyles.h1, someColors.blue, {fontSize: 32}]}>
+        {temperature}˚C
+      </Text>
+      {/* TODO: WeatherIcons */}
+      {/* <Text style={[someStyles.h2, {alignSelf: 'center'}]}>{weather}</Text> */}
+    </View>
+  );
+
+  const loadingContainer = (
+    <View
+      style={{
+        flex: 1,
+        alignSelf: 'center',
+        justifyContent: 'center',
+      }}>
+      <ActivityIndicator
+        color={'#3ea341'}
+        animating={loading}
+        size={'large'}
+        style={{justifyContent: 'center'}}
+      />
+    </View>
+  );
+
+  const errorContainer = (
+    <View style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
+      <Text style={[someStyles.h3, {fontSize: 20, textAlign: 'center'}]}>
+        Falha ao carregar informações
+      </Text>
+      <Text
+        style={[
+          someStyles.h3,
+          {marginVertical: 8, fontSize: 12, textAlign: 'center'},
+        ]}>
+        Verifique sua conexão com a internet.
+      </Text>
+    </View>
+  );
+
+  const sensorDataContainer = (
+    <View style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
+      <MyCarousel data={sensorData} />
+    </View>
+  );
+
+  const _copyReadingToSensorData = () => {
+    sensorData[0].value = reading?.air.toString();
+    sensorData[1].value = reading?.lumi1.toString();
+    sensorData[2].value = reading?.soil1.toString();
+    sensorData[3].value = reading?.temp.toString();
+
+    console.log('sensorData: ' + JSON.stringify(sensorData));
+  };
 
   // Navigation Options
   useEffect(() => {
@@ -151,72 +259,7 @@ const Report: React.FC = () => {
       });
   }, []);
 
-  const weatherContainer = (
-    <View style={someStyles.weatherContainer}>
-      <Text
-        style={[
-          someStyles.h3,
-          someColors.dark_blue,
-          {paddingVertical: 2, fontSize: 18},
-        ]}>
-        {city}
-      </Text>
-      <Text
-        style={[
-          someStyles.h3,
-          someColors.light_blue,
-          {fontSize: 14, paddingVertical: 4, textAlign: 'center'},
-        ]}>
-        {moment().format('LLL')}
-      </Text>
-      <Text style={[someStyles.h1, someColors.blue, {fontSize: 32}]}>
-        {temperature}˚C
-      </Text>
-      {/* TODO: WeatherIcons */}
-      {/* <Text style={[someStyles.h2, {alignSelf: 'center'}]}>{weather}</Text> */}
-    </View>
-  );
-
-  let sensorData = [
-    {
-      id: 'air',
-      title: 'Umidade do ar',
-      text: 'Fator relevante no processo de evapotranspiração',
-      value: '[air]',
-      unit: '%',
-    },
-    {
-      id: 'lumi',
-      title: 'Taxa de luz',
-      text: 'Determinante no crescimento do seu cultivo',
-      value: '[lumi1], [lumi2]',
-      unit: 'PPFD',
-    },
-    {
-      id: 'soil',
-      title: 'Umidade do solo',
-      text: 'Define os ciclos de irrigação',
-      value: '[soil1], [soil2]',
-      unit: '%',
-    },
-    {
-      id: 'temp',
-      title: 'Temperatura',
-      text: 'Influencia as atividades fisiológicas da planta',
-      value: '[temp]',
-      unit: '°C',
-    },
-  ];
-
-  const _copyReadingToSensorData = () => {
-    sensorData[0].value = reading?.air.toString();
-    sensorData[1].value = reading?.lumi1.toString();
-    sensorData[2].value = reading?.soil1.toString();
-    sensorData[3].value = reading?.temp.toString();
-
-    console.log('sensorData: ' + JSON.stringify(sensorData));
-  };
-
+  // Fetch readings from firestore
   useEffect(() => {
     api
       .get(`/reading/${device.deviceId}`)
@@ -233,6 +276,7 @@ const Report: React.FC = () => {
       });
   }, []);
 
+  // Copy fetched readings to sensorData
   useEffect(() => {
     console.log('Reading: ' + JSON.stringify(reading));
     if (typeof reading !== 'undefined') {
@@ -242,42 +286,12 @@ const Report: React.FC = () => {
     }
   }, [reading, sensorData]);
 
-  const sensorContainer = (
-    <View style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
-      <MyCarousel data={sensorData} />
-    </View>
-  );
-
   return (
     <View style={[someStyles.container_spaced]}>
       {loading ? (
-        <View
-          style={{
-            flex: 1,
-            alignSelf: 'center',
-            justifyContent: 'center',
-          }}>
-          <ActivityIndicator
-            color={'#3ea341'}
-            animating={loading}
-            size={'large'}
-            style={{justifyContent: 'center'}}
-          />
-        </View>
+        loadingContainer
       ) : error ? (
-        <View
-          style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={[someStyles.h3, {fontSize: 20, textAlign: 'center'}]}>
-            Falha ao carregar informações
-          </Text>
-          <Text
-            style={[
-              someStyles.h3,
-              {marginVertical: 8, fontSize: 12, textAlign: 'center'},
-            ]}>
-            Verifique sua conexão com a internet.
-          </Text>
-        </View>
+        errorContainer
       ) : (
         <View>
           {/* Sensor Report Container*/}
@@ -286,7 +300,7 @@ const Report: React.FC = () => {
               style={[someStyles.h2, someColors.tertiary, {paddingBottom: 4}]}>
               SENSORES
             </Text>
-            {sensorContainer}
+            {sensorDataContainer}
           </View>
 
           {/* Weather Report Container*/}

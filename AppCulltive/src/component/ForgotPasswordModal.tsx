@@ -1,59 +1,127 @@
 import React, {useState, useEffect} from 'react';
 import {
   ActivityIndicator,
-  Button,
+  KeyboardAvoidingView,
   Modal,
-  StyleSheet,
   Text,
   TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
 
-import {Formik} from 'formik';
-import * as Yup from 'yup';
+// Contexts
+import {
+  useFirebaseDispatch,
+  useFirebaseState,
+  resetPassword,
+  setIsReset,
+} from '../context/FirebaseContext';
 
 // Components
 import {Input} from 'react-native-elements';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Space from '../component/Space';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
+// import Space from '../component/Space';
 
-// Styles
+// Assets
 import {someStyles} from '../Styles';
+import {someColors} from '../Colors';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import EmailUndraw from '../../assets/undraw/mail.svg';
+import * as Svg from 'react-native-svg';
 
 const ForgotPasswordModal: React.FC = (props) => {
-  const [modalState, setModalState] = useState(props.modalState);
+  console.log('-- ForgotPasswordModal.tsx');
 
-  const closeIcon = (
-    <TouchableOpacity
-      style={{alignSelf: 'flex-end'}}
-      onPress={() => {
-        setModalState(!modalState);
-      }}>
-      <Ionicons name="ios-close" size={30} color="#959595" />
+  let _emailInput: any;
+
+  //TODO: Validate setModalState !== null
+  const modalState = props.modalState; // Receiving modalState and setModalState from parent
+
+  const [loading, setLoading] = useState(false);
+
+  const firebaseDispatch = useFirebaseDispatch();
+  const {isReset, error} = useFirebaseState();
+
+  const onCloseButton = () => {
+    //TODO: Validate or test if setModalState !== null
+    props.setModalState(false);
+    if (isReset) setIsReset(firebaseDispatch, false);
+  };
+
+  const closeButton = (
+    <TouchableOpacity style={{alignSelf: 'flex-end'}} onPress={onCloseButton}>
+      <Ionicons name="ios-close" size={42} color={someColors.black.color} />
     </TouchableOpacity>
   );
 
-  useEffect(() => {
-    setModalState(props.modalState);
-  }, [props]);
-
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalState}
-      onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
-      }}>
-      <View style={someStyles.modalView}>
-        {closeIcon}
-        <View>
-          <Text style={someStyles.h3}>
-            Enviaremos um link para redefinição de sua senha.
-          </Text>
-
+    <>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalState}
+        onRequestClose={onCloseButton}>
+        {isReset ? (
+          <>
+            <View style={[someStyles.modalView_big, {flex: 1}]}>
+              {closeButton}
+              <Text
+                style={[
+                  someStyles.h1,
+                  someColors.tertiary,
+                  {marginTop: 0, marginBottom: 12},
+                ]}>
+                Email enviado
+              </Text>
+              <Text style={someStyles.h3}>
+                Verifique sua caixa de entrada e acesse o link para a
+                redefinição de sua senha
+              </Text>
+              <EmailUndraw
+                width={160}
+                height={160}
+                style={{margin: 16, alignSelf: 'center'}}
+              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                }}>
+                <View>
+                  <Text style={[someStyles.h3, {alignSelf: 'flex-start'}]}>
+                    Não recebeu o email?
+                  </Text>
+                  <Text
+                    style={[
+                      someStyles.h3,
+                      someColors.dark_gray,
+                      {alignSelf: 'flex-start'},
+                    ]}>
+                    Verifique também o lixo eletrônico
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      justifyContent: 'center',
+                      alignSelf: 'flex-start',
+                    }}
+                    onPress={() => {
+                      console.log('TODO: Open whatsapp link with a message');
+                    }}>
+                    <Text
+                      style={[
+                        someStyles.textLink,
+                        {fontSize: 14, marginBottom: 8},
+                      ]}>
+                      Entre em contato com nosso suporte.
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </>
+        ) : (
           <Formik
             initialValues={{email: ''}}
             validationSchema={Yup.object().shape({
@@ -61,7 +129,10 @@ const ForgotPasswordModal: React.FC = (props) => {
                 .email('Email inválido')
                 .required('*Obrigatório'),
             })}
-            onSubmit={(values) => alert(JSON.stringify(values))}>
+            onSubmit={(values) => {
+              console.log('values: ' + JSON.stringify(values));
+              resetPassword(firebaseDispatch, values.email, setLoading);
+            }}>
             {({
               handleChange,
               handleBlur,
@@ -70,71 +141,89 @@ const ForgotPasswordModal: React.FC = (props) => {
               errors,
               touched,
             }) => (
-              <View>
-                <Input
-                  style={someStyles.h1}
-                  ref={(component) => (_emailInput = component)}
-                  autoFocus
-                  autoCapitalize="none"
-                  placeholder="Email"
-                  value={values.email}
-                  onChangeText={handleChange('email')}
-                  onBlur={handleBlur('email')}
-                  errorStyle={{color: 'red'}}
-                  errorMessage={
-                    errors.email && touched.email ? errors.email : ''
-                  }
-                />
-
-                <Text style={someStyles.h3}>Não lembra seu email?</Text>
-                <TouchableOpacity
-                  style={{justifyContent: 'center', alignSelf: 'flex-start'}}
-                  onPress={() => {
-                    console.log('TODO: Open whatsapp link with a message');
-                  }}>
-                  <Text style={[someStyles.textLink, {fontSize: 14}]}>
-                    Entre em contato com nosso suporte.
+              <View style={[someStyles.modalView_big, {flex: 1}]}>
+                <KeyboardAvoidingView
+                  behavior={'padding'}
+                  style={someStyles.keyboardContainer}>
+                  {closeButton}
+                  <Text
+                    style={[
+                      someStyles.h1,
+                      someColors.tertiary,
+                      {marginTop: 0, marginBottom: 12},
+                    ]}>
+                    Recupere sua senha
                   </Text>
-                </TouchableOpacity>
+                  <Text style={[someStyles.h3, someColors.dark_gray]}>
+                    Enviaremos um link para redefinição de sua senha.
+                  </Text>
+
+                  <Input
+                    ref={(component) => (_emailInput = component)}
+                    autoFocus
+                    autoCapitalize="none"
+                    placeholder="Email"
+                    value={values.email}
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    errorStyle={{color: 'red'}}
+                    errorMessage={
+                      errors.email && touched.email ? errors.email : ''
+                    }
+                  />
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-end',
+                    }}>
+                    <View>
+                      <Text style={[someStyles.h3, {alignSelf: 'flex-end'}]}>
+                        Não lembra seu email?
+                      </Text>
+                      <TouchableOpacity
+                        style={{
+                          justifyContent: 'center',
+                          alignSelf: 'flex-start',
+                        }}
+                        onPress={() => {
+                          console.log(
+                            'TODO: Open whatsapp link with a message',
+                          );
+                        }}>
+                        <Text
+                          style={[
+                            someStyles.textLink,
+                            {fontSize: 14, marginBottom: 8},
+                          ]}>
+                          Entre em contato com nosso suporte.
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <TouchableHighlight
+                    underlayColor="#3ea341"
+                    activeOpacity={1}
+                    style={[
+                      someStyles.button,
+                      {position: 'absolute', bottom: 0, width: '100%'},
+                    ]}
+                    onPress={handleSubmit}>
+                    {loading ? (
+                      <ActivityIndicator color={'white'} />
+                    ) : (
+                      <Text style={[someStyles.textButton]}>Enviar</Text>
+                    )}
+                  </TouchableHighlight>
+                </KeyboardAvoidingView>
               </View>
             )}
           </Formik>
-
-          {/*<Space margin={'32'} />*/}
-
-          <TouchableOpacity
-            style={[someStyles.button, {marginVertical: 16}]}
-            onPress={() => {
-              setModalState(!modalState);
-            }}>
-            <Text style={someStyles.textButton}>Recuperar senha</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+        )}
+      </Modal>
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  modal: {
-    marginVertical: 100,
-    marginHorizontal: 10,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderColor: '#f5f5f5',
-    backgroundColor: '#f9f9f9',
-    paddingVertical: 20,
-    borderRadius: 10,
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 2.65,
-    elevation: 4,
-  },
-});
 
 export default ForgotPasswordModal;

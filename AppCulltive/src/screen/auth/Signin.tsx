@@ -10,12 +10,10 @@ import {
   View,
 } from 'react-native';
 
-import {Input} from 'react-native-elements';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
-
-// Hooks
+// Navigation
 import {useNavigation} from '@react-navigation/native';
+
+// Contexts
 import {
   useUserDispatch,
   useUserState,
@@ -23,15 +21,11 @@ import {
   clearError,
 } from '../../context/UserContext';
 
-//TODO: reset Password modal and action.
-import {
-  useFirebaseDispatch,
-  resetPassword,
-} from '../../context/FirebaseContext';
-
-// TODO: Finish emailSent / forgotPassword state process
+// Components
+import * as Yup from 'yup';
+import {Formik} from 'formik';
+import {Input} from 'react-native-elements';
 import ForgotPasswordModal from '../../component/ForgotPasswordModal';
-// import EmailSentModal from '../component/EmailSentModal';
 
 // Assets
 import {someStyles} from '../../Styles';
@@ -46,12 +40,9 @@ const Signin: React.FC = () => {
   let _passwordInput: any;
   const userDispatch = useUserDispatch();
   const navigation = useNavigation();
+
   const [loading, setLoading] = useState(false);
-
-  const [secureTextState, setSecureTextState] = React.useState(true);
-  const [eyeState, setEyeState] = React.useState(true);
-
-  //FIXME: handle modal state using context
+  const [secureTextState, setSecureTextState] = useState(true);
   const [modalState, setModalState] = useState(false);
 
   let {error} = useUserState();
@@ -97,32 +88,37 @@ const Signin: React.FC = () => {
   });
 
   return (
-    <SafeAreaView style={someStyles.container_spaced}>
-      <Formik
-        initialValues={{email: '', password: ''}}
-        validationSchema={Yup.object().shape({
-          email: Yup.string().email('Email inválido').required('*Obrigatório'),
-          password: Yup.string().required('*Obrigatório'),
-        })}
-        onSubmit={(values) => {
-          // console.log(JSON.stringify(values));
-          signinUser(userDispatch, values.email, values.password, setLoading);
-        }}>
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-        }) => (
-          <KeyboardAvoidingView
-            behavior={'padding'}
-            style={someStyles.keyboardContainer}>
-            <View
-              style={{
-                flex: 1,
-              }}>
+    <>
+      {/* When user clicks 'forgot_password' this modal opens :)*/}
+      <ForgotPasswordModal
+        modalState={modalState}
+        setModalState={setModalState}
+      />
+
+      {/* Whole Signin.tsx screen components */}
+      <SafeAreaView style={someStyles.container_spaced}>
+        <Formik
+          initialValues={{email: '', password: ''}}
+          validationSchema={Yup.object().shape({
+            email: Yup.string()
+              .email('Email inválido')
+              .required('*Obrigatório'),
+            password: Yup.string().required('*Obrigatório'),
+          })}
+          onSubmit={(values) => {
+            signinUser(userDispatch, values.email, values.password, setLoading);
+          }}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <KeyboardAvoidingView
+              behavior={'padding'}
+              style={someStyles.keyboardContainer}>
               <View
                 style={{
                   flex: 1,
@@ -160,10 +156,9 @@ const Signin: React.FC = () => {
                     style={{left: '90%', top: '20%', position: 'absolute'}}
                     onPress={() => {
                       setSecureTextState(!secureTextState);
-                      setEyeState(!eyeState);
                     }}>
                     <Ionicons
-                      name={eyeState ? 'ios-eye' : 'ios-eye-off'}
+                      name={secureTextState ? 'ios-eye' : 'ios-eye-off'}
                       size={24}
                       color={someColors.tertiary.color}
                     />
@@ -177,32 +172,28 @@ const Signin: React.FC = () => {
                   }}>
                   <Text style={someStyles.textLink}>Esqueceu sua senha?</Text>
                 </TouchableOpacity>
-
-                <ForgotPasswordModal modalState={modalState} />
-                {/* TODO: Finish firebaseForgotPassword mehtod and modal activity progress*/}
-                {/*<EmailSentModal modalState={!modalState} />*/}
               </View>
-            </View>
 
-            {/* JUST OUTSIDE THE FIRST VIEW AFTER THE 'KeyboardAvoidingView' CONTAINER */}
-            <TouchableHighlight
-              underlayColor="#3ea341"
-              activeOpacity={1}
-              style={[
-                someStyles.button,
-                {position: 'absolute', bottom: 0, width: '100%'},
-              ]}
-              onPress={handleSubmit}>
-              {loading ? (
-                <ActivityIndicator color={'white'} />
-              ) : (
-                <Text style={[someStyles.textButton]}>Continuar</Text>
-              )}
-            </TouchableHighlight>
-          </KeyboardAvoidingView>
-        )}
-      </Formik>
-    </SafeAreaView>
+              {/* JUST OUTSIDE THE FIRST VIEW AFTER THE 'KeyboardAvoidingView' CONTAINER */}
+              <TouchableHighlight
+                underlayColor="#3ea341"
+                activeOpacity={1}
+                style={[
+                  someStyles.button,
+                  {position: 'absolute', bottom: 0, width: '100%'},
+                ]}
+                onPress={handleSubmit}>
+                {loading ? (
+                  <ActivityIndicator color={'white'} />
+                ) : (
+                  <Text style={[someStyles.textButton]}>Continuar</Text>
+                )}
+              </TouchableHighlight>
+            </KeyboardAvoidingView>
+          )}
+        </Formik>
+      </SafeAreaView>
+    </>
   );
 };
 

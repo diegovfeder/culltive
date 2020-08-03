@@ -152,6 +152,24 @@ export const someStyles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
+  modalView_big: {
+    backgroundColor: 'white',
+    marginTop: 8,
+    height: '100%',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    // borderRadius: 20,
+    borderTopStartRadius: 24,
+    borderTopEndRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 5,
+  },
   text: {
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
@@ -175,6 +193,7 @@ export const someStyles = StyleSheet.create({
   },
   textLink: {
     fontSize: 13,
+    paddingVertical: 2,
     fontFamily: 'Montserrat-Regular',
     color: '#3cbc40',
     textDecorationLine: 'underline',
