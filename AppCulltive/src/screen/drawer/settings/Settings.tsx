@@ -49,6 +49,7 @@ interface IDevice {
   firmwareVersion: string;
 }
 
+// TODO: Finish this code...
 const myDevice = ({deviceId}: any) => {
   useEffect(() => {
     const subscriber = firestore()
@@ -80,7 +81,7 @@ const Settings: React.FC = () => {
   const [loadingWaterPump, setLoadingWaterPump] = useState(false);
 
   const [isLEDEnabled, setIsLEDEnabled] = useState(true);
-  const [isLEDSwitchDisable, setLEDSwitchDisable] = useState(false);
+  const [isLEDSwitchDisabled, setLEDSwitchDisabled] = useState(false);
 
   // const [automaticWatering, setAutomaticWatering] = useState(true);
   // const [sliderValue, setSliderValue] = useState(360);
@@ -173,17 +174,6 @@ const Settings: React.FC = () => {
     }
   }, [device]);
 
-  useEffect(() => {
-    console.log('Settings-> device: ' + JSON.stringify(device));
-
-    if (device.deviceId !== null || device.deviceId !== undefined) {
-      setLoading(false);
-    } else {
-      // getDevice();
-      //...
-    }
-  }, [device]);
-
   // printDevice
   useEffect(() => {
     console.log('deviceId: ' + device.deviceId);
@@ -195,14 +185,24 @@ const Settings: React.FC = () => {
   }, [device]);
 
   // set settings from device
+  //TODO: verify keys
   useEffect(() => {
     console.log('useEffect(): device: ' + JSON.stringify(device));
 
-    if (device !== {} && typeof device.action.ledTape !== 'undefined') {
-      console.log('device.action.ledTape !== undefined');
-      setIsLEDEnabled(device.action.ledTape);
+    if (device !== {}) {
+      console.log('got here...');
+
+      if (typeof device.action !== 'undefined') {
+        console.log('action !== undefined');
+        if (typeof device.action.ledTape !== 'undefined') {
+          console.log('ledTape !== undefined');
+          setIsLEDEnabled(device.action.ledTape);
+          console.log('didnt crash :)');
+        }
+      }
     } else {
       console.log('device.action.ledTape == undefined');
+      //... get ledTape???
     }
   }, [device]);
 
@@ -244,11 +244,25 @@ const Settings: React.FC = () => {
 
     //TODO: VALIDATE device.ation
     // if (device ), keys, etc...
+    if (typeof device.action === 'undefined') {
+      console.log('device.action IS NOT DEFINED!');
+      getDeviceAction(deviceDispatch, device.deviceId);
+    }
 
-    const action = {
-      ledTape: currentState,
-      waterPump: device.action.waterPump,
-    };
+    let action = {};
+
+    if (typeof device.action !== 'undefined') {
+      action = {
+        ledTape: currentState,
+        waterPump: device.action.waterPump,
+      };
+    } else {
+      console.log('device.action is undefined');
+      action = {
+        ledTape: currentState,
+        waterPump: false,
+      };
+    }
 
     if (device.deviceId.includes('CULLTIVE')) {
       console.log('toggleLEDSwitch: ' + JSON.stringify(device));
@@ -261,7 +275,7 @@ const Settings: React.FC = () => {
   };
 
   const toggleWaterPump = () => {
-    setLEDSwitchDisable(true);
+    setLEDSwitchDisabled(true);
 
     const action = {
       ledTape: isLEDEnabled,
@@ -271,7 +285,7 @@ const Settings: React.FC = () => {
 
     setLoadingWaterPump(true);
     setTimeout(() => {
-      setLEDSwitchDisable(false);
+      setLEDSwitchDisabled(false);
       setLoadingWaterPump(false);
       setDeviceAction(deviceDispatch, {
         ledTape: device.action.ledTape,
@@ -452,7 +466,7 @@ const Settings: React.FC = () => {
                     ios_backgroundColor="#d3d3d3"
                     onValueChange={(value) => toggleLEDSwitch(value)}
                     value={isLEDEnabled}
-                    disabled={isLEDSwitchDisable}
+                    disabled={isLEDSwitchDisabled}
                   />
                 </View>
 
@@ -557,10 +571,11 @@ const Settings: React.FC = () => {
                   {
                     text: 'Sim',
                     onPress: () => {
+                      setLoading(true);
                       //TODO: Handle errors
                       deleteDevice(deviceDispatch, device.deviceId);
-                      //TODO: If deleteDevice returned OK / true / 200
-                      clearUserDevice(userDispatch, device.deviceId);
+                      clearUserDevice(userDispatch);
+                      setLoading(false);
                     },
                   },
                 ],

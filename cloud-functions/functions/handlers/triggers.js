@@ -6,52 +6,91 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 
 
+// ---------------------------------------------
+//               ACTS TRIGGERS
+// ---------------------------------------------
+// TODO: Finish this trigger function
+exports.generateAct = functions.firestore
+  .document('readings/{readingId}')
+  .onCreate(async (snap, context) => {
+
+    const checkForBorders = (data) => {
+      if (data.waterLevel === 'Empty') {
+        //do stuff
+        return true;
+      } 
+      // else if (data.lumi < ?) {
+
+      // } else if (data.soil < ? {
+
+      // }
+    }
+
+    const newReading = snap.data();
+    if (checkForBorders(newReading)) {
+      const createdAt = new Date().toISOString();
+
+      db.collection("acts").doc(`${deviceId}:${actType}:${createdAt}`)
+      db.doc('acts/')
+    }
+
+  })
+
+
+
+// ---------------------------------------------
+//               USER TRIGGERS
+// ---------------------------------------------
 // Listen for new document created in the 'devices' collection
 exports.tieDeviceToUser = functions.firestore
-    .document('devices/{deviceId}')
-    .onCreate(async (snap, context) => {
+  .document('devices/{deviceId}')
+  .onCreate(async (snap, context) => {
 
-      // Get an object representing the document
-      const newDevice = snap.data();
-      var userRef = db.collection("users").doc(`${newDevice.user}`);
+    // Get an object representing the document
+    const newDevice = snap.data();
+    var userRef = db.collection("users").doc(`${newDevice.user}`);
 
-      // Update / Add of a specific user
-      try {
-        await userRef.update({
-          device: `${newDevice.deviceId}`
-        });
-        console.log("Document successfully updated!");
-      }
-      catch (error) {
-        // The document probably doesn't exist.
-        console.error("Error updating document: ", error);
-      }
-    });
+    // Update / Add of a specific user
+    try {
+      await userRef.update({
+        device: `${newDevice.deviceId}`
+      });
+      console.log("Document successfully updated!");
+    }
+    catch (error) {
+      // The document probably doesn't exist.
+      console.error("Error updating document: ", error);
+    }
+  });
 
 
 // Listen for deleted document in the 'devices collection
 exports.untieDeviceFromUser = functions.firestore
-    .document('devices/{deviceId}')
-    .onDelete(async (snap, context) => {
-      
-      // Get an object representing the document prior to deletion
-      const deletedDevice = snap.data();
-      var userRef = db.collection("users").doc(`${deletedDevice.user}`);
+  .document('devices/{deviceId}')
+  .onDelete(async (snap, context) => {
+    
+    // Get an object representing the document prior to deletion
+    const deletedDevice = snap.data();
+    var userRef = db.collection("users").doc(`${deletedDevice.user}`);
 
-      // Update / Remove device from a specific user
-      try {
-        await userRef.update({
-          device: ''
-        });
-        console.log("Document successfully updated!");
-      }
-      catch (error) {
-        // The document probably doesn't exist.
-        console.error("Error updating document: ", error);
-      }
-    });
+    // Update / Remove device from a specific user
+    try {
+      await userRef.update({
+        device: ''
+      });
+      console.log("Document successfully updated!");
+    }
+    catch (error) {
+      // The document probably doesn't exist.
+      console.error("Error updating document: ", error);
+    }
+  });
 
 
+
+// ---------------------------------------------
+//               EMAIL TRIGGERS
+// ---------------------------------------------
 // Send welcome email from user signup
 const welcomePath = path.join(__dirname, '../public', 'welcome.html');
 var htmlmail = fs.readFileSync(welcomePath,"utf-8").toString();
@@ -87,6 +126,9 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
 });
 
 
+// ---------------------------------------------
+//               LOCATION TRIGGERS
+// ---------------------------------------------
 // Get aproximated geolocation from client IP by GCP app engine
 function _geolocation(req, res) {
   // res.header('Cache-Control','no-cache');

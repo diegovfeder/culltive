@@ -12,7 +12,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 // import com.reactlibrary.RNWifiPackage;
 
+//React Native Firebase
+import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
+
 public class MainApplication extends Application implements ReactApplication {
+
+
+  
 
     private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
         @Override
@@ -27,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
             // Packages that cannot be autolinked yet can be added manually here, for
             // example:
             // packages.add(new RNWifiPackage());
+            // packages.add(ReactNativeFirebaseMessagingPackage());
 
             return packages;
         }

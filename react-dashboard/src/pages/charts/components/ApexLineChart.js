@@ -2,10 +2,13 @@ import React from "react";
 import ApexCharts from "react-apexcharts";
 import { useTheme } from "@material-ui/styles";
 
+
+//TODO: Pass prpps.data to series
+// validate data... undefined etc...
 const series = [
   {
     name: "series1",
-    data: [31, 40, 28, 51, 42, 109, 100],
+    data: [31, 40, 28, 51, 42, 109, 200],
   },
   {
     name: "series2",
@@ -13,8 +16,11 @@ const series = [
   },
 ];
 
-export default function ApexLineChart() {
+export default function ApexLineChart(props) {
   var theme = useTheme();
+
+  // const series = props.data;
+  // console.log(JSON.stringify(series))
 
   return (
     <ApexCharts

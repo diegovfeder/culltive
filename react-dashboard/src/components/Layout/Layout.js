@@ -51,6 +51,7 @@ function Layout(props) {
 
             {/*<Route path="/app/add" component={Add} />*/}
 
+            {/* TODO: Feature add next pages or delete for production... */}
             <Route path="/app/dashboard_example" component={Dashboard} />
             <Route path="/app/typography_example" component={Typography} />
             <Route path="/app/tables_example" component={Tables} />

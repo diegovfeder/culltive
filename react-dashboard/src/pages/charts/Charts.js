@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid, Select, OutlinedInput, MenuItem } from "@material-ui/core";
 import { useTheme } from "@material-ui/styles";
 import {
   CartesianGrid,
@@ -20,6 +20,9 @@ import Widget from "../../components/Widget/Widget";
 import ApexLineChart from "./components/ApexLineChart";
 import ApexHeatmap from "./components/ApexHeatmap";
 import PageTitle from "../../components/PageTitle/PageTitle";
+
+// styles
+import useStyles from "./styles";
 
 const lineChartData = [
   {
@@ -74,10 +77,15 @@ const pieChartData = [
 ];
 
 export default function Charts(props) {
+  var classes = useStyles();
   var theme = useTheme();
 
   // local
   var [activeIndex, setActiveIndexId] = useState(0);
+
+  var [device, selectDevice] = useState("000"); // 000 as the id (value) for MenuItem
+  //TODO: deviceContext?
+  // getAllDevices, populate selector
 
   return (
     <>
@@ -85,9 +93,42 @@ export default function Charts(props) {
 
       {/* TODO: Device and Chart Selector */}
       <Grid container spacing={2}>
+
+      <Select
+      style={{margin: 8}}
+        value={device}
+        onChange={e => selectDevice(e.target.value)}
+        input={
+          <OutlinedInput
+            labelWidth={0}
+            classes={{
+              notchedOutline: classes.mainChartSelectRoot,
+              input: classes.deviceSelect
+            }}
+          />
+        }
+        autoWidth>
+          {/* TODO: POPULATE MENU-ITEM */}
+          <MenuItem value="000">CULLTIVE-000</MenuItem>
+          <MenuItem value="001">CULLTIVE-001</MenuItem>
+          <MenuItem value="002">CULLTIVE-002</MenuItem>
+          <MenuItem value="003">CULLTIVE-003</MenuItem>
+          <MenuItem value="004">CULLTIVE-004</MenuItem>
+          <MenuItem value="005">CULLTIVE-005</MenuItem>
+      </Select>
+
       <Grid item xs={12}>
           <Widget title="Air Humidity" upperTitle noBodyPadding>
-            <ApexLineChart />
+            <ApexLineChart data={[
+  {
+    name: "series1",
+    data: [200, 40, 28, 51, 42, 109, 200],
+  },
+  {
+    name: "series2",
+    data: [500, 32, 45, 32, 34, 52, 41],
+  },
+]}/>
           </Widget>
         </Grid>
         <Grid item xs={12}>

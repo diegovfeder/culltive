@@ -118,7 +118,7 @@ const ConnectionHandshake: React.FC = ({nav, route}) => {
             connectedSsid,
         );
         //FIXME: includes 'culltive' in ssid is not the best validator but works for now...
-        if (connectedSsid.includes('culltive')) {
+        if (connectedSsid.includes('CULLTIVE')) {
           // Enable connecting flag to start connectionHandshake state machine
           setConnecting(true);
         } else {

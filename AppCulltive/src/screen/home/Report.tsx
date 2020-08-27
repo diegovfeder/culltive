@@ -48,21 +48,20 @@ const Report: React.FC = () => {
   console.log('-- Report.tsx');
 
   const navigation = useNavigation();
-  // const route = useRoute();
 
   const {device} = useDeviceState();
-
-  //TODO: get lat / lon from device context...
-  const [latitude, setLatitude] = useState('-25.43');
-  const [longitude, setLongitude] = useState('-49.27');
 
   const [city, setCity] = useState('');
   const [temperature, setTemperature] = useState('');
 
   const [weather, setWeather] = useState('');
-  const [loadingWeather, setLoadingWeather] = useState(true);
+  const [loadingWeather, setLoadingWeather] = useState(false);
   const [fetchWeatherError, setFetchWeatherError] = useState(false);
-  const openWeatherAPIKey = 'e23da0e080203453b203b91febafb4dd';
+  // const openWeatherAPIKey = 'e23da0e080203453b203b91febafb4dd';
+
+  //TODO: Get location from device context...
+  // const [latitude, setLatitude] = useState('-25.43');
+  // const [longitude, setLongitude] = useState('-49.27');
 
   const [reading, setReading] = useState<IReading>({
     air: 0,
@@ -101,8 +100,8 @@ const Report: React.FC = () => {
     '/' +
     today.getFullYear();
 
-  const timezone = 'America/Sao_Paulo';
-  const format = 'MMMM Do YYYY, h:mm:ss a';
+  // const timezone = 'America/Sao_Paulo';
+  // const format = 'MMMM Do YYYY, h:mm:ss a';
 
   // console.log(tz('America/Los_Angeles').format('ha z'));
   // const dateMoment = moment.tz(date, format, timezone);
@@ -204,12 +203,19 @@ const Report: React.FC = () => {
   );
 
   const sensorDataContainer = (
-    <View style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
+    <View
+      style={{
+        padding: 2,
+        alignItems: 'center',
+        alignSelf: 'center',
+        justifyContent: 'center',
+      }}>
       <MyCarousel data={sensorData} />
     </View>
   );
 
   const _copyReadingToSensorData = () => {
+    //TODO: Null verification...
     sensorData[0].value = reading?.air.toString();
     sensorData[1].value = reading?.lumi1.toString();
     sensorData[2].value = reading?.soil1.toString();
@@ -218,9 +224,26 @@ const Report: React.FC = () => {
     console.log('sensorData: ' + JSON.stringify(sensorData));
   };
 
+  const fixUndefinedData = () => {
+    sensorData[0].value = '0';
+    sensorData[1].value = '0';
+    sensorData[2].value = '0';
+    sensorData[3].value = '0';
+  };
+
+  const mapSoilHumidityData = () => {
+    // Soil Humidity is position 2 of sensorData array
+    // TODO: should gather soil1 and soil2 for the calculation
+    const MAX_HUMI = 600;
+    const MIN_HUMI = 1024;
+    sensorData[2].value = Number(
+      (MAX_HUMI * sensorData[2].value) / MIN_HUMI,
+    ).toString();
+  };
+
   // Navigation Options
   useEffect(() => {
-    // Sets navigation gesture and swipe to false so it doesn't
+    // Sets navigation gesture and swipe to false so it doesn't block card gestures
     navigation.setOptions({gestureEnabled: false});
     navigation.setOptions({swipeEnabled: false});
 
@@ -234,29 +257,6 @@ const Report: React.FC = () => {
         </View>
       ),
     });
-  }, []);
-
-  // Get weather values from openWeather and set data in weatherContainer
-  useEffect(() => {
-    axios
-      .get(
-        `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&APPID=${openWeatherAPIKey}&units=metric`,
-      )
-      .then((res) => {
-        console.log('openWeather data: ' + JSON.stringify(res.data));
-
-        setLoadingWeather(false);
-        setCity(res.data.name);
-        setTemperature(res.data.main.temp.toFixed());
-        setWeather(res.data.weather[0].main);
-      })
-      .catch((err) => {
-        console.log('OpenWeather: ERROR: ' + err);
-
-        setLoadingWeather(false);
-        setFetchWeatherError(true);
-        //TODO: Set another state to try to load data again // handle Error routine...
-      });
   }, []);
 
   // Fetch readings from firestore
@@ -283,6 +283,9 @@ const Report: React.FC = () => {
       _copyReadingToSensorData();
     } else {
       console.log('reading is undefined?...');
+      // If reading is undefined, change the values for sensorData object ([temp] [air] [lumi], etc) to 0 or blank
+      // Or show error message?...
+      fixUndefinedData();
     }
   }, [reading, sensorData]);
 
@@ -295,14 +298,7 @@ const Report: React.FC = () => {
       ) : (
         <View>
           {/* Sensor Report Container*/}
-          <View>
-            <Text
-              style={[someStyles.h2, someColors.tertiary, {paddingBottom: 4}]}>
-              SENSORES
-            </Text>
-            {sensorDataContainer}
-          </View>
-
+          <View>{sensorDataContainer}</View>
           {/* Weather Report Container*/}
           {/* Removed for the moment, pasted at the bottom of the code or notion. */}
         </View>
@@ -329,6 +325,29 @@ export default Report;
 </View>
 {weatherContainer}
 </View> */
+
+// Get weather values from openWeather and set data in weatherContainer
+// useEffect(() => {
+//   axios
+//     .get(
+//       `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&APPID=${openWeatherAPIKey}&units=metric`,
+//     )
+//     .then((res) => {
+//       console.log('openWeather data: ' + JSON.stringify(res.data));
+
+//       setLoadingWeather(false);
+//       setCity(res.data.name);
+//       setTemperature(res.data.main.temp.toFixed());
+//       setWeather(res.data.weather[0].main);
+//     })
+//     .catch((err) => {
+//       console.log('OpenWeather: ERROR: ' + err);
+
+//       setLoadingWeather(false);
+//       setFetchWeatherError(true);
+//       //TODO: Set another state to try to load data again // handle Error routine...
+//     });
+// }, []);
 
 //------------------------------------------------------------//
 //            TRASHED CODE

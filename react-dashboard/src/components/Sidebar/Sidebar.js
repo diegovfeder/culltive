@@ -67,7 +67,6 @@ const structure = [
     icon: <UIElementsIcon />,
     children: [
       { label: "Icons", link: "/app/ui/icons_example" },
-      { label: "Charts", link: "/app/ui/charts_example" },
       { label: "Maps", link: "/app/ui/maps_example" }
     ]
   }

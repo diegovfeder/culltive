@@ -201,6 +201,8 @@ dependencies {
     // https://firebase.google.com/docs/android/setup#available-libraries
 
 
+    // implementation project(path: ":@react-native-firebase_messaging")
+
     // implementation project(':react-native-wifi-reborn')
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {

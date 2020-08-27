@@ -65,7 +65,7 @@ exports.postReading = (req, res) => {
     temp: req.body.temp, 
     ledTape: req.body.ledTape,
     waterLevel: req.body.waterLevel,
-    waterPump: req.body.waterPump,
+    // waterPump: req.body.waterPump,
   };
 
   db.doc(`/readings/${newReading.deviceId}:${newReading.createdAt}`)

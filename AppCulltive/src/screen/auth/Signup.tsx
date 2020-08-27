@@ -49,33 +49,39 @@ const Signup: React.FC = () => {
   //TODO: Transform error responses into text
   // Network Error -> Verifique sua conexao com a internet
   // Request failed with status code 401 -> Verifique se suas credenciais foram digitadas corretamente
-  // ...
   useEffect(() => {
+    let mounted = true;
+
     const _handleContextErrors = () => {
-      if (typeof error === 'undefined' || error === null) {
-        // return <></>;
-      } else {
-        console.log('signup() : ' + error);
-        Alert.alert(
-          'Ops...',
-          'Encontramos um problema durante a autenticação.' + '\n\n' + error,
-          // \nVerifique se digitou as credenciais corretamente e se possui conexão com a internet.
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                console.log('OK Pressed');
-                // errors = null;
-                clearError(userDispatch);
+      if (mounted) {
+        if (typeof error === 'undefined' || error === null) {
+          //...
+        } else {
+          console.log('signup() : ' + error);
+          Alert.alert(
+            'Ops...',
+            'Encontramos um problema durante a autenticação.' + '\n\n' + error,
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  console.log('OK Pressed');
+                  // errors = null;
+                  clearError(userDispatch);
+                },
               },
-            },
-          ],
-          {cancelable: false},
-        );
-        // return <Text style={someStyles.textError}>{errors.message}</Text>;
+            ],
+            {cancelable: false},
+          );
+        }
       }
     };
-    return _handleContextErrors();
+
+    _handleContextErrors();
+
+    return function cleanup() {
+      mounted = false;
+    };
   }, [error]);
 
   useEffect(() => {
@@ -184,8 +190,6 @@ const Signup: React.FC = () => {
                 </TouchableOpacity>
               </View>
             </View>
-
-            {/* BUTTON IS JUST OUTSIDE THE TEXT-INPUTS VIEW CONTAINER */}
             <TouchableHighlight
               underlayColor="#3ea341"
               activeOpacity={1}

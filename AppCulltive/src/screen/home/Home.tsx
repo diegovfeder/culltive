@@ -18,6 +18,7 @@ import {
   getAuthenticatedUser,
   setUserError,
 } from '../../context/UserContext';
+
 import {
   useDeviceDispatch,
   useDeviceState,
@@ -26,10 +27,11 @@ import {
 } from '../../context/DeviceContext';
 
 // Components
-import {check, PERMISSIONS} from 'react-native-permissions';
-import {Divider} from 'react-native-elements';
+// import FirstSigninModal from '../../component/FirstSigninModal';
+import ActComponent from '../../component/ActComponent';
 // import {ListItem} from 'react-native-elements';
-// import FirstSigninModal from '../component/FirstSigninModal';
+import {Divider} from 'react-native-elements';
+import {check, PERMISSIONS} from 'react-native-permissions';
 
 // Assets
 import {someStyles} from '../../Styles';
@@ -95,7 +97,7 @@ const Home: React.FC = () => {
         }
       } else {
         //... when would user be null?
-        setUserError(userDispatch, 'User is signed but context is null...');
+        // setUserError(userDispatch, 'User is signed but context is null...');
       }
     } else {
       // Device isn't paired
@@ -124,10 +126,10 @@ const Home: React.FC = () => {
       if (keys.includes('device')) {
         if (user.device.includes('CULLTIVE') && paired) {
           isLoading(false);
-        } else {
+        } else if ((user.device = '')) {
+          console.log('user.device is empty');
           // Is this really necessary?
-          // setDeviceError(deviceDispatch, 'User logged in but no device was found');
-          getDevice(deviceDispatch, user.device);
+          // getDevice(deviceDispatch, user.device);
         }
       } else if (keys.includes('email') && !keys.includes('userId')) {
         getAuthenticatedUser(userDispatch);
@@ -136,16 +138,9 @@ const Home: React.FC = () => {
       }
     } else {
       console.log('keys is empty');
+      getAuthenticatedUser(userDispatch);
     }
   }, [user]);
-
-  const [modalState, setModalState] = useState(false);
-  // FIXME: Open FirstSigninModal if !paired
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setModalState(true);
-  //   }, 2000);
-  // }, [null]);
 
   const errorContainer = (
     <View style={{padding: 2, alignItems: 'center', justifyContent: 'center'}}>
@@ -309,59 +304,7 @@ const Home: React.FC = () => {
         loadingContainer
       ) : error ? (
         errorContainer
-      ) : paired ? (
-        <View
-          style={[
-            someStyles.container_spaced,
-            {
-              alignItems: 'stretch',
-            },
-          ]}>
-          {plantContainer}
-          {/* {logoContainer} */}
-
-          <Divider style={{marginTop: 8}} />
-
-          <View style={{flex: 1}}>
-            <View style={{flexDirection: 'row'}}>
-              {/* View Component: Little green circle */}
-              <View
-                style={{
-                  alignSelf: 'center',
-                  borderRadius: 8,
-                  width: 8,
-                  height: 8,
-                  marginEnd: 8,
-                  marginTop: 8,
-                  marginBottom: 4,
-                  backgroundColor: someColors.primary.color,
-                }}></View>
-              <Text
-                style={[
-                  someStyles.h4,
-                  someColors.tertiary,
-                  {fontSize: 15, paddingTop: 8, paddingBottom: 4},
-                ]}>
-                ATIVIDADES RECENTES
-              </Text>
-            </View>
-
-            {activityContainer}
-          </View>
-
-          <Divider style={{marginVertical: 8}} />
-
-          <View style={{width: '100%'}}>
-            <TouchableHighlight
-              underlayColor="#3ea341"
-              activeOpacity={1}
-              style={someStyles.button}
-              onPress={() => navigation.navigate('Report')}>
-              <Text style={[someStyles.textButton]}>Relatórios</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      ) : (
+      ) : !paired ? (
         <SafeAreaView
           style={{
             flex: 1,
@@ -385,8 +328,59 @@ const Home: React.FC = () => {
 
           {pairContainer}
         </SafeAreaView>
+      ) : (
+        <View
+          style={[
+            someStyles.container_spaced,
+            {
+              alignItems: 'stretch',
+            },
+          ]}>
+          {plantContainer}
+          {/* {logoContainer} */}
+
+          <Divider style={{marginTop: 8}} />
+
+          <View style={{flex: 1}}>
+            <View style={{flexDirection: 'row'}}>
+              <View style={[someStyles.greenCircle]}></View>
+              <Text
+                style={[
+                  someStyles.h4,
+                  someColors.tertiary,
+                  {fontSize: 15, paddingTop: 8, paddingBottom: 4},
+                ]}>
+                ATIVIDADES RECENTES
+              </Text>
+            </View>
+
+            <ActComponent />
+            {activityContainer}
+          </View>
+
+          <Divider style={{marginVertical: 8}} />
+
+          <View style={{width: '100%'}}>
+            <TouchableHighlight
+              underlayColor="#3ea341"
+              activeOpacity={1}
+              style={someStyles.button}
+              onPress={() => navigation.navigate('Report')}>
+              <Text style={[someStyles.textButton]}>Relatórios</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
       )}
     </>
   );
 };
 export default Home;
+
+//TODO:
+// const [modalState, setModalState] = useState(false);
+// FIXME: Open FirstSigninModal if !paired
+// useEffect(() => {
+//   setTimeout(() => {
+//     setModalState(true);
+//   }, 2000);
+// }, [null]);

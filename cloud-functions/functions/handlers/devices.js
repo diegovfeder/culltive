@@ -49,6 +49,7 @@ exports.getDeviceAction = (req, res) => {
     .get()
     .then(doc => {
       if (!doc.exists) {
+        console.log("ERROR 404: Device not found");
         return res.status(404).json({
           error: "Device not found"
         });

@@ -28,7 +28,7 @@
 // ------------------------------------------------------- //
 
 /*Product Definition*/
-#define DEVICE_ID "CULLTIVE-001"
+#define DEVICE_ID "CULLTIVE-00Y"
 #define PRODUCT_TYPE "SINGLE"
 #define FIRMWARE_VERSION "alpha"
 

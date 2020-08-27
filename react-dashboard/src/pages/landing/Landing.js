@@ -11,6 +11,10 @@ import {AppBar, Button, Container, CssBaseline, Grid, Link, makeStyles, Toolbar,
 import logo from "../../images/culltive-logo.png";
 import logo_small from "../../images/culltive-logo-sm.jpeg";
 
+// import cLogo 
+// import logo from "../../images/cLogo.min.svg";
+// import logo_small from "../../images/cLogo.min.svg";
+
 
 // Styles
 const useStyles = makeStyles(theme => ({
