@@ -40,8 +40,12 @@ const readingsColumns = [
   { label: "Lumi.2", name: "lumi2" },
   { label: "Soil Hum.1", name: "soil1" },
   { label: "Soil Hum.2", name: "soil2" },
-  { label: "Temperature", name: "temp" }
+  { label: "Temperature", name: "temp" },
+  { label: "Water Level", name: "waterLevel" }
 ];
+
+//TODO:
+// const actsColumns = [];
 
 const options = {
   filterType: "dropdown",
@@ -96,7 +100,7 @@ export default function Home(props) {
 
   return (
     <>
-      <PageTitle title="Home" button="Latest Reports" />
+      <PageTitle title="Home" button="Refresh Data" />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           {devicesMUIDataTable}

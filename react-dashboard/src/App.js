@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import "./App.css";
 
-
 // Components
 import Layout from "./components/Layout";
 // import AuthRoute from "./util/AuthRoute";

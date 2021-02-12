@@ -50,7 +50,6 @@ const Signin: React.FC = () => {
   //TODO: Transform error responses into text
   // Network Error -> Verifique sua conexao com a internet
   // Request failed with status code 401 -> Verifique se suas credenciais foram digitadas corretamente
-  // ...
   useEffect(() => {
     const _handleContextErrors = () => {
       if (typeof error === 'undefined' || error === null) {
@@ -73,8 +72,13 @@ const Signin: React.FC = () => {
         );
       }
     };
-    return _handleContextErrors();
+
+    _handleContextErrors();
   }, [error]);
+
+  useEffect(() => {
+    setLoading(false);
+  }, [loading]);
 
   useEffect(() => {
     navigation.setOptions({

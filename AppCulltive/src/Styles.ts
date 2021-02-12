@@ -1,4 +1,3 @@
-// import React from 'react';
 import {StyleSheet, Dimensions} from 'react-native';
 import {someColors} from './Colors';
 
@@ -21,7 +20,6 @@ export const someStyles = StyleSheet.create({
     backgroundColor: '#f6f7f8',
   },
   button: {
-    // marginVertical: 6,
     marginTop: 6,
     display: 'flex',
     height: 48,
@@ -84,7 +82,16 @@ export const someStyles = StyleSheet.create({
     marginVertical: 10,
     justifyContent: 'space-between',
   },
-
+  greenCircle: {
+    alignSelf: 'center',
+    borderRadius: 8,
+    width: 8,
+    height: 8,
+    marginEnd: 8,
+    marginTop: 8,
+    marginBottom: 4,
+    backgroundColor: someColors.primary.color,
+  },
   h0: {
     fontSize: 28,
     fontFamily: 'Montserrat-Bold',

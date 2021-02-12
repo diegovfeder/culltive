@@ -23,7 +23,7 @@ export {
   DeviceProvider,
   useDeviceState,
   useDeviceDispatch,
-  // getDevices,
+  getDevices,
   getDevice,
   getDeviceAction,
   postDevice,
@@ -32,7 +32,6 @@ export {
   setDeviceAction,
   setPaired,
   setLoadingDevice,
-  setDeviceError,
   storeDeviceToken,
   clearError,
 };
@@ -71,9 +70,9 @@ function deviceReducer(state: any, action: any) {
       return {
         ...state,
         device: action.payload,
+        loading: false,
         paired: !!action.payload,
         pairToken: action.payload.deviceId,
-        loading: false,
       };
     case 'GET_DEVICE_ACTION':
       return {
@@ -95,10 +94,10 @@ function deviceReducer(state: any, action: any) {
     case 'DELETE_DEVICE':
       return {
         ...state,
-        paired: false,
-        pairToken: '',
         device: {},
         loading: false,
+        paired: false,
+        pairToken: '',
       };
     case 'SET_DEVICE_ACTION':
       return {
@@ -119,10 +118,10 @@ function deviceReducer(state: any, action: any) {
     case 'STORE_TOKEN':
       return {
         ...state,
-        paired: !!action.token,
-        pairToken: action.token,
         device: {deviceId: action.token},
         loading: false,
+        paired: !!action.token,
+        pairToken: action.token,
       };
     case 'CLEAR_ERROR':
       return {
@@ -175,7 +174,7 @@ function getDevice(dispatch: any, deviceId: string) {
   api
     .get(`/device/${deviceId}`)
     .then((res) => {
-      console.log('getDevice: ' + JSON.stringify(res));
+      // console.log('getDevice: ' + JSON.stringify(res));
       dispatch({
         type: 'GET_DEVICE',
         payload: res.data,
@@ -299,17 +298,12 @@ function setLoadingDevice(dispatch: any, loading: boolean) {
   dispatch({type: 'SET_LOADING', loading});
 }
 
-// Is this useful?
-function setDeviceError(dispatch: any, error: any, from: string) {
-  dispatch({type: 'SET_ERROR', error});
-}
-
 // STORE DEVICE / PAIR TOKEN
 async function storeDeviceToken(dispatch: any, token: string) {
   try {
     console.log('storeDeviceToken: ' + token);
     await AsyncStorage.setItem('@pairToken', token);
-    dispatch({type: 'STORE_TOKEN', token: token, loading: false});
+    dispatch({type: 'STORE_TOKEN', token: token});
   } catch (e) {
     console.log('ERROR: DeviceContext: ' + e.error);
   }

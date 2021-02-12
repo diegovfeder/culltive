@@ -14,6 +14,17 @@ export default function PageTitle(props) {
   function handleClick(e) {
     e.preventDefault();
     switch (props.button) {
+      //HOME
+      case "Refresh Data":
+        console.log("TODO: Refreshing data...")
+        //TODO: ...
+      break;
+      // CHARTS
+      case "Latest Reports":
+        console.log("TODO: Fetching latest reports...")
+        //TODO: ...
+      break;
+      // TASKS
       case "Clear All Tasks":
         base
           .removeDoc("tasks/user") //TODO: change to userHandle
@@ -24,9 +35,9 @@ export default function PageTitle(props) {
             //handle error
           });
         break;
-      default:
-        console.log(props.button);
-        break;
+        default:
+          console.log(props.button);
+      break;
     }
   }
 

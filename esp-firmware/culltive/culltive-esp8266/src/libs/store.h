@@ -1,0 +1,1 @@
+//TODO: EEPROM IS ANALYTICAL TO CONTEXT -> Easy access store for state management!

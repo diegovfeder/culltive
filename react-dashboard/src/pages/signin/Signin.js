@@ -18,7 +18,10 @@ import {
 import useStyles from "./styles";
 
 // Logo
-import logo from "../../images/culltive-logo.png";
+// import logo from "../../images/culltive-logo.png";
+
+// cLogo 
+import logo from "../../images/cLogo.min.svg";
 
 // Context
 import {

@@ -45,54 +45,78 @@ const MyCarousel: React.FC = (props) => {
       <View
         style={{
           width: width * 0.8,
-          height: 240,
+          height: height * 0.75,
           marginVertical: 8,
-          marginHorizontal: 32,
-          padding: 16,
-          backgroundColor: '#fff',
-          shadowColor: '#000',
-          shadowOffset: 5,
-          shadowOpacity: 0.1,
-          shadowRadius: 20,
-          borderRadius: 16,
+          marginHorizontal: 8,
+          padding: 4,
+          backgroundColor: someColors.white.color,
+          shadowColor: someColors.primary.color,
+          shadowOffset: 2,
+          shadowOpacity: 0.2,
+          shadowRadius: 16,
+          borderRadius: 24,
           elevation: 5,
           alignSelf: 'center',
           justifyContent: 'space-around',
         }}>
-        <View>
-          <Text style={[someStyles.h1, someColors.primary]}>{item.title}</Text>
+        <View style={{flex: 1}}>
+          <Text
+            style={[
+              someStyles.h1,
+              someColors.black,
+              {marginHorizontal: 8, marginTop: 24},
+            ]}>
+            {item.title}
+          </Text>
           <Text
             style={[
               someStyles.h3,
-              someColors.secondary,
+              someColors.gray,
               {
                 textAlign: 'center',
-                alignSelf: 'center',
+                alignSelf: 'stretch',
               },
             ]}>
             {item.text}
           </Text>
         </View>
-        <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-          <Text
-            style={[
-              someStyles.h1_number,
-              someColors.secondary,
-              {alignSelf: 'center'},
-            ]}>
-            {item.value}
-          </Text>
-          <Text
-            style={[
-              someStyles.h1,
-              someColors.secondary,
-              {
-                alignSelf: 'center',
-                fontSize: 32,
-              },
-            ]}>
-            {item.unit}
-          </Text>
+        <View style={{flex: 5, flexDirection: 'row', alignSelf: 'center'}}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignSelf: 'center',
+            }}>
+            <Text
+              style={[
+                someStyles.h1_number,
+                someColors.tertiary,
+                {
+                  position: 'relative',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  fontSize: 96,
+                },
+              ]}>
+              {item.value}
+            </Text>
+            <Text
+              style={[
+                someStyles.h1,
+                someColors.dark_gray,
+                {
+                  fontSize: 32,
+                  position: 'relative',
+                  bottom: 12,
+                  left: 12,
+                },
+              ]}>
+              {item.unit}
+            </Text>
+          </View>
         </View>
       </View>
     );
@@ -108,27 +132,27 @@ const MyCarousel: React.FC = (props) => {
         loop={true}
         onSnapToItem={(index) => setIndex(index)}
       />
+      <Pagination
+        dotsLength={props.data.length}
+        activeDotIndex={index}
+        containerStyle={{
+          paddingTop: 7,
+          paddingBottom: 1,
+        }}
+        dotColor={'#3cbc40'}
+        dotStyle={{
+          width: 9,
+          height: 9,
+          borderRadius: 4.5,
+          marginHorizontal: 2,
+        }}
+        inactiveDotColor={'lightgrey'}
+        inactiveDotOpacity={2}
+        inactiveDotScale={1}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paginationContainer: {
-    paddingTop: 7,
-    paddingBottom: 1,
-  },
-  paginationDot: {
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
-    marginHorizontal: 2,
-  },
-  logoStyle: {},
-});
 
 export default MyCarousel;
 

@@ -93,9 +93,9 @@ function userReducer(state: any, action: any) {
     case 'GET_USER':
       return {
         ...state,
-        user: action.payload,
         authenticated: !!action.payload,
-        // authToken ??
+        loading: false,
+        user: action.payload,
       };
     case 'SET_PAIRED':
       return {...state, paired: action.paired};
@@ -109,9 +109,9 @@ function userReducer(state: any, action: any) {
     case 'STORE_TOKEN':
       return {
         ...state,
-        loading: false,
         authenticated: !!action.token,
         authToken: action.token,
+        loading: false,
       };
     case 'CLEAR_USER_DEVICE':
       return {

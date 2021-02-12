@@ -1,8 +1,3 @@
-# Culltive react-dashboard project
-
-The objective of this website hosted in culltive.me is to have an easy way to display and monitor data but also provide some organization and enhancing features we could develop later on...
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 ## Available Scripts
 
 In the project directory, you can run:
@@ -29,6 +24,8 @@ The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+We are currently deploying with firebase.
 
 ### `npm run eject`
 

@@ -1,0 +1,1 @@
+//TODO: Connect to Home Wi-Fi // manage state // trigger State Machine when connection lost.
