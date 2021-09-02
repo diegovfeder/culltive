@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="Culltive" title="Culltive" />
+    Culltive
 </h1>
 
 <h4 align="center">
@@ -31,4 +31,4 @@ This project was developed with the following technologies:
 
 
 ---
-Made with ❤️ by Diego Feder
+Startup engineered by Diego Feder
