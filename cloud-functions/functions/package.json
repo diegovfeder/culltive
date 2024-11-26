@@ -18,7 +18,7 @@
     "firebase-admin": "^8.9.2",
     "firebase-functions": "^3.7.0",
     "fs": "0.0.1-security",
-    "nodemailer": "^6.4.10",
+    "nodemailer": "^6.4.16",
     "path": "^0.12.7",
     "validator": "^12.2.0"
   },
